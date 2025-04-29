@@ -1,0 +1,7 @@
+{
+  "baseUrl": "https://backoffice.xyleum.com",
+  "local":"http://localhost",
+  "port": "9090",
+  "localPort":"4000",
+  "prod": "no"
+}

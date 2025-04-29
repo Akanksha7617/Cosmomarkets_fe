@@ -1,0 +1,202 @@
+/* Deposit page styles */
+.deposit-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Step card styles */
+  .step-card {
+    border-radius: 8px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .step-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .step-badge {
+    background-color: #FFF7E6;
+    color: #FAAD14;
+    padding: 2px 12px;
+    border-radius: 16px;
+    font-weight: 500;
+    margin-right: 12px;
+    font-size: 14px;
+  }
+  
+  .step-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #262626;
+  }
+  
+  .step-content {
+    padding: 0 8px;
+  }
+  
+  /* Action buttons */
+  .action-buttons {
+    display: flex;
+    margin-top: 24px;
+    gap: 12px;
+  }
+  
+  .continue-button,
+  .submit-button,
+  .confirm-button {
+    background-color: #FAAD14;
+    border-color: #FAAD14;
+  }
+  
+  .continue-button:hover,
+  .submit-button:hover,
+  .confirm-button:hover {
+    background-color: #FFC53D;
+    border-color: #FFC53D;
+  }
+  
+  .back-button {
+    background-color: #f5f5f5;
+    border-color: #d9d9d9;
+  }
+  
+  .main-back-button {
+    margin-bottom: 16px;
+  }
+  
+  /* Payment table styles */
+  .payment-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .payment-table th,
+  .payment-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .payment-table th {
+    background-color: #fafafa;
+    font-weight: 500;
+    text-align: left;
+    color: #595959;
+  }
+  
+  .payment-option {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Form styles */
+  .currency-select {
+    margin-top: 8px;
+    margin-bottom: 24px;
+  }
+  
+  .amount-form {
+    margin-top: 16px;
+    max-width: 480px;
+  }
+  
+  /* Upload area styles */
+  .upload-container {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .upload-area {
+    width: 100%;
+  }
+  
+  .upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    border: 2px dashed #d9d9d9;
+    border-radius: 4px;
+    background-color: #fafafa;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  
+  .upload-content:hover {
+    border-color: #FAAD14;
+  }
+  
+  .upload-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: #8c8c8c;
+  }
+  
+  .upload-note {
+    font-size: 12px;
+    color: #8c8c8c;
+    margin-top: 8px;
+    text-align: center;
+  }
+  
+  /* Type selection styles for initial screen */
+  .transfer-type-container {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    margin-top: 16px;
+  }
+  
+  .transfer-type-card {
+    flex: 1;
+    min-width: 250px;
+    cursor: pointer;
+    border-color: #f0f0f0;
+    border-radius: 8px;
+    transition: all 0.3s;
+  }
+  
+  .transfer-type-card:hover {
+    border-color: #FAAD14;
+    box-shadow: 0 2px 8px rgba(250, 173, 20, 0.1);
+  }
+  
+  .transfer-icon-container {
+    background-color: #FFF7E6;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+  }
+  
+  .transfer-icon {
+    font-size: 24px;
+    color: #FAAD14;
+  }
+  
+  .transfer-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  .transfer-text {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .transfer-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  .transfer-description {
+    font-size: 14px;
+    color: #8c8c8c;
+  }

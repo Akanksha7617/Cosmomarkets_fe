@@ -1,0 +1,227 @@
+import { api, rawApi } from '@/components/common/api';
+import { useModel } from '@@/exports';
+import { SearchOutlined, FileExcelOutlined } from '@ant-design/icons';
+import { Button, Card, Input, Table, Tag, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import CustomLoader from '../CustomLoader';
+
+const { Title, Text } = Typography;
+
+const Clients: React.FC = () => {
+  // State
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState('');
+  const { initialState } = useModel('@@initialState');
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
+
+  // Fetch data on component mount and when search/pagination changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      getData(pagination.current, pagination.pageSize, searchText);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [searchText, pagination.current, pagination.pageSize]);
+
+  // Initial loading effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Fetch client data
+  const getData = async (page, pageSize, param) => {
+    try {
+      setLoading(true);
+      const response = await api.ib.getAttractedClientsLimited(page, pageSize, param);
+      setPagination({ ...pagination, current: page, total: response.totalRecords });
+      setData(response.requests || []);
+    } catch (error) {
+      console.error('Error fetching client data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Export to Excel
+  const exportExcel = async () => {
+    try {
+      const response = await rawApi.get(`/api/app/ib/ib_clients_export/xlsx`, {
+        responseType: 'blob',
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'ib_clients_export.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      link.remove();
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+    }
+  };
+
+  // Handle search
+  const handleSearch = () => {
+    setPagination({ ...pagination, current: 1 });
+    getData(1, pagination.pageSize, searchText);
+  };
+
+  // Handle page change
+  const handlePageChange = (page, pageSize) => {
+    setPagination({ ...pagination, current: page, pageSize });
+  };
+
+  // Generate account ID for demo purposes
+  const generateAccountId = () => `MT5-${Math.floor(10000000 + Math.random() * 90000000)}`;
+  
+  // Generate registration date for demo purposes
+  const generateDate = () => {
+    const date = new Date();
+    date.setDate(date.getDate() - Math.floor(Math.random() * 30));
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  };
+
+  // Table columns
+  const columns = [
+    {
+      title: 'Name',
+      key: 'name',
+      render: (_, record) => (
+        <div>
+          <div style={{ fontWeight: 500 }}>{`${record.firstName} ${record.lastName}`}</div>
+          <div style={{ color: '#8c8c8c', fontSize: '12px' }}>{record.email}</div>
+        </div>
+      ),
+    },
+    {
+      title: 'Wallet Balance',
+      key: 'walletBalance',
+      render: (_, record) => (
+        <div>
+          <div style={{ fontWeight: 500 }}>
+            {`${record.wallet?.balance || 0} USD`}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: 'Total Withdraw',
+      key: 'totalWithdraw',
+      render: (_, record) => (
+        <div>
+          <div style={{ fontWeight: 500 }}>{`${record.totalWithdraw || 0} USD`}</div>
+        </div>
+      ),
+    },
+    {
+      title: 'Total Deposit',
+      key: 'totalDeposit',
+      render: (_, record) => {
+        const amount = record.totalDeposit || 0;
+        return `${amount.toFixed(2)} USD`;
+      },
+      align: 'right',
+    },
+    {
+      title: 'Total MT5 Deposit',
+      key: 'totalMt5Deposit',
+      render: (_, record) => {
+        const amount = record.totalMt5Deposit || 0;
+        return `${amount.toFixed(2)} USD`;
+      },
+      align: 'right',
+    },
+    {
+      title: 'Total MT5 Withdraw',
+      key: 'totalMt5Withdraw',
+      render: (_, record) => {
+        const amount = record.totalMt5Withdraw || 0;
+        return `${amount.toFixed(2)} USD`;
+      },
+      align: 'right',
+    },
+  ];
+
+  return (
+    <div>
+      <Title level={3} style={{ marginBottom: '24px' }}>IB Clients</Title>
+      
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: '24px',
+        flexWrap: 'wrap',
+        gap: '16px'
+      }}>
+        <Input
+          placeholder="Search clients..."
+          prefix={<SearchOutlined />}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onPressEnter={handleSearch}
+          style={{ 
+            width: '100%', 
+            maxWidth: '500px'
+          }}
+        />
+        
+        <div>
+          <Button 
+            type="primary"
+            onClick={handleSearch}
+            style={{ 
+              marginRight: '8px',
+              backgroundColor: '#FAAD14',
+              borderColor: '#FAAD14' 
+            }}
+          >
+            Search
+          </Button>
+          
+          <Button 
+            icon={<FileExcelOutlined />}
+            onClick={exportExcel}
+          >
+            Export
+          </Button>
+        </div>
+      </div>
+      
+      {loading && <CustomLoader />}
+      
+      <Table
+        columns={columns}
+        dataSource={data.length > 0 ? data : []}
+        rowKey={(record) => record.id || Math.random().toString(36).substring(2)}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: pagination.total,
+          onChange: handlePageChange,
+          showSizeChanger: true,
+        }}
+        loading={loading}
+      />
+    </div>
+  );
+};
+
+export default Clients;
