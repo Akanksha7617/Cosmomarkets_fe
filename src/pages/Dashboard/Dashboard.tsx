@@ -633,71 +633,59 @@ const Dashboard: React.FC = () => {
               {`@ ${userData.FirstName} ${userData.LastName}`}
             </div> */}
             <PageContainer>
-              <div className="dashboard-flex">
-                {/* Wallet Card */}
-                <div className="wallet-card">
-                  <div className="wallet-info">
-                    <div className="wallet-info-label">WALLET ID</div>
-                    <div className="wallet-info-value">{`# ${userData.Wallet?.Id} USD`}</div>
-                  </div>
-                  <div className="wallet-balance">
-                    <div className="wallet-balance-label">WALLET BALANCE</div>
-                    <div className="wallet-balance-value">
-                      ${userData.Wallet?.Balance ?? '0.00'}
+              <div className="unified-card-container">
+                <div className="unified-card">
+                  {/* Header Section: Wallet ID and Balance side by side */}
+                  <div className="unified-header">
+                    <div className="wallet-id-balance">
+                      <div>
+                        <div className="unified-label">WALLET ID</div>
+                        <div className="unified-value">{`# ${userData.Wallet?.Id} USD`}</div>
+                      </div>
+                      <div>
+                        <div className="unified-label">WALLET BALANCE</div>
+                        <div className="unified-value">${userData.Wallet?.Balance ?? '0.00'}</div>
+                      </div>
                     </div>
                   </div>
-                  <div className="wallet-buttons">
+
+                  {/* Button Section */}
+                  <div className="unified-buttons">
                     <button
                       onClick={() => history.push('/finops/deposit')}
-                      className="wallet-button-deposit"
+                      className="unified-btn deposit"
                     >
                       ↓ Deposit
                     </button>
                     <button
                       onClick={() => history.push('/finops/withdraw')}
-                      className="wallet-button-withdraw"
+                      className="unified-btn withdraw"
                     >
                       ↑ Withdraw
                     </button>
                   </div>
-                </div>
 
-                {/* Right Grid */}
-                <div className="transaction-grid">
-                  {[
-                    {
-                      title: 'Total Deposit',
-                      amount: data.totalDeposit,
-                      colorClass: 'direction-down',
-                      arrow: '↓',
-                    },
-                    {
-                      title: 'Total Withdrawal',
-                      amount: data.totalWithdraw,
-                      colorClass: 'direction-up',
-                      arrow: '↑',
-                    },
-                    {
-                      title: 'Total MT5 Deposit',
-                      amount: data.totalMt5Deposit,
-                      colorClass: 'direction-down',
-                      arrow: '↓',
-                    },
-                    {
-                      title: 'Total MT5 Withdrawal',
-                      amount: data.totalMt5Withdraw,
-                      colorClass: 'direction-up',
-                      arrow: '↑',
-                    },
-                  ].map((item, i) => (
-                    <div key={i} className="transaction-box">
-                      <div className="transaction-title">{item.title}</div>
-                      <div className="transaction-amount">${item.amount}</div>
-                      <div className={`transaction-direction ${item.colorClass}`}>
-                        {item.arrow} All time
+                  {/* Summary Section */}
+                  <div className="unified-summary">
+                    <div className="unified-summary-grid">
+                      <div className="unified-summary-item">
+                        <label>Total Deposit</label>
+                        <span>${data.totalDeposit}</span>
+                      </div>
+                      <div className="unified-summary-item">
+                        <label>Total Withdrawal</label>
+                        <span>${data.totalWithdraw}</span>
+                      </div>
+                      <div className="unified-summary-item">
+                        <label>Total MT5 Deposit</label>
+                        <span>${data.totalMt5Deposit}</span>
+                      </div>
+                      <div className="unified-summary-item">
+                        <label>Total MT5 Withdrawal</label>
+                        <span>${data.totalMt5Withdraw}</span>
                       </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
 
@@ -725,7 +713,7 @@ const Dashboard: React.FC = () => {
                       }}
                     >
                       <span style={{ fontFamily: 'math', fontSize: '16px' }}></span>
-                     
+
                       <Link to="/finops/transaction_history" className="view-all-btn">
                         <ClockCircleOutlined className="view-all-icon" />
                         View All

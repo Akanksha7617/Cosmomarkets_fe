@@ -3302,6 +3302,122 @@ margin-left: -100px;
 
 /* user side live card */
 
+/* dashboard card user side new ak */
+.unified-card {
+  position: relative;
+  background: linear-gradient(to bottom, #fff7e6, #ffffff);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden; 
+}
+
+/* Top golden bar using ::before */
+.unified-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 6px;
+  width: 100%;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  background: linear-gradient(to right, #fff4cc, #d4af37, #fff4cc); /* gold fade */
+}
+
+
+/* Card styling like the Bitcoin Deposit card */
+.unified-card {
+  background: linear-gradient(to bottom, #fff7e6, #ffffff); /* light yellow gradient */
+   /* soft yellow border */
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* WALLET ID + BALANCE in one row */
+.wallet-id-balance {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.unified-label {
+  font-size: 14px;
+  color: #555; /* darker gray */
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.unified-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #111; /* dark text like Bitcoin Deposit card */
+}
+
+/* Buttons */
+.unified-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.unified-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-size: 14px;
+}
+
+/* Yellow Deposit Button like "Confirm Deposit" */
+.unified-btn.deposit {
+  background-color: #fbbf24; /* bright yellow */
+  color: #000; /* black text */
+}
+
+/* Red Withdraw Button */
+.unified-btn.withdraw {
+  background-color: #f87171; /* soft red */
+  color: #fff;
+}
+
+.unified-btn:hover {
+  opacity: 0.9;
+}
+
+/* Summary Grid */
+.unified-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.unified-summary-item label {
+  display: block;
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.unified-summary-item span {
+  font-weight: bold;
+  color: #000;
+}
+
+
+
+
+
+
+/* dashboard card user side new end ak*/
+
 /* Profile setting page */
 /* Reset Antd default tab spacing */
 .ant-tabs-tab {
@@ -3361,6 +3477,8 @@ margin-left: -100px;
 }
 
 /* profile setting end */
+
+
 
 /* myDetails page */
 .mydetail-card {
