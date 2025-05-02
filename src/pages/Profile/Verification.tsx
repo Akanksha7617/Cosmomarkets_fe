@@ -1,9 +1,8 @@
 import { api } from '@/components/common/api';
 import { ProofRequestModel, Status } from '@/generated';
-import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Card, Form, message, Upload } from 'antd';
-import { FormInstance } from 'antd/es/form';
-import { RcFile, UploadFile, UploadProps } from 'antd/es/upload';
+import { FileOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Form, message, Modal, Upload } from 'antd';
+import { RcFile, UploadProps } from 'antd/es/upload';
 import React, { useEffect, useState } from 'react';
 import '../../common.css';
 import { ConView } from './Profile';
@@ -15,6 +14,7 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
+
 const beforeUpload = (file: RcFile) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
   if (!isJpgOrPng) {
@@ -38,9 +38,7 @@ const beforeUpload = (file: RcFile) => {
 };
 
 const Verification: React.FC = () => {
-  const [backpage, setBackPage] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>();
   const [form] = Form.useForm();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
@@ -55,6 +53,7 @@ const Verification: React.FC = () => {
     image: '',
     isImage: false,
   });
+
   const [idViewBack, setIdViewBack] = useState<ConView>({
     Status: Status.NOT_REQUESTED,
     color: 'orange',
@@ -63,6 +62,7 @@ const Verification: React.FC = () => {
     image: '',
     isImage: false,
   });
+
   const [addressView, setAddressView] = useState<ConView>({
     Status: Status.NOT_REQUESTED,
     color: 'orange',
@@ -72,7 +72,7 @@ const Verification: React.FC = () => {
     isImage: false,
   });
 
-  // New state variables to store preview images
+  // State variables to store preview images
   const [idPreviewImage, setIdPreviewImage] = useState<string>('');
   const [idBackPreviewImage, setIdBackPreviewImage] = useState<string>('');
   const [addressPreviewImage, setAddressPreviewImage] = useState<string>('');
@@ -80,14 +80,11 @@ const Verification: React.FC = () => {
   const [idFileList, setIdFileList] = useState<any[]>([]);
   const [idFileListBack, setIdFileListBack] = useState<any[]>([]);
   const [addressFileList, setAddressFileList] = useState<any[]>([]);
-  const [modalVisible1, setModalVisible1] = useState(false);
-  const [modalVisible2, setModalVisible2] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
   const [managerComment, setManagerComment] = useState<string>();
   const [record, setRecord] = useState<ProofRequestModel>();
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [formLayout, setFormLayout] = useState<LayoutType>('horizontal');
-  const [isRequested, setIsRequested] = useState(false);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [showCancelButton, setShowCancelButton] = useState(false);
 
   // Determine if update button should be disabled based on all document statuses
   const isUpdateButtonDisabled =
@@ -98,203 +95,141 @@ const Verification: React.FC = () => {
     addressView.Status !== Status.NOT_REQUESTED &&
     addressView.Status !== Status.REJECTED;
 
-  const [showCancelButton, setShowCancelButton] = useState(false);
-
-  const onFormLayoutChange = ({ layout }: { layout: LayoutType }) => {
-    setFormLayout(layout);
-  };
-
-  const formItemLayout =
-    formLayout === 'horizontal' ? { labelCol: { span: 4 }, wrapperCol: { span: 14 } } : null;
-
-  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
-    setFileList(newFileList);
-
-  const handleCancel = () => {
-    console.log('Cancellation logic here');
-    setShowCancelButton(false);
-  };
-
-  const handleUpdate = () => {
-    console.log('----->update');
-    setLoading(true);
-
-    const isIdProofUploaded = idFileList.length > 0;
-    const isIdProofUploadedBack = idFileListBack.length > 0;
-    const address = addressFileList.length > 0;
-    console.log(isIdProofUploaded);
-
-    if (!isIdProofUploaded && !isIdProofUploadedBack && !address) {
-      setLoading(false);
-      return;
-    }
-
-    setTimeout(() => {
-      setLoading(false);
-      setShowCancelButton(true);
-    }, 2000);
-  };
-
-  const handlePreview = async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as RcFile);
-    }
-
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-    setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
-  };
-
-  const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
-
-  const SubmitButton = ({ form }: { form: FormInstance }) => {
-    const [submittable, setSubmittable] = React.useState(false);
-
-    // Watch all values
-    const values = Form.useWatch([], form);
-
-    React.useEffect(() => {
-      form.validateFields({ validateOnly: true }).then(
-        () => {
-          setSubmittable(true);
-        },
-        () => {
-          setSubmittable(false);
-        },
-      );
-    }, [values]);
-
-    return (
-      <Button type="primary" htmlType="submit" disabled={!submittable}>
-        Submit
-      </Button>
-    );
-  };
-
-  const handleButton = () => {
-    setIsFlipped(!isFlipped);
-  };
-
-  const descId =
-    'Please Upload An Identification Documents(Passport/National Id/Driving\n' +
-    '          License)in Colour Where Your Full Name Is Display';
-
-  const descAddress =
-    'Proof Of Address Is not Older Than 180 Days(Electric Bill/Bank Statement/Other\n' +
-    '          Official Document With Your Name And Address On It)';
-
   useEffect(() => {
-    init().then();
+    init();
   }, []);
 
-  // Modified init function to handle individual statuses
+  // Initialize document statuses
   const init = async () => {
-    const requests = await api.proof.getMyRequest();
-    let anyRequested = false;
+    try {
+      const requests = await api.proof.getMyRequest();
+      let anyRequested = false;
 
-    // Initialize with default values
-    let idStatus = Status.NOT_REQUESTED;
-    let idBackStatus = Status.NOT_REQUESTED;
-    let addressStatus = Status.NOT_REQUESTED;
+      // Initialize with default values
+      let idStatus = Status.NOT_REQUESTED;
+      let idBackStatus = Status.NOT_REQUESTED;
+      let addressStatus = Status.NOT_REQUESTED;
 
-    let idImageDataUrl = '';
-    let idImageDataUrlBack = '';
-    let addressImageDataUrl = '';
+      let idImageDataUrl = '';
+      let idImageDataUrlBack = '';
+      let addressImageDataUrl = '';
 
-    if (requests.length > 0) {
-      const r = requests[0];
-      setRecord(r);
+      if (requests.length > 0) {
+        const r = requests[0];
+        setRecord(r);
 
-      // Check ID Front proof status and image
-      if (r.idProofName) {
-        const ext = r.idProofName.split('.').pop().toLowerCase();
-        idImageDataUrl = `data:image/${ext};base64,${r.idProof}`;
+        // Check ID Front proof status and image
+        if (r.idProofName) {
+          const ext = r.idProofName.split('.').pop().toLowerCase();
+          idImageDataUrl = `data:image/${ext};base64,${r.idProof}`;
 
-        // Set status based on individual document
-        if (r.idProofStatus !== undefined) {
-          // If you have individual status for each document
-          idStatus = r.idProofStatus;
-        } else {
-          // Fallback to the main status if no individual status exists
-          idStatus = r.status !== Status.REJECTED ? r.status : Status.NOT_REQUESTED;
+          // Set status based on individual document
+          idStatus =
+            r.idProofStatus !== undefined
+              ? r.idProofStatus
+              : r.status !== Status.REJECTED
+              ? r.status
+              : Status.NOT_REQUESTED;
+
+          // Set the preview image
+          setIdPreviewImage(idImageDataUrl);
+        }
+
+        // Check ID Back proof status and image
+        if (r.idProofBackPageName) {
+          const ext = r.idProofBackPageName.split('.').pop().toLowerCase();
+          idImageDataUrlBack = `data:image/${ext};base64,${r.idProofBackPage}`;
+
+          // Set status based on individual document
+          idBackStatus =
+            r.idProofBackStatus !== undefined
+              ? r.idProofBackStatus
+              : r.status !== Status.REJECTED
+              ? r.status
+              : Status.NOT_REQUESTED;
+
+          // Set the preview image
+          setIdBackPreviewImage(idImageDataUrlBack);
+        }
+
+        // Check Address proof status and image
+        if (r.addressProofName) {
+          const ext = r.addressProofName.split('.').pop().toLowerCase();
+          addressImageDataUrl = `data:image/${ext};base64,${r.addressProof}`;
+
+          // Set status based on individual document
+          addressStatus =
+            r.addressProofStatus !== undefined
+              ? r.addressProofStatus
+              : r.status !== Status.REJECTED
+              ? r.status
+              : Status.NOT_REQUESTED;
+
+          // Set the preview image
+          setAddressPreviewImage(addressImageDataUrl);
+        }
+
+        // Check if any document is requested
+        if (
+          idStatus === Status.REQUESTED ||
+          idBackStatus === Status.REQUESTED ||
+          addressStatus === Status.REQUESTED
+        ) {
+          anyRequested = true;
+          setShowCancelButton(true);
         }
       }
 
-      // Check ID Back proof status and image
-      if (r.idProofBackPageName) {
-        const ext = r.idProofBackPageName.split('.').pop().toLowerCase();
-        idImageDataUrlBack = `data:image/${ext};base64,${r.idProofBackPage}`;
-
-        // Set status based on individual document
-        if (r.idProofBackStatus !== undefined) {
-          // If you have individual status for each document
-          idBackStatus = r.idProofBackStatus;
-        } else {
-          // Fallback to the main status if no individual status exists
-          idBackStatus = r.status !== Status.REJECTED ? r.status : Status.NOT_REQUESTED;
+      // Convert enum Status to string for consistent display
+      const getStatusText = (status) => {
+        switch (status) {
+          case Status.APPROVED:
+            return 'APPROVED';
+          case Status.REQUESTED:
+            return 'REQUESTED';
+          case Status.REJECTED:
+            return 'REJECTED';
+          default:
+            return 'NOT_REQUESTED';
         }
-      }
+      };
 
-      // Check Address proof status and image
-      if (r.addressProofName) {
-        const ext = r.addressProofName.split('.').pop().toLowerCase();
-        addressImageDataUrl = `data:image/${ext};base64,${r.addressProof}`;
+      // Update each view with its respective status
+      setIdView({
+        Status: idStatus,
+        color: getStatusColor(idStatus),
+        text: getStatusText(idStatus),
+        desc: '',
+        image: idImageDataUrl,
+        isImage: !!idImageDataUrl,
+      });
 
-        // Set status based on individual document
-        if (r.addressProofStatus !== undefined) {
-          // If you have individual status for each document
-          addressStatus = r.addressProofStatus;
-        } else {
-          // Fallback to the main status if no individual status exists
-          addressStatus = r.status !== Status.REJECTED ? r.status : Status.NOT_REQUESTED;
-        }
-      }
+      setIdViewBack({
+        Status: idBackStatus,
+        color: getStatusColor(idBackStatus),
+        text: getStatusText(idBackStatus),
+        desc: '',
+        image: idImageDataUrlBack,
+        isImage: !!idImageDataUrlBack,
+      });
 
-      // Check if any document is requested
-      if (
-        idStatus === Status.REQUESTED ||
-        idBackStatus === Status.REQUESTED ||
-        addressStatus === Status.REQUESTED
-      ) {
-        anyRequested = true;
-      }
-
-      setIsRequested(anyRequested);
-      setManagerComment(r.managerComment || '');
+      setAddressView({
+        Status: addressStatus,
+        color: getStatusColor(addressStatus),
+        text: getStatusText(addressStatus),
+        desc: '',
+        image: addressImageDataUrl,
+        isImage: !!addressImageDataUrl,
+      });
+    } catch (error) {
+      console.error('Error initializing verification:', error);
+      message.error({
+        content: 'Error loading verification status',
+        icon: <span className="orange-error-icon"> ✘ </span>,
+        className: 'orange-error-notification',
+        duration: 3,
+      });
     }
-
-    // Update each view with its respective status
-    setIdView({
-      Status: idStatus,
-      color: getStatusColor(idStatus),
-      text: idStatus,
-      desc: idStatus === Status.NOT_REQUESTED ? descId : '',
-      image: idImageDataUrl,
-      isImage: !!idImageDataUrl,
-    });
-
-    setIdViewBack({
-      Status: idBackStatus,
-      color: getStatusColor(idBackStatus),
-      text: idBackStatus,
-      desc: idBackStatus === Status.NOT_REQUESTED ? descId : '',
-      image: idImageDataUrlBack,
-      isImage: !!idImageDataUrlBack,
-    });
-
-    setAddressView({
-      Status: addressStatus,
-      color: getStatusColor(addressStatus),
-      text: addressStatus,
-      desc: addressStatus === Status.NOT_REQUESTED ? descAddress : '',
-      image: addressImageDataUrl,
-      isImage: !!addressImageDataUrl,
-    });
   };
 
   // Helper function to get color based on status
@@ -311,6 +246,22 @@ const Verification: React.FC = () => {
     }
   };
 
+  // Helper function to get status badge text and style
+  const getStatusBadge = (status) => {
+    // Convert status.text to uppercase for consistent comparison
+    const statusText = typeof status.text === 'string' ? status.text.toUpperCase() : status.text;
+
+    if (statusText === 'APPROVED') {
+      return <span className="verification-badge verification-badge-verified">Verified</span>;
+    } else if (statusText === 'REQUESTED') {
+      return <span className="verification-badge verification-badge-pending">Pending</span>;
+    } else if (statusText === 'REJECTED') {
+      return <span className="verification-badge verification-badge-rejected">Rejected</span>;
+    } else {
+      return <span className="verification-badge verification-badge-upload">Upload</span>;
+    }
+  };
+
   // Check if any document is in requested state
   const hasRequestedDocuments =
     idView.Status === Status.REQUESTED ||
@@ -319,41 +270,48 @@ const Verification: React.FC = () => {
 
   const handleCancelProof = async () => {
     try {
+      setLoading(true);
       const response = await api.proof.cancelRequest();
       console.log('API Response:', response);
-      window.location.reload();
+      message.success('Verification request cancelled');
+      await init();
+      setShowCancelButton(false);
     } catch (error) {
       console.error('Error cancelling verification:', error);
+      message.error({
+        content: 'Error cancelling verification',
+        icon: <span className="orange-error-icon"> ✘ </span>,
+        className: 'orange-error-notification',
+        duration: 3,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleImageClick1 = () => {
-    setModalVisible1(true);
-  };
-
-  const handleImageClick2 = () => {
-    setModalVisible2(true);
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setModalVisible(true);
   };
 
   const props: UploadProps = {
     beforeUpload: (file) => {
-      const acceptedFormats = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/bmp',
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      ];
-      console.log('file Extension', file.type);
+      const acceptedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp'];
+
       if (!acceptedFormats.includes(file.type)) {
         message.error({
-          content: 'This file type is not supported. Please upload a valid file format.',
+          content: 'This file type is not supported. Please upload a valid image format.',
+          icon: <span className="orange-error-icon"> ✘ </span>,
+          className: 'orange-error-notification',
+          duration: 3,
+        });
+        return Upload.LIST_IGNORE;
+      }
+
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        message.error({
+          content: 'Image must be smaller than 2MB!',
           icon: <span className="orange-error-icon"> ✘ </span>,
           className: 'orange-error-notification',
           duration: 3,
@@ -362,9 +320,6 @@ const Verification: React.FC = () => {
       }
 
       return true;
-    },
-    onChange: (info) => {
-      console.log(info.fileList);
     },
   };
 
@@ -412,18 +367,60 @@ const Verification: React.FC = () => {
     }
   };
 
-  const handleOk = () => {
-    console.log('----->Uploading');
+  // Update local status to REQUESTED immediately after form submission
+  const updateLocalStatus = () => {
+    // Update ID Front status if a file is uploaded
+    if (idFileList.length > 0) {
+      setIdView((prev) => ({
+        ...prev,
+        Status: Status.REQUESTED,
+        text: 'REQUESTED', // Using string directly to ensure consistency
+        color: getStatusColor(Status.REQUESTED),
+      }));
+    }
+
+    // Update ID Back status if a file is uploaded
+    if (idFileListBack.length > 0) {
+      setIdViewBack((prev) => ({
+        ...prev,
+        Status: Status.REQUESTED,
+        text: 'REQUESTED', // Using string directly to ensure consistency
+        color: getStatusColor(Status.REQUESTED),
+      }));
+    }
+
+    // Update Address Proof status if a file is uploaded
+    if (addressFileList.length > 0) {
+      setAddressView((prev) => ({
+        ...prev,
+        Status: Status.REQUESTED,
+        text: 'REQUESTED', // Using string directly to ensure consistency
+        color: getStatusColor(Status.REQUESTED),
+      }));
+    }
+
+    // Show cancel button if any document is now in REQUESTED state
+    setShowCancelButton(true);
+  };
+
+  const handleSubmit = () => {
     setLoading(true);
     form
       .validateFields()
       .then(async (values) => {
         const idFile = idFileList?.length > 0 ? idFileList[0] : null;
         const idFileBack = idFileListBack?.length > 0 ? idFileListBack[0] : null;
+        const addrFile = addressFileList?.length > 0 ? addressFileList[0] : null;
 
-        if (idFile?.size > 30 * 1024 * 1024) {
+        if (
+          (idFile && idFile.originFileObj && idFile.originFileObj.size > 2 * 1024 * 1024) ||
+          (idFileBack &&
+            idFileBack.originFileObj &&
+            idFileBack.originFileObj.size > 2 * 1024 * 1024) ||
+          (addrFile && addrFile.originFileObj && addrFile.originFileObj.size > 2 * 1024 * 1024)
+        ) {
           message.error({
-            content: 'Document size exceeds the limit. Please upload a file less than 30 MB.',
+            content: 'Image size exceeds the limit. Please upload files less than 2MB.',
             icon: <span className="orange-error-icon"> ✘ </span>,
             className: 'orange-error-notification',
             duration: 3,
@@ -432,30 +429,24 @@ const Verification: React.FC = () => {
           return;
         }
 
-        const addrFile = addressFileList[0];
-        const isIdProofUploaded = idFileList.length > 0;
-        const isIdProofUploadedback = idFileListBack.length > 0;
-        const address = addressFileList.length > 0;
+        const isAnyFileUploaded = idFile || idFileBack || addrFile;
 
-        if (!isIdProofUploaded && !isIdProofUploadedback && !address) {
+        if (!isAnyFileUploaded) {
           message.error({
-            content: 'Please upload the required ID proof image and address.',
+            content: 'Please upload at least one document.',
             icon: <span className="orange-error-icon"> ✘ </span>,
             className: 'orange-error-notification',
             duration: 3,
           });
+          setLoading(false);
           return;
         }
 
         let formData: any = {};
+
         if (idFile) {
           formData.IdProofFile = idFile?.originFileObj;
           formData.IdProofName = idFile?.name;
-        }
-
-        if (addrFile) {
-          formData.AddressProofFile = addrFile?.originFileObj;
-          formData.AddressProofName = addrFile?.name;
         }
 
         if (idFileBack) {
@@ -463,133 +454,268 @@ const Verification: React.FC = () => {
           formData.IdProofBackPageName = idFileBack?.name;
         }
 
-        await api.proof.postProofRequest(formData);
-        init();
+        if (addrFile) {
+          formData.AddressProofFile = addrFile?.originFileObj;
+          formData.AddressProofName = addrFile?.name;
+        }
+
+        try {
+          // First update the local state to show "Pending" immediately
+          updateLocalStatus();
+
+          // Forcing a re-render to make sure status changes are visible
+          setTimeout(() => {
+            // This setState call forces React to re-render with the new status
+            if (idFile) {
+              setIdView((prev) => ({ ...prev }));
+            }
+            if (idFileBack) {
+              setIdViewBack((prev) => ({ ...prev }));
+            }
+            if (addrFile) {
+              setAddressView((prev) => ({ ...prev }));
+            }
+          }, 0);
+
+          // Then make the API call
+          await api.proof.postProofRequest(formData);
+          message.success('Documents submitted successfully');
+
+          // No need to call init() here as we've already updated the local state
+        } catch (error) {
+          console.error('Error submitting documents:', error);
+          message.error({
+            content: 'Error submitting documents',
+            icon: <span className="orange-error-icon"> ✘ </span>,
+            className: 'orange-error-notification',
+            duration: 3,
+          });
+          // If there's an error, revert to the previous state
+          init();
+        } finally {
+          setLoading(false);
+        }
       })
-      .catch((e) => console.log(e))
-      .finally(() => {
+      .catch((e) => {
+        console.log(e);
+        message.error({
+          content: 'Please check your form inputs',
+          icon: <span className="orange-error-icon"> ✘ </span>,
+          className: 'orange-error-notification',
+          duration: 3,
+        });
         setLoading(false);
       });
   };
 
+  // Render document item with correct UI states based on status
+  const renderDocumentItem = (doc, index) => {
+    // Make sure we're consistently working with uppercase strings for comparison
+    const statusText =
+      typeof doc.status.text === 'string' ? doc.status.text.toUpperCase() : doc.status.text;
+
+    const isStatusRequested = statusText === 'REQUESTED';
+    const isStatusApproved = statusText === 'APPROVED';
+    const isStatusRejected = statusText === 'REJECTED';
+    const isStatusNotRequested = !isStatusRequested && !isStatusApproved && !isStatusRejected;
+
+    console.log(`Document ${doc.title} status: ${statusText}`, {
+      isRequested: isStatusRequested,
+      isApproved: isStatusApproved,
+      isRejected: isStatusRejected,
+      isNotRequested: isStatusNotRequested,
+    });
+
+    return (
+      
+      <div key={index} className="verification-document-item">
+          
+        <div className="verification-document-details">
+          {/* Document Thumbnail */}
+          {doc.previewImage ? (
+            <div className="document-thumbnail" onClick={() => handleImageClick(doc.previewImage)}>
+              <img src={doc.previewImage} alt={doc.imageAlt} />
+            </div>
+          ) : (
+            <div className="document-thumbnail placeholder">
+              <FileOutlined />
+            </div>
+          )}
+
+          {/* Document Info */}
+          <div className="verification-document-info">
+            <div className="verification-document-title">{doc.title}</div>
+            <div className="verification-document-subtitle">{doc.subtitle}</div>
+          </div>
+        </div>
+
+        <div className="verification-document-status">
+          {/* Always display the current status badge */}
+          {getStatusBadge(doc.status)}
+
+          {/* Show upload button only if not requested or approved */}
+          {isStatusNotRequested && (
+            <Form.Item
+              className="verification-upload-form-item"
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
+              name={doc.name}
+            >
+              <Upload
+                {...props}
+                name="document"
+                fileList={doc.fileList}
+                onChange={doc.handleChange}
+                showUploadList={false}
+              >
+                <Button className="verification-upload-button" icon={<UploadOutlined />}>
+                  Upload
+                </Button>
+              </Upload>
+            </Form.Item>
+          )}
+
+          {/* Show Upload Again button for rejected documents */}
+          {isStatusRejected && (
+            <Form.Item
+              className="verification-upload-form-item"
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
+              name={doc.name}
+            >
+              <Upload
+                {...props}
+                name="document"
+                fileList={doc.fileList}
+                onChange={doc.handleChange}
+                showUploadList={false}
+              >
+                <Button type="primary" className="verification-upload-again">
+                  Upload Again
+                </Button>
+              </Upload>
+            </Form.Item>
+          )}
+
+          {/* Show Verified button for approved documents */}
+          {isStatusApproved && (
+            <Button disabled type="default" className="verification-verified-button">
+              Verified
+            </Button>
+          )}
+
+          {/* Show Pending button for requested documents */}
+          {isStatusRequested && (
+            <Button disabled type="default" className="verification-pending-button">
+              Pending
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
-      <div className="btn-at-end">
-        {/* <Button
-          type="buttton"
-          onClick={() => history.push('/ProfileSettings')}
-          className="back-btn"
-        >
-          Back
-        </Button> */}
-      </div>
-      <Card className="doc-verification-card">
-        <h2 className="doc-verification-heading">Document Verification</h2>
-
-        <Form form={form} onFinish={handleOk} labelCol={{ span: 4 }} wrapperCol={{ span: 14 }}>
-          <div className="doc-upload-container">
-            {[
-              {
-                title: 'ID Proof (Front Side)',
-                status: idView,
-                name: 'idProofFile',
-                fileList: idFileList,
-                handleChange: handleIdFileChange,
-                imageAlt: 'idProofFront',
-                previewImage: idPreviewImage,
-              },
-              {
-                title: 'ID Proof (Back Side)',
-                status: idViewBack,
-                name: 'IdProofFileBackPage',
-                fileList: idFileListBack,
-                handleChange: handleIdFileChangeBack,
-                imageAlt: 'idProofBack',
-                previewImage: idBackPreviewImage,
-              },
-              {
-                title: 'Proof of Address',
-                status: addressView,
-                name: 'addressProofFile',
-                fileList: addressFileList,
-                handleChange: handleAddressFileChange,
-                imageAlt: 'addressProof',
-                previewImage: addressPreviewImage,
-              },
-            ].map((doc, index) => (
-              <Card key={index} className="doc-upload-card">
-                <div className="doc-image-wrapper">
-                  {/* Show server image if available, otherwise show preview image */}
-                  <img
-                    src={doc.status.image || doc.previewImage || ''}
-                    alt={doc.imageAlt}
-                    className={`doc-image ${
-                      doc.status.image || doc.previewImage ? 'visible' : 'hidden'
-                    }`}
-                    onClick={handleImageClick1}
-                  />
-                </div>
-
-                <h3 className="doc-title">{doc.title}</h3>
-
-                <p className="doc-status">
-                  Status: <span style={{ color: doc.status.color }}>{doc.status.text}</span>
-                </p>
-
-                {!doc.status.image && (
-                  <Form.Item
-                    className="custom-upload-box"
-                    valuePropName="fileList"
-                    getValueFromEvent={normFile}
-                    name={doc.name}
-                    help={
-                      <div className="error-message">Please upload {doc.title.toLowerCase()}</div>
-                    }
-                    style={{ marginBottom: 0 }}
-                  >
-                    <Upload
-                      {...props}
-                      name="avatar"
-                      fileList={doc.fileList}
-                      onChange={doc.handleChange}
-                      beforeUpload={beforeUpload}
-                      className="img-ver"
-                      showUploadList={false}
-                    >
-                      <Button icon={<UploadOutlined />}>Upload</Button>
-                    </Upload>
-                  </Form.Item>
-                )}
-
-                {doc.status.text === 'Rejected' && !doc.image && (
-                  <Button type="primary" onClick={handleUpdate}>
-                    Upload Again
-                  </Button>
-                )}
-                {doc.status.text === 'Approved' && (
-                  <Button disabled type="default">
-                    Verified
-                  </Button>
-                )}
-              </Card>
-            ))}
+      {/* Account Wrapper inspired by MY ACCOUNT section */}
+      <div className="account-wrapper">
+        <div className="account-headerr">
+          {/* <div className="account-avatar">
+            <div className="account-letter">V</div>
+          </div> */}
+          <div className="account-title">
+            <h2>VERIFICATION</h2>
+            <div className="account-subtitle">
+              <span className="verification-tag">Documents</span>
+            </div>
           </div>
+        </div>
+        
+        {/* Verification Container (Using similar styles as the original) */}
+        <div className="verification-container">
+          <Form form={form} onFinish={handleSubmit} layout="vertical">
+            <div className="verification-documents-list">
+              {renderDocumentItem(
+                {
+                  title: 'ID Verification',
+                  subtitle: 'Passport or ID card (front)',
+                  status: idView,
+                  name: 'idProofFile',
+                  fileList: idFileList,
+                  handleChange: handleIdFileChange,
+                  imageAlt: 'ID Proof Front',
+                  previewImage: idPreviewImage || idView.image,
+                },
+                0,
+              )}
 
-          <div className="doc-btn-group">
-            <Button type="primary" htmlType="submit" loading={loading} onClick={handleUpdate}>
-              Update Documents
-            </Button>
+              {renderDocumentItem(
+                {
+                  title: 'ID Verification (Back)',
+                  subtitle: 'Passport or ID card (back)',
+                  status: idViewBack,
+                  name: 'IdProofFileBackPage',
+                  fileList: idFileListBack,
+                  handleChange: handleIdFileChangeBack,
+                  imageAlt: 'ID Proof Back',
+                  previewImage: idBackPreviewImage || idViewBack.image,
+                },
+                1,
+              )}
 
-            {hasRequestedDocuments && (
-              <Button className="doc-cancel-btn" onClick={handleCancelProof}>
-                Cancel
+              {renderDocumentItem(
+                {
+                  title: 'Proof of Address',
+                  subtitle: 'Utility bill or bank statement',
+                  status: addressView,
+                  name: 'addressProofFile',
+                  fileList: addressFileList,
+                  handleChange: handleAddressFileChange,
+                  imageAlt: 'Address Proof',
+                  previewImage: addressPreviewImage || addressView.image,
+                },
+                2,
+              )}
+            </div>
+
+            <div className="verification-actions">
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                disabled={isUpdateButtonDisabled}
+                className="verification-update-button"
+              >
+                Update Documents
               </Button>
-            )}
-          </div>
-        </Form>
-      </Card>
+
+              {(hasRequestedDocuments || showCancelButton) && (
+                <Button
+                  className="verification-cancel-button"
+                  onClick={handleCancelProof}
+                  loading={loading}
+                >
+                  Cancel Request
+                </Button>
+              )}
+            </div>
+          </Form>
+        </div>
+      </div>
+
+      {/* Image Preview Modal */}
+      <Modal
+        open={modalVisible}
+        footer={null}
+        onCancel={() => setModalVisible(false)}
+        width={600}
+        centered
+      >
+        <img alt="Document Preview" style={{ width: '100%' }} src={selectedImage} />
+      </Modal>
     </>
   );
 };
+
 
 export default Verification;
