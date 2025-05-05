@@ -207,7 +207,7 @@
   background-color: white;
 }
 .ant-picker-range {
-  border: 1px solid #eeab4c !important ;
+  border: 1px solid #d4a159 !important ;
 }
 .wallet-cls:hover {
   color: white;
@@ -870,7 +870,7 @@
   height: 30px;
   color: black;
   text-align: center;
-  background: linear-gradient(45deg, #ff8f00, #ffb74d);
+  /* background: linear-gradient(45deg, #ff8f00, #ffb74d); */
   border-color: #ff8f00;
 
   border-top-left-radius: 16px;
@@ -1718,17 +1718,17 @@ align-items: center;
 }
 
 .react-data-table-component .rdt_TableBody .rdt_TableRow:hover {
-  background-color: #c78534; /* Set the highlight color here */
-  transition: background-color 0.3s ease; /* Add a smooth transition effect */
+  background-color: #c78534;
+  transition: background-color 0.3s ease;
 }
 
 .custom-tabs {
   display: flex;
-  justify-content: space-between; /* Add space between tabs */
+  justify-content: space-between;
 }
 
 .custom-tabs .ant-tabs-nav-wrap {
-  flex: 1; /* Allow tabs to take available space */
+  flex: 1;
 }
 .dashboard-card {
   width: 220px;
@@ -2880,431 +2880,6 @@ margin-left: -100px;
 }
 
 /* user side card  */
-
-.voco-username-tag {
-  margin-bottom: 10px;
-  color: #333;
-  font-weight: 600;
-  font-size: 18px;
-}
-
-.voco-wallet-info,
-.voco-wallet-balance {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  padding: 12px 15px;
-  color: #444;
-  font-size: 14px;
-  background-color: white;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.voco-wallet-info a,
-.voco-wallet-balance a {
-  margin-bottom: 4px;
-  color: #777;
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.dashboard-container,
-.ant-page-container {
-  width: 100%;
-  max-width: 100%;
-}
-
-.ant-pro-card {
-  width: 101%;
-  max-width: 1005px !important;
-  margin: 0 auto;
-}
-
-.ant-row {
-  width: 100%;
-  max-width: 100%;
-}
-
-.ant-col {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-[style*='grid-template-columns: repeat(4, 1fr)'] {
-  width: 100% !important;
-}
-
-.ant-pro-page-container-children-content {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.ant-tabs-content {
-  width: 100%;
-}
-
-.dashboard-container {
-  padding: 20px;
-}
-
-.voco-username-tag {
-  margin-bottom: 16px;
-  font-weight: 600;
-  font-size: 18px;
-}
-
-.dashboard-flex {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-/* Wallet Card */
-.wallet-card {
-  display: flex;
-  flex: 1 1 60%;
-  flex-direction: column;
-  justify-content: space-between;
-  min-width: 350px;
-  padding: 24px;
-  background-color: #fff;
-  border: 1px solid #ffeec1;
-  border-radius: 8px;
-}
-
-.wallet-info,
-.wallet-balance {
-  margin-bottom: 12px;
-}
-
-.wallet-info-label,
-.wallet-balance-label {
-  color: #6b7280;
-  font-size: 14px;
-}
-
-.wallet-info-value {
-  font-weight: 600;
-}
-
-.wallet-balance-value {
-  color: #f59e0b;
-  font-weight: 700;
-  font-size: 28px;
-}
-
-.wallet-buttons {
-  display: flex;
-  gap: 12px;
-}
-
-.wallet-button-deposit {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 0;
-  color: #fff;
-  font-weight: 600;
-  background: linear-gradient(to right, #fbbf24, #f59e0b);
-  border: none;
-  border-radius: 6px;
-}
-
-.wallet-button-withdraw {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 0;
-  color: #1f2937;
-  font-weight: 600;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-/* Right side grid */
-.transaction-grid {
-  display: grid;
-  flex: 1 1 35%;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  min-width: 280px;
-}
-
-.transaction-box {
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  background-color: #fff;
-  border: 1px solid #ffeec1;
-  border-radius: 8px;
-}
-
-.transaction-title {
-  margin-bottom: 8px;
-  color: #374151;
-  font-size: 14px;
-}
-
-.transaction-amount {
-  color: #111827;
-  font-weight: 700;
-  font-size: 20px;
-}
-
-.transaction-direction {
-  margin-top: 4px;
-  font-size: 12px;
-}
-
-.direction-down {
-  color: #10b981;
-}
-
-.direction-up {
-  color: #ef4444;
-}
-
-/* Table */
-.recent-transactions {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
-  background-color: #fff;
-  border: 1px solid #ffeec1;
-  border-radius: 10px;
-}
-
-.recent-transactions-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.recent-transactions-title {
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.recent-transactions-link {
-  color: #f59e0b;
-  font-weight: 500;
-  font-size: 13px;
-  text-decoration: none;
-}
-
-/* Modal form */
-.modal-form h1 {
-  margin-left: 180px;
-}
-
-.modal-form .ant-form-item-label {
-  font-weight: bold !important;
-}
-
-.modal-form input,
-.modal-form .ant-input-password {
-  margin: 10px 0;
-}
-
-/* Attach Button */
-.attach-btn {
-  display: flex;
-  justify-content: flex-end;
-}
-@media (max-width: 500px) {
-  .dashboard-flex {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .wallet-card {
-    flex: 1 1 100%;
-    padding: 16px;
-    padding-right: 65px;
-  }
-
-  .wallet-balance-value {
-    font-size: 22px;
-  }
-
-  .wallet-buttons {
-    flex-direction: column;
-    gap: 10px;
-    padding-right: 65px;
-  }
-
-  .wallet-button-deposit,
-  .wallet-button-withdraw {
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  .transaction-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .transaction-box {
-    padding: 12px;
-  }
-
-  .transaction-amount {
-    font-size: 18px;
-  }
-
-  .recent-transactions {
-    padding: 12px;
-  }
-
-  .recent-transactions-title {
-    font-size: 14px;
-  }
-
-  .recent-transactions-link {
-    font-size: 12px;
-  }
-
-  .modal-form h1 {
-    margin-left: 0;
-    font-size: 20px;
-    text-align: center;
-  }
-
-  .modal-form input,
-  .modal-form .ant-input-password {
-    width: 100% !important;
-    margin-left: 0 !important;
-  }
-
-  .modal-form .ant-form-item {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .modal-form .ant-form-item-label {
-    font-size: 14px;
-  }
-
-  .attach-btn {
-    justify-content: center;
-    margin-top: 10px;
-  }
-}
-
-/* user side card */
-
-/* user side live card */
-
-.view-all-btn {
-  display: flex;
-  align-items: center;
-  color: #b8860b; /* gold shade */
-  font-size: 14px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.view-all-icon {
-  margin-right: 6px;
-  font-size: 10px;
-}
-
-.account-container {
-  width: 100%;
-}
-
-.account-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-
-}
-
-.account-title {
-  margin: 0;
-}
-
-.attach-btn {
-  border-radius: 8px;
-}
-
-.account-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: 100%;
-  padding: 24px;
-  column-gap: 24px;
-  background-color: #fff;
-  border: 1px solid #ffeec1;
-  border-radius: 10px;
-  row-gap: 24px;
-}
-
-.account-field .label {
-  color: #6b7280;
-  font-size: 12px;
-}
-
-.account-field .value {
-  font-weight: 500;
-  font-size: 14px;
-}
-.account-field .bolda {
-  font-weight: bold !important;
-}
-
-.account-field .value.positive {
-  color: #10b981;
-}
-
-.account-field .value.negative {
-  color: red;
-}
-@media screen and (max-width: 500px) and (min-width: 320px) {
-  .account-header {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .attach-btn {
-    width: 100%;
-  }
-
-  .account-grid {
-    grid-template-columns: 1fr; /* Stack items vertically */
-    padding: 16px;
-    row-gap: 16px;
-  }
-
-  .account-field .label {
-    font-size: 11px;
-  }
-
-  .account-field .value {
-    font-size: 13px;
-  }
-
-  .account-title {
-    font-size: 18px;
-  }
-  .ant-menu-light .ant-menu-item-selected :hover {
-    background: linear-gradient(45deg, #ff8f00, #ffb74d) !important;
-  }
-}
-
-/* user side live card */
-
-/* dashboard card user side new ak */
 .unified-card {
   position: relative;
   overflow: hidden;
@@ -3362,31 +2937,24 @@ margin-left: -100px;
 }
 
 /* Buttons */
-.unified-buttons {
-  display: flex;
-  gap: 16px;
-}
-
 .unified-btn {
-  padding: 10px 20px;
+  padding: 10px 30px;
   font-weight: bold;
   font-size: 14px;
   border: none;
-  border-radius: 8px;
   cursor: pointer;
   transition: 0.3s ease;
+  color: white;
+  clip-path: polygon(15% 0%, 100% 0%, 85% 50%, 100% 100%, 15% 100%, 0% 50%);
 }
 
-/* Yellow Deposit Button like "Confirm Deposit" */
 .unified-btn.deposit {
-  color: #000; /* black text */
-  background-color: #fbbf24; /* bright yellow */
+  background-color: #fbbf24; /* Yellow */
+  color: black;
 }
 
-/* Red Withdraw Button */
 .unified-btn.withdraw {
-  color: #fff;
-  background-color: #f87171; /* soft red */
+  background-color: #f87171; /* Red */
 }
 
 .unified-btn:hover {
@@ -3412,15 +2980,481 @@ margin-left: -100px;
   font-weight: bold;
 }
 
-/* dashboard card user side new end ak*/
+/* user side card */
+
+/* user side live card */
+
+.ant-pro-card {
+  width: 101%;
+  max-width: 1005px !important;
+  margin: 0 auto;
+  /* background: transparent; */
+}
+
+.ant-row {
+  width: 100%;
+  max-width: 100%;
+}
+
+.ant-col {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+[style*='grid-template-columns: repeat(4, 1fr)'] {
+  width: 100% !important;
+}
+
+.ant-pro-page-container-children-content {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ant-tabs-content {
+  width: 100%;
+}
+
+.view-all-btn {
+  display: flex;
+  align-items: center;
+  color: #b8860b;
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.view-all-icon {
+  margin-right: 6px;
+  font-size: 10px;
+}
+
+.account-container {
+  width: 100%;
+}
+
+.account-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.account-title {
+  margin: 0;
+}
+
+.attach-btn {
+  border-radius: 8px;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  padding: 24px;
+  column-gap: 24px;
+  background-color: #fff;
+  border: 1px solid #ffeec1;
+  border-radius: 10px;
+  row-gap: 24px;
+}
+
+.account-field .label {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.account-field .value {
+  font-weight: 500;
+  font-size: 14px;
+}
+.account-field .bolda {
+  font-weight: bold !important;
+}
+
+.account-field .value.positive {
+  color: #10b981;
+}
+
+.account-field .value.negative {
+  color: red;
+}
+@media screen and (max-width: 500px) and (min-width: 320px) {
+  .account-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .attach-btn {
+    width: 100%;
+  }
+
+  .account-grid {
+    grid-template-columns: 1fr; 
+    padding: 16px;
+    row-gap: 16px;
+  }
+
+  .account-field .label {
+    font-size: 11px;
+  }
+
+  .account-field .value {
+    font-size: 13px;
+  }
+
+  .account-title {
+    font-size: 18px;
+  }
+  .ant-menu-light .ant-menu-item-selected :hover {
+    background: linear-gradient(45deg, #ff8f00, #ffb74d) !important;
+  }
+}
+
+/* user side live card */
+
+/* Transaction History user side page */
+
+.page-container {
+  min-height: 90vh;
+  background-color: #f5f7f9;
+  border-radius: 8px;
+}
+
+.content-container {
+  padding: 16px;
+  background-color: white;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.tab-header {
+  display: flex;
+  padding: 4px;
+  background-color: #f6f0e0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.tab-header .tab {
+  padding: 8px 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tab-header .tab.active {
+  font-weight: 600;
+  background-color: #fff9ea;
+  border-radius: 4px;
+}
+
+.title-section {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.title-section h1 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.filter-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.search-filter {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-input {
+  width: 200px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-button,
+.date-range-button {
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+}
+
+.refresh-button,
+.export-button {
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+}
+
+.transaction-tabs {
+  display: flex;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tab-item {
+  position: relative;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tab-item.active {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.tab-item.active:after {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #1890ff;
+  content: '';
+}
+
+.transaction-table {
+  margin-top: 16px;
+}
+
+.transaction-table .ant-table-thead > tr > th {
+  color: #333;
+  font-weight: 500;
+  background-color: #fafafa;
+}
+
+.transaction-id {
+  color: #1890ff;
+  cursor: pointer;
+}
+
+.reference-code {
+  font-weight: 500;
+  font-family: monospace;
+}
+
+.status-tag {
+  padding: 2px 12px;
+  border-radius: 12px;
+}
+
+.status-success {
+  color: #52c41a;
+  background-color: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.status-error {
+  color: #ff4d4f;
+  background-color: #fff2f0;
+  border-color: #ffccc7;
+}
+
+.status-warning {
+  color: #faad14;
+  background-color: #fffbe6;
+  border-color: #ffe58f;
+}
+
+.status-blue {
+  color: #1890ff;
+  background-color: #e6f7ff;
+  border-color: #91d5ff;
+}
+
+.amount-positive {
+  color: #52c41a;
+}
+
+.amount-negative {
+  color: #f5222d;
+}
+
+.ant-pagination-item-active {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+.ant-pagination-item-active a {
+  color: white;
+}
+
+.ant-pagination-prev,
+.ant-pagination-next {
+  color: #1890ff;
+}
+
+.ant-btn-icon-only {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ant-btn > .anticon {
+  line-height: 1;
+}
+
+.ant-select-selector {
+  border: 1px solid #be8b4a !important;
+}
+.custom-btn {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 16px;
+  color: #333;
+  font-size: 14px;
+  background-color: transparent;
+  border: 1px solid #be8b4a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.custom-btn:hover {
+  background-color: #f0f0f0;
+  border-color: #999;
+}
+
+.status-select {
+  width: 180px;
+}
+
+.status-select .ant-select-selector {
+  height: 32px !important;
+}
+
+/* Transaction tabs responsiveness */
+@media screen and (max-width: 768px) {
+  .transaction-tabs {
+    display: flex;
+    padding-bottom: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .transaction-tabs::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .transaction-tabs::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    border-radius: 4px;
+  }
+
+  .tab-item {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .filter-section {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .search-filter {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .action-buttons {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .search-filter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .search-input {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .date-range-picker {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .date-range-picker .ant-picker {
+    width: 100%;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .custom-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .status-select {
+    width: 255px !important;
+  }
+
+  .status-select .ant-select-selector {
+    height: 35px !important;
+  }
+
+  .transaction-tabs .tab-item {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .custom-btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .refresh-button,
+  .export-button {
+    height: 40px;
+  }
+}
+
+/* Transaction History user side page */
 
 /* Profile setting page */
-/* Reset Antd default tab spacing */
+
 .ant-tabs-tab {
   padding: 0 !important;
 }
 
-/* Horizontal card layout */
 .custom-tab-horizontal {
   display: flex;
   gap: 12px;
@@ -3433,40 +3467,34 @@ margin-left: -100px;
   transition: all 0.3s ease;
 }
 
-/* Highlight active tab */
 .ant-tabs-tab-active .custom-tab-horizontal {
   border: 2px solid #fbc252;
   box-shadow: 0 4px 10px rgba(255, 199, 81, 0.2);
 }
 
-/* Lock icon left */
 .tab-icon-left {
   flex-shrink: 0;
   color: #fbc252;
   font-size: 24px;
 }
 
-/* Content section */
 .tab-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-/* Title */
 .tab-title {
   color: #333;
   font-weight: 600;
   font-size: 15px;
 }
 
-/* Subtext */
 .tab-subtext {
   color: #999;
   font-size: 13px;
 }
 
-/* Hover effect */
 .ant-tabs-tab:hover .custom-tab-horizontal {
   border-color: #fbc252;
   box-shadow: 0 2px 8px rgba(255, 199, 81, 0.15);
@@ -3476,22 +3504,17 @@ margin-left: -100px;
 
 /* profile setting end  new ak */
 
-/* Add these styles to your common.css file */
-
-/* Vertical tabs wrapper */
 .vertical-tabs-wrapper {
   display: flex;
   min-height: 400px;
 }
 
-/* Vertical tabs container */
 .vertical-tabs-container {
   width: 250px;
   background-color: white;
   border-right: 1px solid #e8e8e8;
 }
 
-/* Vertical tabs header */
 .vertical-tabs-header {
   display: flex;
   align-items: center;
@@ -3505,13 +3528,11 @@ margin-left: -100px;
   margin-right: 8px;
 }
 
-/* Vertical tabs list */
 .vertical-tab-list {
   display: flex;
   flex-direction: column;
 }
 
-/* Individual tab item */
 .vertical-tab-item {
   padding: 16px;
   border-left: 4px solid transparent;
@@ -3528,7 +3549,6 @@ margin-left: -100px;
   border-left: 4px solid #1890ff;
 }
 
-/* Custom tab vertical styling */
 .custom-tab-vertical {
   display: flex;
   align-items: center;
@@ -3544,7 +3564,6 @@ margin-left: -100px;
   color: #1890ff;
 }
 
-/* Tab content */
 .tab-content {
   display: flex;
   flex-direction: column;
@@ -3560,13 +3579,11 @@ margin-left: -100px;
   font-size: 12px;
 }
 
-/* Content area */
 .vertical-tabs-content {
   flex: 1;
   padding: 20px;
 }
 
-/* Profile setting parent card */
 .profile-setting-parent {
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -3575,12 +3592,8 @@ margin-left: -100px;
 .profile-setting-parent h2 {
   margin-bottom: 20px;
 }
-/* Mobile responsiveness for ProfileSettings - for screens 320px to 500px */
-
-/* Add this to your common.css file or component-specific CSS */
 
 @media screen and (max-width: 500px) {
-  /* Overall card padding reduction */
   .profile-setting-parent {
     padding: 10px !important;
   }
@@ -3591,12 +3604,10 @@ margin-left: -100px;
     text-align: center;
   }
 
-  /* Convert vertical tab layout to mobile-friendly layout */
   .vertical-tabs-wrapper {
     flex-direction: column !important;
   }
 
-  /* Tab container styling for mobile */
   .vertical-tabs-container {
     width: 100% !important;
     margin-bottom: 15px;
@@ -3608,7 +3619,6 @@ margin-left: -100px;
     font-size: 16px;
   }
 
-  /* Make tabs scrollable horizontally on mobile */
   .vertical-tab-list {
     display: flex;
     padding-bottom: 5px;
@@ -3617,7 +3627,6 @@ margin-left: -100px;
     border-bottom: 1px solid #e8e8e8;
   }
 
-  /* Style for tab items in horizontal scroll */
   .vertical-tab-item {
     flex: 0 0 auto;
     min-width: auto;
@@ -3649,16 +3658,14 @@ margin-left: -100px;
   }
 
   .tab-subtext {
-    display: none; /* Hide subtitle on mobile to save space */
+    display: none;
   }
 
-  /* Content area full width */
   .vertical-tabs-content {
     width: 100% !important;
     padding: 10px 0 !important;
   }
 
-  /* Form layout adjustments for mobile */
   .ant-form-item-label {
     padding: 0 0 8px !important;
   }
@@ -3677,12 +3684,10 @@ margin-left: -100px;
     width: 100% !important;
   }
 
-  /* Adjust button sizes and positions */
   .submit-btn {
     width: 100%;
   }
 
-  /* Program Information section adjustments */
   .img-para {
     flex-direction: column !important;
   }
@@ -3701,7 +3706,6 @@ margin-left: -100px;
     width: 100% !important;
   }
 
-  /* Modal adjustments */
   .ant-modal-content {
     width: 95% !important;
     margin: 0 auto;
@@ -3832,8 +3836,8 @@ margin-left: -100px;
 }
 
 .profile-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #ffa500;
-  font-weight: 600;
+  color: #d4a159;
+
 }
 
 .profile-tabs .ant-tabs-ink-bar {
@@ -4051,7 +4055,6 @@ margin-left: -100px;
 
 /* Help Desk */
 
-/* Filters container layout */
 .filters-wrapper {
   display: flex;
   align-items: center;
@@ -4067,7 +4070,6 @@ margin-left: -100px;
   width: 100%;
 }
 
-/* Date filter */
 .date-filter {
   flex-grow: 1;
   min-width: 280px;
@@ -4077,7 +4079,6 @@ margin-left: -100px;
   width: 100%;
 }
 
-/* Status filter */
 .status-filter {
   flex-grow: 0;
   min-width: 120px;
@@ -4092,14 +4093,12 @@ margin-left: -100px;
   border: 1px solid #be8b4a !important;
 }
 
-/* When the select is focused/active */
 .status-filter .ant-select-focused .ant-select-selector,
 .status-filter .ant-select-open .ant-select-selector {
   border-color: #be8b4a !important;
   box-shadow: 0 0 0 2px rgba(190, 139, 74, 0.2) !important;
 }
 
-/* Search container */
 .search-container {
   position: relative;
   flex-grow: 1;
@@ -4113,23 +4112,21 @@ margin-left: -100px;
   border-radius: 4px;
 }
 
-/* Action buttons container */
 .action-buttons {
   position: relative;
-  z-index: 1; /* Ensure buttons are above other elements */
+  z-index: 1;
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
-/* Search button */
 .search-btn {
-  position: relative; /* Ensure clickability */
-  z-index: 2; /* Higher than container */
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 34px; /* Match the height of refresh button */
+  height: 34px;
   padding: 8px 32px;
   color: #fff;
   font-weight: bold;
@@ -4138,28 +4135,27 @@ margin-left: -100px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
-  pointer-events: auto; /* Explicitly enable pointer events */
+  pointer-events: auto;
 }
 
 .search-btn:hover {
   background: #e69c19;
 }
 
-/* Refresh button */
 .refresh-btn {
-  position: relative; /* Ensure clickability */
-  z-index: 2; /* Higher than container */
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 34px; /* Match the height of search button */
+  height: 34px;
   padding: 8px;
   background: #f5f5f5;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
-  pointer-events: auto; /* Explicitly enable pointer events */
+  pointer-events: auto;
 }
 
 .refresh-btn:hover {
@@ -4174,7 +4170,6 @@ margin-left: -100px;
   transform: rotate(180deg);
 }
 
-/* Mobile responsiveness */
 @media (max-width: 768px) {
   .filters-container {
     flex-direction: column;
@@ -4193,7 +4188,7 @@ margin-left: -100px;
     display: flex;
     justify-content: space-between;
     width: 100%;
-    margin-top: -47px;
+    /* margin-top: -47px; */
   }
 
   .search-btn,
@@ -4215,7 +4210,7 @@ margin-left: -100px;
 
 .excel-icon {
   color: #f89d42;
-  font-size: 24px; /* Make this bigger or smaller as needed */
+  font-size: 24px;
   transition: transform 0.2s ease;
 }
 
@@ -4227,7 +4222,7 @@ margin-left: -100px;
   width: 100%;
   min-height: 100vh;
   padding: 2rem;
-  /* background: linear-gradient(45deg, #be8b4a, #ffb74d); */
+
   color: #333;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
@@ -4262,7 +4257,6 @@ margin-left: -100px;
   content: '';
 }
 
-/* Form Styles */
 .query-form {
   display: flex;
   flex-direction: column;
@@ -4889,6 +4883,7 @@ margin-left: -100px;
 /* helpDesk Adminside End */
 
 /* DepositPage.css */
+
 .deposit-card {
   padding: 24px;
   border-radius: 12px;
@@ -4900,7 +4895,7 @@ margin-left: -100px;
 }
 
 .deposit-title {
-  margin: 0;
+  /* margin: 0; */
   font-size: 28px;
 }
 
@@ -5258,7 +5253,6 @@ margin-left: -100px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #12172d;
 }
 
 /* Navigation */
@@ -5530,40 +5524,52 @@ margin-left: -100px;
 }
 
 /* update password page css */
-.change-password {
-  padding: 24px;
+
+.change-password .ant-card-head {
+  margin-bottom: 20px;
+  padding-left: 16px;
+  background-color: #f5f7fa;
+  border-bottom: 1px solid #e8e8e8;
+  border-left: 4px solid #1890ff;
 }
 
 .change-password .ant-card-head-title {
-  margin-bottom: -29px;
-  color: white;
-  font-family: 'Poppins', sans-serif;
-  text-align: center;
-  background: linear-gradient(45deg, #be8b4a, #ffb74d);
-  border-radius: 8px;
+  position: relative;
+  padding: 14px 0;
+  color: #333333;
+  font-weight: 500 !important;
+  font-size: 22px !important;
 }
 
-.change-pwd-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 32px;
+.change-password {
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
 }
 
-.change-pwd-btn {
-  margin-top: 24px;
-  text-align: center;
+.change-password .change-pwd-form {
+  padding: 10px 20px;
 }
 
 .updatepassword-btn {
-  padding: 0 15px !important;
-  color: white !important;
-  background-color: #1890ff !important;
-  border: none !important;
-  border-radius: 4px !important;
+  height: 40px;
+  padding: 0 20px;
+  color: white;
+  font-weight: 500;
+  background-color: #1890ff;
+  border: none;
+  border-radius: 4px;
 }
 
+.updatepassword-btn:hover {
+  color: white;
+  background-color: #40a9ff;
+}
 
+.change-pwd-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
 /* Updated  passwords page end */
 
 .slider-section {
@@ -5695,178 +5701,209 @@ margin-left: -100px;
 }
 /* sign in sign up pages end */
 
+/*Status page start ak */
 
+/* Dark Mode Verification Card Design */
 
-
-
-
-/* Comprehensive Responsive Design */
-@media (max-width: 992px) {
-  .verification-wrapper {
-    max-width: 700px;
-  }
-
-  .verification-body {
-    padding: 25px;
-  }
-
-  .verification-action-container {
-    padding-left: 30px;
-  }
-
-  .status-image {
-    width: 220px;
-    height: 180px;
-  }
+.verification-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 0 16px;
 }
 
-@media (max-width: 768px) {
+.verification-card {
+  background: linear-gradient(145deg, #1f2937, #111827);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.verification-header {
+  padding: 30px;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.verification-title {
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #f59e0b, #f97316);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+  position: relative;
+}
+
+.verification-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #f97316);
+  border-radius: 2px;
+}
+
+.badge-alert {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f2937;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  padding: 6px 14px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+.verification-instructions {
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.verification-body {
+  display: flex;
+  padding: 30px;
+ 
+}
+
+.verification-image-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 30px;
+}
+
+.image-frame {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.image-frame::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: linear-gradient(45deg, rgba(245, 158, 11, 0.4), rgba(249, 115, 22, 0));
+  border-radius: 18px;
+  z-index: -1;
+  filter: blur(15px);
+}
+
+.status-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: all 0.4s ease;
+  filter: brightness(0.9) contrast(1.1);
+}
+
+.image-frame:hover .status-image {
+  filter: brightness(1) contrast(1.05);
+}
+
+.verification-action-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 30px;
+  position: relative;
+}
+
+.verification-action-container::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 1px;
+  background: linear-gradient(to bottom, 
+    rgba(255, 255, 255, 0), 
+    rgba(255, 255, 255, 0.1), 
+    rgba(255, 255, 255, 0));
+}
+
+.verification-button {
+  height: 50px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #f59e0b, #f97316);
+  border: none;
+  text-transform: none;
+  box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.verification-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.1), 
+    transparent);
+  transition: left 0.7s;
+}
+
+.verification-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 20px -3px rgba(245, 158, 11, 0.4);
+  background: linear-gradient(90deg, #f97316, #fb923c);
+}
+
+.verification-button:hover::before {
+  left: 100%;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
   .verification-body {
     flex-direction: column;
+    padding: 24px;
   }
-
+  
   .verification-image-container {
-    margin-bottom: 30px;
+    padding-right: 0;
+    padding-bottom: 24px;
+    width: 100%;
   }
-
+  
   .verification-action-container {
     padding-left: 0;
+    padding-top: 24px;
+    width: 100%;
   }
-
-  .verification-instructions {
-    max-width: 100%;
+  
+  .verification-action-container::before {
+    display: none;
   }
-
-  .badge-alert {
-    position: relative;
-    top: auto;
-    right: auto;
-    display: inline-block;
-    margin-bottom: 15px;
-  }
-
-  .verification-title {
-    font-size: 24px;
-  }
-}
-
-@media (max-width: 576px) {
-  .verification-container {
-    padding: 15px;
-  }
-
+  
   .verification-header {
-    padding: 20px 20px 15px;
-  }
-
-  .verification-body {
-    padding: 20px;
-  }
-
-  .verification-title {
-    font-size: 22px;
-  }
-
-  .verification-instructions {
-    font-size: 14px;
-  }
-
-  .step-text {
-    font-size: 14px;
-  }
-
-  .step-number {
-    width: 26px;
-    height: 26px;
-    margin-right: 12px;
-  }
-
-  .status-image {
-    width: 180px;
-    height: 150px;
-  }
-
-  .verification-button {
-    height: 45px;
-    font-size: 15px;
+    padding: 24px;
   }
 }
 
-@media (max-width: 375px) {
-  .verification-header {
-    padding: 15px 15px 12px;
-  }
-
-  .verification-body {
-    padding: 15px;
-  }
-
-  .verification-title {
-    margin-bottom: 10px;
-    font-size: 20px;
-  }
-
-  .step-item {
-    margin-bottom: 10px;
-  }
-
-  .verification-steps {
-    margin-bottom: 20px;
-  }
-
-  .status-image {
-    width: 150px;
-    height: 120px;
-  }
-}
-
-/* For very small screens */
-@media (max-width: 320px) {
-  .status-image {
-    width: 130px;
-    height: 100px;
-  }
-
-  .verification-button {
-    height: 40px;
-    font-size: 14px;
-  }
-  .ant-menu-light .ant-menu-item-selected :hover {
-    background: linear-gradient(45deg, #ff8f00, #ffb74d) !important;
-  }
-}
-
-/* Ensure proper orientation handling */
-@media (orientation: landscape) and (max-height: 500px) {
-  .verification-container {
-    padding: 10px;
-  }
-
-  .verification-body {
-    flex-direction: row;
-  }
-
-  .verification-image-container {
-    margin-bottom: 0;
-  }
-
-  .verification-action-container {
-    padding-left: 20px;
-  }
-
-  .status-image {
-    width: 140px;
-    height: 110px;
-  }
-
-  .verification-steps {
-    margin-bottom: 15px;
-  }
-
-  .step-item {
-    margin-bottom: 8px;
-  }
-}
 
 /* status page end ak */
 
@@ -6755,8 +6792,8 @@ margin-left: -100px;
     box-shadow: none !important;
   }
   .ant-picker-range {
-    margin-bottom: 17px;
-    padding-bottom: 22px;
+    /* margin-bottom: 38px; */
+    padding-bottom: 8px;
     border: 1px solid #eeab4c !important;
   }
   .tab-item {
@@ -6785,9 +6822,8 @@ margin-left: -100px;
   max-width: 800px;
   margin: 0 auto;
   padding: 24px;
-  background-color: white;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  
 }
 
 .verification-heading {
@@ -6808,8 +6844,9 @@ margin-left: -100px;
 .verification-document-item {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Important: Creates space between left and right content */
-  width: 100%; /* Ensure full width */
+  justify-content: space-between;
+
+  width: 100%;
   padding: 16px;
   background-color: #f9f9f9;
   border: 1px solid #f0f0f0;
@@ -6825,7 +6862,6 @@ margin-left: -100px;
 .verification-document-details {
   display: flex;
   align-items: center;
-  /* No flex: 1 to allow natural width */
 }
 
 .verification-document-title {
@@ -6850,12 +6886,11 @@ margin-left: -100px;
   gap: 12px;
   align-items: center;
   justify-content: flex-end;
-  /* No fixed width, allowing it to adjust naturally */
 }
 
 .verification-badge {
   display: inline-block;
-  min-width: 80px; /* Give badges consistent width */
+  min-width: 80px;
   padding: 4px 12px;
   font-weight: 500;
   font-size: 12px;
@@ -6898,8 +6933,6 @@ margin-left: -100px;
   margin-top: 24px;
 }
 
-
-
 .verification-upload-again {
   color: white;
   background-color: #1890ff;
@@ -6913,7 +6946,6 @@ margin-left: -100px;
   cursor: not-allowed;
 }
 
-/* New style for pending button */
 .verification-pending-button {
   color: #faad14;
   background-color: #fffbe6;
@@ -6921,19 +6953,18 @@ margin-left: -100px;
   cursor: not-allowed;
 }
 
-/* Document thumbnail preview */
 .document-thumbnail {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px; /* Reduced size to match image */
-  height: 40px; /* Reduced size to match image */
+  width: 40px;
+  height: 40px;
   overflow: hidden;
   background-color: #f5f5f5;
   border: 1px solid #d9d9d9;
   border-radius: 4px;
-  cursor: pointer; /* Make it obvious that thumbnails are clickable */
+  cursor: pointer;
 }
 
 .document-thumbnail img {
@@ -6948,19 +6979,18 @@ margin-left: -100px;
   background-color: #fafafa;
 }
 
-/* Button styling for upload buttons to match the image */
 .verification-upload-button,
 .verification-upload-again,
 .verification-verified-button,
 .verification-pending-button {
-  min-width: 80px; /* Match width with badges */
+  min-width: 80px;
   text-align: center;
 }
 .account-wrapper {
+  margin-bottom: 20px;
+  overflow: hidden;
   background-color: #f8f8f8;
   border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 20px;
 }
 
 .account-headerr {
@@ -6971,20 +7001,20 @@ margin-left: -100px;
 }
 
 .account-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: #ffa500;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 60px;
+  height: 60px;
   margin-right: 15px;
+  background-color: #ffa500;
+  border-radius: 50%;
 }
 
 .account-letter {
   color: white;
-  font-size: 24px;
   font-weight: bold;
+  font-size: 24px;
 }
 
 .account-title {
@@ -6994,8 +7024,8 @@ margin-left: -100px;
 
 .account-title h2 {
   margin: 0;
-  font-size: 20px;
   color: #333;
+  font-size: 20px;
 }
 
 .account-subtitle {
@@ -7003,16 +7033,13 @@ margin-left: -100px;
 }
 
 .verification-tag {
-  background-color: #ffa500;
-  color: white;
-  padding: 2px 12px;
-  border-radius: 20px;
-  font-size: 12px;
   display: inline-block;
+  padding: 2px 12px;
+  color: white;
+  font-size: 12px;
+  background-color: #ffa500;
+  border-radius: 20px;
 }
-
-
-
 
 .verification-documents-list {
   display: flex;
@@ -7023,12 +7050,12 @@ margin-left: -100px;
 
 .verification-document-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: 15px;
+  background-color: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  background-color: white;
 }
 
 .verification-document-details {
@@ -7037,15 +7064,15 @@ margin-left: -100px;
 }
 
 .document-thumbnail {
-  width: 50px;
-  height: 50px;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-right: 15px;
-  background-color: #f0f0f0;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  border-radius: 4px;
   cursor: pointer;
 }
 
@@ -7066,8 +7093,8 @@ margin-left: -100px;
 }
 
 .verification-document-title {
-  font-weight: bold;
   margin-bottom: 4px;
+  font-weight: bold;
 }
 
 .verification-document-subtitle {
@@ -7077,35 +7104,35 @@ margin-left: -100px;
 
 .verification-document-status {
   display: flex;
-  align-items: center;
   gap: 10px;
+  align-items: center;
 }
 
 .verification-badge {
   padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
   font-weight: 500;
+  font-size: 12px;
+  border-radius: 20px;
 }
 
 .verification-badge-verified {
-  background-color: #e7f9ed;
   color: #399a5a;
+  background-color: #e7f9ed;
 }
 
 .verification-badge-pending {
-  background-color: #fff5e6;
   color: #ff9500;
+  background-color: #fff5e6;
 }
 
 .verification-badge-rejected {
-  background-color: #ffeeee;
   color: #ff3b30;
+  background-color: #ffeeee;
 }
 
 .verification-badge-upload {
-  background-color: #e6f7ff;
   color: #0070f3;
+  background-color: #e6f7ff;
 }
 
 .verification-upload-form-item {
@@ -7115,24 +7142,27 @@ margin-left: -100px;
 .verification-upload-button {
   display: flex;
   align-items: center;
+  background: transparent;
+  color: #d4a159 ;
+  border: 2px  #d4a159;
 }
 
 .verification-upload-again {
-  background-color: #f55;
   color: white;
+  background-color: #f55;
   border: none;
 }
 
 .verification-verified-button {
-  background-color: #4caf50;
   color: white;
+  background-color: #4caf50;
   border: none;
   opacity: 0.8;
 }
 
 .verification-pending-button {
-  background-color: #ff9500;
   color: white;
+  background-color: #ff9500;
   border: none;
   opacity: 0.8;
 }
@@ -7155,18 +7185,14 @@ margin-left: -100px;
 }
 
 .verification-cancel-button {
-  border-color: #ff9500;
   color: white !important;
+  border-color: #ff9500;
 }
 
 .verification-cancel-button {
-  background-color: #e68a00 !important;
+  background-color: #e68a00 !;
   border-color: #e68a00;
 }
-
-/* .verification-cancel-button:hover {
-  background-color: #f59e0b;
-} */
 
 .orange-error-notification {
   border-left: 4px solid #ff9500;
@@ -7176,25 +7202,126 @@ margin-left: -100px;
   color: #ff9500;
 }
 
-/* For mobile responsiveness */
+@media (max-width: 768px) {
+  .verification-container {
+    margin: 0 10px;
+    padding: 16px;
+  }
+
+  .account-headerr {
+    flex-direction: column;
+    padding: 15px 10px;
+    text-align: center;
+  }
+
+  .account-avatar {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .account-title h2 {
+    font-size: 18px;
+  }
+}
+
 @media (max-width: 768px) {
   .verification-document-item {
     flex-direction: column;
     align-items: flex-start;
+    padding: 12px;
   }
 
   .verification-document-details {
     width: 100%;
-    margin-bottom: 12px;
-  }
-
-  .document-thumbnail {
-    margin-bottom: 8px;
+    margin-bottom: 15px;
   }
 
   .verification-document-status {
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
     width: 100%;
-    margin-top: 12px;
+  }
+
+  .verification-badge {
+    width: 100%;
+    text-align: center;
+  }
+
+  .verification-upload-form-item,
+  .verification-upload-button,
+  .verification-upload-again,
+  .verification-verified-button,
+  .verification-pending-button {
+    width: 100%;
+  }
+
+  .ant-form-item {
+    width: 100%;
+  }
+
+  .ant-upload {
+    width: 100%;
+  }
+
+  .ant-upload button {
+    width: 100%;
   }
 }
+
+@media (max-width: 768px) {
+  .verification-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .verification-update-button,
+  .verification-cancel-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .verification-document-item {
+    padding: 10px;
+  }
+
+  .document-thumbnail {
+    width: 40px;
+    height: 40px;
+  }
+
+  .verification-document-title {
+    font-size: 14px;
+  }
+
+  .verification-document-subtitle {
+    font-size: 12px;
+  }
+
+  .verification-badge {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+}
+
+.verification-cancel-button {
+  color: white !important;
+  background-color: #e68a00 !important;
+  border-color: #e68a00;
+}
+
+@media (max-width: 768px) {
+  .ant-modal {
+    width: 90% !important;
+    margin: 0 auto;
+  }
+
+  .ant-modal-body {
+    padding: 12px;
+  }
+}
+
+/* verification page mobile end */
+
+

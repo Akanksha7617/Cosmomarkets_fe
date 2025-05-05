@@ -1,32 +1,17 @@
 import { api, rawApi } from '@/components/common/api';
 import { Type } from '@/generated';
-import {
-  CalendarOutlined,
-  DownloadOutlined,
-  ReloadOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { DownloadOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import {
-  Button,
-  Card,
-  Col,
-  DatePicker,
-  Input,
-  Row,
-  Select,
-  Space,
-  Table,
-  Tag,
-  Typography,
-} from 'antd';
+import { DatePicker, Input, Select, Table, Tabs, Tag, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
+import '../../common.css';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+const { TabPane } = Tabs;
 
 export default () => {
   // State management
@@ -36,6 +21,7 @@ export default () => {
   const [selectedType, setSelectedType] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [dateRange, setDateRange] = useState<any>([null, null]);
+  const [activeTab, setActiveTab] = useState('All');
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -54,6 +40,7 @@ export default () => {
     selectedStatus,
     dateRange,
     searchText,
+    activeTab,
   ]);
 
   // Fetch transaction data with filters
@@ -62,14 +49,17 @@ export default () => {
       setLoading(true);
 
       let type = '';
-      if (selectedType === 'Deposit') {
+      if (selectedType === 'Deposit' || activeTab === 'Deposits') {
         type = Type.EXT_TO_WALLET;
-      } else if (selectedType === 'Withdraw') {
+      } else if (selectedType === 'Withdraw' || activeTab === 'Withdrawals') {
         type = Type.WALLET_TO_EXT;
-      } else if (selectedType === 'Deposit to MT5') {
+      } else if (selectedType === 'Deposit to MT5' || activeTab === 'DepositMT5') {
         type = Type.WALLET_TO_MT;
-      } else if (selectedType === 'Withdraw from MT5') {
+      } else if (selectedType === 'Withdraw from MT5' || activeTab === 'WithdrawMT5') {
         type = Type.MT_TO_WALLET;
+      } else if (activeTab === 'Transfers') {
+        // For Transfers tab, include both MT5 deposit and withdrawal types
+        type = ''; // Using empty to get both types
       }
 
       let startDate = '';
@@ -154,10 +144,36 @@ export default () => {
   // Format amount with sign and color
   const formatAmount = (amount, type) => {
     const isDeposit = type === 'ExtToWallet' || type === 'MtToWallet';
-    const formattedAmount = isDeposit ? `+${amount.toFixed(2)}` : `-${amount.toFixed(2)}`;
-    const style = { color: isDeposit ? '#52c41a' : '#c78534' };
+    const className = isDeposit ? 'amount-positive' : 'amount-negative';
+    const formattedAmount = isDeposit ? `+$${amount.toFixed(2)}` : `-$${amount.toFixed(2)}`;
 
-    return <span style={style}>{formattedAmount}</span>;
+    return <span className={className}>{formattedAmount}</span>;
+  };
+
+  // Handle tab change
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+    setPagination({ ...pagination, current: 1 });
+  };
+
+  // Generate reference based on transaction type and ID
+  const generateReference = (record) => {
+    const prefix = (() => {
+      switch (record.type) {
+        case 'ExtToWallet':
+          return 'DEP';
+        case 'WalletToExt':
+          return 'WDR';
+        case 'WalletToMt':
+          return 'D2MT5';
+        case 'MtToWallet':
+          return 'W4MT5';
+        default:
+          return 'TRX';
+      }
+    })();
+
+    return `${prefix}-${record.id.toString().padStart(6, '0')}`;
   };
 
   // Table columns
@@ -166,229 +182,196 @@ export default () => {
       title: 'Transaction ID',
       dataIndex: 'id',
       key: 'id',
-      render: (text) => <a>{text}</a>,
+      render: (text) => <span className="transaction-id">TX-{text}</span>,
+    },
+    {
+      title: 'Reference',
+      key: 'reference',
+      render: (_, record) => <span className="reference-code">{generateReference(record)}</span>,
     },
     {
       title: 'Date',
       dataIndex: 'requestedAt',
       key: 'date',
-      render: (date) => moment(date).format('DD/MM/YYYY'),
-      sorter: (a, b) => moment(a.requestedAt).unix() - moment(b.requestedAt).unix(),
+      render: (date) => moment(date).format('YYYY-MM-DD'),
+    },
+    {
+      title: 'From',
+      dataIndex: 'source',
+      key: 'from',
+      render: (_, record) => {
+        if (record.type === 'ExtToWallet') return 'External';
+        else if (record.type === 'MtToWallet') return 'MT5 Account';
+        else return 'Wallet';
+      },
+    },
+    {
+      title: 'To',
+      dataIndex: 'destination',
+      key: 'to',
+      render: (_, record) => {
+        if (record.type === 'WalletToExt') return 'External';
+        else if (record.type === 'WalletToMt') return 'MT5 Account';
+        else return 'Wallet';
+      },
     },
     {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount, record) => formatAmount(amount, record.type),
+      render: (amount) => `$${amount.toFixed(2)}`,
       align: 'right',
-    },
-    {
-      title: 'Type',
-      dataIndex: 'type',
-      key: 'type',
-      render: (type) => formatTransactionType(type),
-    },
-    {
-      title: 'Method',
-      dataIndex: 'paymentMethod',
-      key: 'method',
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
       render: (status) => {
-        let color = 'default';
+        let statusClassName = 'status-default';
         switch (status) {
           case 'Approved':
+            statusClassName = 'status-blue';
+            break;
           case 'Completed':
-            color = 'success';
+            statusClassName = 'status-success';
             break;
           case 'Rejected':
-            color = 'error';
+            statusClassName = 'status-error';
             break;
           case 'Requested':
-            color = 'processing';
+            statusClassName = 'status-warning';
             break;
+          default:
+            statusClassName = 'status-default';
         }
-        return <Tag color={color}>{status}</Tag>;
+        return <Tag className={`status-tag ${statusClassName}`}>{status}</Tag>;
       },
-    },
-    {
-      title: 'Reference',
-      dataIndex: 'reference',
-      key: 'reference',
-      render: (_, record) => `REF${record.id}`,
     },
   ];
 
   return (
-    <Card className="transaction-history-card">
-      <Title level={2}>Financial Records</Title>
-
-      <Card className="filter-card">
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} md={6}>
-            <Text strong>Start Date</Text>
-            <DatePicker
-              style={{ width: '100%', marginTop: 8 }}
-              placeholder="Pick a date"
-              value={dateRange[0]}
-              onChange={(date) => setDateRange([date, dateRange[1]])}
-              allowClear
-              format="DD/MM/YYYY"
-              suffixIcon={<CalendarOutlined />}
-            />
-          </Col>
-
-          <Col xs={24} sm={12} md={6}>
-            <Text strong>End Date</Text>
-            <DatePicker
-              style={{ width: '100%', marginTop: 8 }}
-              placeholder="Pick a date"
-              value={dateRange[1]}
-              onChange={(date) => setDateRange([dateRange[0], date])}
-              allowClear
-              format="DD/MM/YYYY"
-              suffixIcon={<CalendarOutlined />}
-            />
-          </Col>
-
-          <Col xs={24} sm={12} md={6}>
-            <Text strong>Search</Text>
-            <Input
-              placeholder="Transaction ID or Reference"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              prefix={<SearchOutlined style={{ color: '#FAAD14' }} />}
-              style={{ width: '100%', marginTop: 8 }}
-            />
-          </Col>
-
-          <Col xs={24} sm={12} md={6}>
-            <Text strong>Type</Text>
-            <Select
-              style={{ width: '100%', marginTop: 8 }}
-              value={selectedType}
-              onChange={setSelectedType}
-            >
-              <Option value="All">All</Option>
-              <Option value="Deposit">Deposit</Option>
-              <Option value="Withdraw">Withdraw</Option>
-              <Option value="Deposit to MT5">Deposit to MT5</Option>
-              <Option value="Withdraw from MT5">Withdraw from MT5</Option>
-            </Select>
-          </Col>
-
-          <Col xs={24} sm={12} md={6}>
-            <Text strong>Status</Text>
-            <Select
-              style={{ width: '100%', marginTop: 8 }}
-              value={selectedStatus}
-              onChange={setSelectedStatus}
-            >
-              <Option value="All">All</Option>
-              <Option value="Requested">Requested</Option>
-              <Option value="Approved">Approved</Option>
-              <Option value="Rejected">Rejected</Option>
-              <Option value="Completed">Completed</Option>
-            </Select>
-          </Col>
-
-          <Col xs={24} md={12} style={{ display: 'flex', alignItems: 'flex-end' }}>
-            <Space>
-              <Button
-                type="primary"
-                icon={<SearchOutlined />}
-                onClick={fetchTransactionData}
-                style={{ marginTop: 8, backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
-              >
-                Search
-              </Button>
-
-              <Button onClick={handleReset} style={{ marginTop: 8 }}>
-                Reset
-              </Button>
-            </Space>
-          </Col>
-        </Row>
-      </Card>
-
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginTop: 16,
-          marginBottom: 16,
-        }}
-      >
-        <div></div>
-        <Space>
-          <Button icon={<DownloadOutlined />} onClick={exportToExcel}>
-            Export
-          </Button>
-          <Button icon={<ReloadOutlined />} onClick={fetchTransactionData}>
-            Refresh
-          </Button>
-        </Space>
+    <div className="page-container">
+      <div className="tab-header">
+        <div className="tab active">Transaction History</div>
+        {/* <div className="tab">Support Tickets</div> */}
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={data}
-        loading={loading}
-        rowKey="id"
-        pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: pagination.total,
-          onChange: handlePageChange,
-          showSizeChanger: true,
-        }}
-        style={{ overflowX: 'auto' }}
-        scroll={{ x: 'max-content' }}
-      />
+      <div className="content-container">
+        {/* <div className="title-section">
+          <h1>Transaction History</h1>
+        </div> */}
 
-      <style jsx global>{`
-        .transaction-history-card {
-          border-radius: 8px;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        }
+        <div className="filter-section">
+          <div className="search-filter">
+            <Input
+              placeholder="Search transactions..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              prefix={<SearchOutlined />}
+              className="search-input"
+            />
+             <div className="date-range-picker ntg">
+              <DatePicker.RangePicker
+                value={dateRange}
+                onChange={setDateRange}
+                format="YYYY-MM-DD"
+                placeholder={['Start Date', 'End Date']}
+              />
+            </div>
+            <div className="dropdown-filters">
+              <Select
+                placeholder="Status"
+                value={selectedStatus}
+                onChange={setSelectedStatus}
+                className="status-select"
+                dropdownMatchSelectWidth={false}
+              >
+                <Option value="All">All Status</Option>
+                <Option value="Requested">Requested</Option>
+                <Option value="Approved">Approved</Option>
+                <Option value="Rejected">Rejected</Option>
+                <Option value="Completed">Completed</Option>
+              </Select>
+            </div>
 
-        .filter-card {
-          margin-top: 16px;
-          background-color: #ffffff;
-          border-radius: 8px;
-        }
+           
+          </div>
+          <div className="action-buttons">
+            <button className="custom-btn " onClick={fetchTransactionData}>
+              <ReloadOutlined />
+              Refresh
+            </button>
 
-        .ant-table-thead > tr > th {
-          color: rgba(0, 0, 0, 0.85);
-          font-weight: 500;
-          background-color: #fafafa;
-        }
+            <button className="custom-btn export-btn" onClick={exportToExcel}>
+              <DownloadOutlined /> Export
+            </button>
+          </div>
+        </div>
 
-        .ant-table-row:hover {
-          background-color: #f5f5f5;
-        }
+        <div className="transaction-tabs">
+          <div
+            className={`tab-item ${activeTab === 'All' ? 'active' : ''}`}
+            onClick={() => handleTabChange('All')}
+          >
+            All Transactions
+          </div>
+          <div
+            className={`tab-item ${activeTab === 'Deposits' ? 'active' : ''}`}
+            onClick={() => handleTabChange('Deposits')}
+          >
+            Deposits
+          </div>
+          <div
+            className={`tab-item ${activeTab === 'Withdrawals' ? 'active' : ''}`}
+            onClick={() => handleTabChange('Withdrawals')}
+          >
+            Withdrawals
+          </div>
+          <div
+            className={`tab-item ${activeTab === 'DepositMT5' ? 'active' : ''}`}
+            onClick={() => handleTabChange('DepositMT5')}
+          >
+            Deposit to MT5
+          </div>
+          <div
+            className={`tab-item ${activeTab === 'WithdrawMT5' ? 'active' : ''}`}
+            onClick={() => handleTabChange('WithdrawMT5')}
+          >
+            Withdraw from MT5
+          </div>
+          <div
+            className={`tab-item ${activeTab === 'Transfers' ? 'active' : ''}`}
+            onClick={() => handleTabChange('Transfers')}
+          >
+            Transfers
+          </div>
+        </div>
 
-        .ant-tag-success {
-          color: #52c41a;
-          background-color: #f6ffed;
-          border-color: #b7eb8f;
-        }
-
-        .ant-tag-error {
-          color: #c78534;
-          background-color: #fff2f0;
-          border-color: #ffccc7;
-        }
-
-        .ant-tag-processing {
-          color: #1890ff;
-          background-color: #e6f7ff;
-          border-color: #91d5ff;
-        }
-      `}</style>
-    </Card>
+        <Table
+          columns={columns}
+          dataSource={data}
+          loading={loading}
+          rowKey="id"
+          pagination={{
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: pagination.total,
+            onChange: handlePageChange,
+            showSizeChanger: true,
+            position: ['bottomCenter'],
+            itemRender: (page, type, originalElement) => {
+              if (type === 'prev') {
+                return <a>← Previous</a>;
+              }
+              if (type === 'next') {
+                return <a>Next →</a>;
+              }
+              return originalElement;
+            },
+          }}
+          className="transaction-table"
+        />
+      </div>
+    </div>
   );
 };

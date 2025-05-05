@@ -550,9 +550,20 @@ const DepositCard: React.FC = () => {
 
   const renderStep1 = () => (
     <Card className="step-card">
+     <div className="account-headerr">
+          {/* <div className="account-avatar">
+            <div className="account-letter">V</div>
+          </div> */}
+          <div className="account-title">
+            <h2>Select Currency</h2>
+            <div className="account-subtitle">
+              <span className="verification-tag">Step 1</span>
+            </div>
+          </div>
+       </div>
       <div className="step-header">
-        <div className="step-badge">Step 1</div>
-        <div className="step-title">Select Currency</div>
+        <div className="step-badge"></div>
+        <div className="step-title"></div>
       </div>
 
       <div className="step-content">
@@ -823,9 +834,7 @@ const DepositCard: React.FC = () => {
         Back
       </Button>
 
-      <Title level={2} style={{ marginBottom: '24px' }}>
-        Deposit
-      </Title>
+      
 
       {currentStep === 1 && renderStep1()}
       {currentStep === 2 && renderStep2()}

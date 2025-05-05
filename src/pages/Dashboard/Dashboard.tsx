@@ -650,20 +650,6 @@ const Dashboard: React.FC = () => {
                   </div>
 
                   {/* Button Section */}
-                  <div className="unified-buttons">
-                    <button
-                      onClick={() => history.push('/finops/deposit')}
-                      className="unified-btn deposit"
-                    >
-                      ↓ Deposit
-                    </button>
-                    <button
-                      onClick={() => history.push('/finops/withdraw')}
-                      className="unified-btn withdraw"
-                    >
-                      ↑ Withdraw
-                    </button>
-                  </div>
 
                   {/* Summary Section */}
                   <div className="unified-summary">
@@ -685,6 +671,21 @@ const Dashboard: React.FC = () => {
                         <span>${data.totalMt5Withdraw}</span>
                       </div>
                     </div>
+                  </div>
+
+                  <div className="unified-buttons">
+                    <button
+                      onClick={() => history.push('/finops/deposit')}
+                      className="unified-btn deposit"
+                    >
+                      ↓ Deposit
+                    </button>
+                    <button
+                      onClick={() => history.push('/finops/withdraw')}
+                      className="unified-btn withdraw"
+                    >
+                      ↑ Withdraw
+                    </button>
                   </div>
                 </div>
               </div>

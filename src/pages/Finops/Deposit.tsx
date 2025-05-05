@@ -2,13 +2,14 @@ import { api } from '@/components/common/api';
 import { Type } from '@/generated';
 import { Transfer } from '@/pages/Finops/common/Transfer';
 import { useModel } from '@@/exports';
-import { CalculatorOutlined, WalletOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { history } from '@umijs/max';
 import { Card, ConfigProvider, theme, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import CustomLoader from '../CustomLoader';
 import StatusPage from './common/StatusPage';
+import { ArrowRightOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+
 
 const { Title, Text } = Typography;
 
@@ -73,30 +74,36 @@ const Deposit: React.FC = () => {
           ) : (
             <PageContainer>
               <Card className="deposit-card">
-                <div className="deposit-header">
-                  <Title level={2} className="deposit-title">
-                    Deposit
-                  </Title>
+                <div className="account-headerr">
+                  {/* <div className="account-avatar">
+            <div className="account-letter">V</div>
+          </div> */}
+                  <div className="account-title">
+                    <h2>DEPOSIT</h2>
+                    <div className="account-subtitle">
+                      <span className="verification-tag">Select Type of Balance Transfer</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="deposit-content">
-                  <Title level={4} className="deposit-subtitle">
+                  {/* <Title level={4} className="deposit-subtitle">
                     Select Type of Balance Transfer
-                  </Title>
+                  </Title> */}
 
                   <div className="deposit-options">
                     <Card hoverable className="deposit-option-card" onClick={handleWalletClick}>
                       <div className="option-container">
                         <div className="icon-circle">
-                          <WalletOutlined className="deposit-icon" />
+                          <ArrowRightOutlined className="deposit-icon" />
                         </div>
                         <div className="card-text">
                           <Text strong className="card-text-strong">
                             Wallet
                           </Text>
-                          <Text className="card-text-secondary" type="secondary">
+                          {/* <Text className="card-text-secondary" type="secondary">
                             Deposit to your main wallet
-                          </Text>
+                          </Text> */}
                         </div>
                       </div>
                     </Card>
@@ -104,15 +111,15 @@ const Deposit: React.FC = () => {
                     <Card hoverable className="deposit-option-card" onClick={handleMt5Click}>
                       <div className="option-container">
                         <div className="icon-circle">
-                          <CalculatorOutlined className="deposit-icon" />
+                          <ArrowLeftOutlined className="deposit-icon" />
                         </div>
                         <div className="card-text">
                           <Text strong className="card-text-strong">
                             MT5 Account
                           </Text>
-                          <Text className="card-text-secondary" type="secondary">
+                          {/* <Text className="card-text-secondary" type="secondary">
                             Deposit directly to MT5 account
-                          </Text>
+                          </Text> */}
                         </div>
                       </div>
                     </Card>
