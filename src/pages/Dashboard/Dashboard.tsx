@@ -74,66 +74,51 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
           key: u.Login,
           title: u.Login,
           content: (
-
-            <div className="account-grid-wrapper">
-  <div className="account-grid-header"></div>
-  <div className="account-grid">
-  <div className="account-container">
-              {/* Header Row */}
-              <div className="account-header">
-                <h3 className="account-title">Live Account</h3>
-                <Button type="default" className="attach-btn" onClick={() => setModalVisible(true)}>
-                  +MT5 Sub Account
-                </Button>
-              </div>
-
-              {/* Account Info Grid */}
-              <div className="account-grid">
-                {/* Row 1 */}
-                <div className="account-field">
-                  <div className="label">Account ID</div>
-                  <div className="value bolda">{u.Login}</div>
-                </div>
-                <div className="account-field">
-                  <div className="label">Balance</div>
-                  <div className="value bolda">${u.Balance?.toFixed(2) ?? '0.00'}</div>
-                </div>
-                <div className="account-field">
-                  <div className="label">Equity</div>
-                  <div className="value">${u.EquityPrevDay?.toFixed(2) ?? '0.00'}</div>
-                </div>
-                <div className="account-field">
-                  <div className="label">Free Margin</div>
-                  <div className="value">${u.MarginFree?.toFixed(2) ?? '0.00'}</div>
+            <div className="account-card-wrapper">
+              <div className="account-top-strip"></div>
+              <div className="account-container">
+                {/* Header Row */}
+                <div className="account-header">
+                  <h3 className="account-title">Live Account</h3>
+                  <button className="arrow-button" onClick={() => setModalVisible(true)}>
+                    +MT5 Sub Account
+                  </button>
                 </div>
 
-                {/* Row 2 */}
-                <div className="account-field">
-                  <div className="label">Margin</div>
-                  <div className="value">${u.Margin?.toFixed(2) ?? '0.00'}</div>
-                </div>
-                <div className="account-field">
-                  <div className="label">Margin Level</div>
-                  <div className="value">{u.MarginLevel?.toFixed(2) ?? '0.00'}%</div>
-                </div>
-                {/* <div className="account-field">
-                  <div className="label">Profit</div>
-                  <div className={`value ${u.Profit < 0 ? 'negative' : 'positive'}`}>
-                    {u.Profit < 0
-                      ? `-$${Math.abs(u.Profit).toFixed(2)}`
-                      : `$${u.Profit?.toFixed(2)}`}
+                {/* Account Info Grid */}
+                <div className="account-grid">
+                  <div className="account-field">
+                    <div className="label">Account ID</div>
+                    <div className="value bolda">{u.Login}</div>
                   </div>
-                </div> */}
-                <div className="account-field">
-                  <div className="label">Agent Code</div>
-                  <div className="value">{appUser.Promo || '--'}</div>
+                  <div className="account-field">
+                    <div className="label">Balance</div>
+                    <div className="value bolda">${u.Balance?.toFixed(2) ?? '0.00'}</div>
+                  </div>
+                  <div className="account-field">
+                    <div className="label">Equity</div>
+                    <div className="value">${u.EquityPrevDay?.toFixed(2) ?? '0.00'}</div>
+                  </div>
+                  <div className="account-field">
+                    <div className="label">Free Margin</div>
+                    <div className="value">${u.MarginFree?.toFixed(2) ?? '0.00'}</div>
+                  </div>
+
+                  <div className="account-field">
+                    <div className="label">Margin</div>
+                    <div className="value">${u.Margin?.toFixed(2) ?? '0.00'}</div>
+                  </div>
+                  <div className="account-field">
+                    <div className="label">Margin Level</div>
+                    <div className="value">{u.MarginLevel?.toFixed(2) ?? '0.00'}%</div>
+                  </div>
+                  <div className="account-field">
+                    <div className="label">Agent Code</div>
+                    <div className="value">{appUser.Promo || '--'}</div>
+                  </div>
                 </div>
               </div>
             </div>
-  </div>
-</div>
-
-            
           ),
         };
       }) || [];
@@ -496,7 +481,7 @@ const Dashboard: React.FC = () => {
   const tabs: TabsProps['items'] = [
     {
       key: '1',
-      label: <span className="live-account-tab">Live Accounts</span>, // Add class
+      label: <span className="live-account-tab">Live Accounts</span>, 
       children: <LiveAccount appUser={userData} getUser={getUser} />,
     },
 
