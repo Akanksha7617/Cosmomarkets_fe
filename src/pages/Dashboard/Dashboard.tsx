@@ -74,7 +74,11 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
           key: u.Login,
           title: u.Login,
           content: (
-            <div className="account-container">
+
+            <div className="account-grid-wrapper">
+  <div className="account-grid-header"></div>
+  <div className="account-grid">
+  <div className="account-container">
               {/* Header Row */}
               <div className="account-header">
                 <h3 className="account-title">Live Account</h3>
@@ -126,6 +130,10 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
                 </div>
               </div>
             </div>
+  </div>
+</div>
+
+            
           ),
         };
       }) || [];

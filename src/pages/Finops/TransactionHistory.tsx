@@ -253,8 +253,17 @@ export default () => {
     <div className="page-container">
       <div className="tab-header">
         <div className="tab active">Transaction History</div>
-        {/* <div className="tab">Support Tickets</div> */}
+        <div className="tab">Support Tickets</div>
       </div>
+
+      {/* <Tabs defaultActiveKey="1" onChange={(key) => console.log(key)}>
+        <TabPane tab="Transaction History" key="1">
+          <TransactionHistory />
+        </TabPane>
+        <TabPane tab="Support Tickets" key="2">
+          <SupportTickets />
+        </TabPane>
+      </Tabs> */}
 
       <div className="content-container">
         {/* <div className="title-section">

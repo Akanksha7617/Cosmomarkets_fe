@@ -161,56 +161,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
   };
 
   return (
-    // <Card title={title}>
-    //   <Form
-    //     form={form}
-    //     initialValues={{ currency: "USD" }}
-    //     onFinish={onFinish}
-    //     onFinishFailed={onFinishFailed}
-    //     //layout={'inline'}
-    //     labelCol={{ span: 8 }}
-    //     wrapperCol={{ span: 16 }}
-    //     style={{ maxWidth: 500 }}
-    //   >
-    //     <Form.Item
-    //       label="MT5 Account"
-    //       name="login"
-    //       rules={[{ required: true, message: 'Please select a MT5 account' }]}
-    //     >
-    //       <Select
-    //         options={mtLogins}
-    //         onChange={(e) => {
-    //           handleSelectChange(e);
-    //         }}
-    //       />
-    //     </Form.Item>
-    //     <Form.Item
-    //       label="Amount"
-    //       name="amount"
-    //       rules={[{
-    //         required: true,
-    //         pattern: /^(?!0\d{15,})(\d{1,16})(\.\d{0,2})?$/,
-    //         message: 'Please input a positive value up to 2 decimal places!'
-    //       }]}
-    //     >
-    //       <InputNumber addonAfter={<Form.Item name="currency" noStyle>USD</Form.Item>} style={{ width: '100%' }} />
-    //     </Form.Item>
-
-    //     <Form.Item
-    //       label="Comment"
-    //       name="comment"
-    //       rules={[{ required: true, message: 'Please input comment!' }]}
-    //     >
-    //       <Input />
-    //     </Form.Item>
-
-    //     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-    //       <Button type="primary" htmlType="submit" loading={loading}>
-    //         Submit
-    //       </Button>
-    //     </Form.Item>
-    //   </Form>
-    // </Card>
+    
     <div className="mt5-parent-class">
       <div className="mt5-card">
         <ConfigProvider locale={enUS}>
@@ -219,8 +170,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
             headStyle={{
               background: '#ffb74d',
               textTransform: 'uppercase',
-              // backgroundColor: '#f89d42',
-              // Other styles you want to apply to the header
+             
             }}
           >
             <ProForm
@@ -247,7 +197,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
               />
               <ProDescriptions column={1}>
                 <ProDescriptions.Item label="Free Margin">{freeMargin}</ProDescriptions.Item>
-                {/* Add more ProDescriptions.Item components as needed */}
+               
               </ProDescriptions>
 
               {type === Type.MT_TO_WALLET ? (
@@ -278,19 +228,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
                         );
                       },
                     }),
-                    // ({ getFieldValue }) => ({
-                    //   validator(_, value) {
-                    //     const enteredAmount = parseFloat(value);
-
-                    //     /*  if (Number(value) >= balance) {
-                    //          return Promise.reject(new Error("User does not have enough wallet balance!"));
-                    //        }  */
-                    //     if (enteredAmount <= freeMargin) {
-                    //       return Promise.resolve();
-                    //     }
-                    //     return Promise.reject(new Error(`Must be less than or equal to Free Margin (${freeMargin}) !`));
-                    //   },
-                    // }),
+                    
                   ]}
                   fieldProps={{
                     addonAfter: 'USD',
