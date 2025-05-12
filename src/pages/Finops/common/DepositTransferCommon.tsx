@@ -134,7 +134,7 @@ const DepositTransferCommon: React.FC<{
           <Card
             title={title}
             headStyle={{
-              background: '#ffb74d',
+              background: '#f9f7f0',
               textTransform: 'uppercase',
               
             }}
@@ -145,7 +145,7 @@ const DepositTransferCommon: React.FC<{
               layout="vertical"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 20 }}
-              style={{ maxWidth: 500 }}
+              // style={{ maxWidth: 500}}
               initialValues={{ currency: 'USD' }}
               submitter={{}}
             >
@@ -230,9 +230,9 @@ const DepositTransferCommon: React.FC<{
           </Card>
         </ConfigProvider>
       </div>
-      <div className="mt5-img-class">
+      {/* <div className="mt5-img-class">
         <img src="\images\step.png" alt="" width={'100%'} height={350} />
-      </div>
+      </div> */}
     </div>
   );
 };

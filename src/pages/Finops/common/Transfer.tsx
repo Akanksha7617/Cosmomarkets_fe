@@ -168,7 +168,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
           <Card
             title={title}
             headStyle={{
-              background: '#ffb74d',
+              background: '#f9f7f0',
               textTransform: 'uppercase',
              
             }}
@@ -179,7 +179,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
               layout="vertical"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 20 }}
-              style={{ maxWidth: 500 }}
+              // style={{ maxWidth: 500 }}
               initialValues={{ currency: 'USD' }}
               submitter={{}}
             >
@@ -262,9 +262,9 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
           </Card>
         </ConfigProvider>
       </div>
-      <div className="mt5-img-class">
+      {/* <div className="mt5-img-class">
         <img src="\images\step.png" alt="" width={'100%'} height={350} />
-      </div>
+      </div> */}
     </div>
   );
 };

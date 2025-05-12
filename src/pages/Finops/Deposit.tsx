@@ -6,6 +6,7 @@ import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
   BankOutlined,
+  CreditCardOutlined,
   DollarOutlined,
   UploadOutlined,
   WalletOutlined,
@@ -19,7 +20,6 @@ import {
   Form,
   Input,
   message,
-  Radio,
   Select,
   Table,
   theme,
@@ -29,6 +29,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import CustomLoader from '../CustomLoader';
 import StatusPage from './common/StatusPage';
+import { DepositTransferCommon, Type1 } from './common/DepositTransferCommon';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -180,11 +181,11 @@ const Deposit: React.FC = () => {
   }
 
   // Handle Withdraw option click
-  function handleWithdrawClick() {
-    setShowDepositFlow(false);
-    setShowWithdrawFlow(true);
-    history.push('/Finops/withdraw');
-  }
+  // function handleWithdrawClick() {
+  //   setShowDepositFlow(false);
+  //   setShowWithdrawFlow(true);
+  //   history.push('/Finops/withdraw');
+  // }
 
   // Handle account selection in dropdown
   function handleAccountSelection(value) {
@@ -195,9 +196,25 @@ const Deposit: React.FC = () => {
     } else if (value === 'MT5 Trading Account') {
       setIsMt5(true);
       setShowWalletSteps(false); // Hide wallet steps when MT5 is selected
-      history.push('/Finops/DepositTransfer');
+      // Instead of redirecting, we'll render MT5 deposit form directly
     }
   }
+
+  function handleWithdrawClick() {
+    // This function is no longer needed but kept for reference
+    // You can remove it completely
+  }
+
+  const renderMT5DepositForm = () => (
+    <div className="mt5-deposit-container">
+      <DepositTransferCommon
+        title="DEPOSIT TO MT5 ACCOUNT"
+        type={Type.WALLET_TO_MT}
+        successMsg="Deposit to MT5 account successful"
+        failureMsg="Failed to deposit to MT5 account"
+      />
+    </div>
+  );
 
   // Reset to main deposit options
   function resetToMainDeposit() {
@@ -600,11 +617,11 @@ const Deposit: React.FC = () => {
           <table className="payment-table">
             <thead>
               <tr>
-                <th>Operation</th>
                 <th>Payment Option</th>
                 <th>Details</th>
                 <th>Processing Time</th>
                 <th>Cost</th>
+                <th>Operation</th>
               </tr>
             </thead>
             <tbody>
@@ -615,13 +632,6 @@ const Deposit: React.FC = () => {
                   style={{ backgroundColor: index % 2 === 1 ? '#f9f9f9' : '#ffffff' }}
                 >
                   <td>
-                    <Radio
-                      checked={selectedPaymentMethod === method.key}
-                      onChange={handlePaymentMethodChange}
-                      value={method.key}
-                    />
-                  </td>
-                  <td>
                     <div className="payment-option">
                       <div className="payment-icon-bg">{method.icon}</div>
                       <span className="payment-label">{method.label}</span>
@@ -630,6 +640,19 @@ const Deposit: React.FC = () => {
                   <td>{method.details}</td>
                   <td>{method.processingTime}</td>
                   <td>{method.cost}</td>
+                  <td>
+                    <button
+                      className={`select-button ${
+                        selectedPaymentMethod === method.key ? 'selected' : ''
+                      }`}
+                      onClick={() => {
+                        handlePaymentMethodChange({ target: { value: method.key } });
+                        setCurrentStep(3); // Go to Step 3 immediately
+                      }}
+                    >
+                      Select
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -637,17 +660,17 @@ const Deposit: React.FC = () => {
         </div>
 
         <div className="action-buttons">
-          <Button onClick={handleBack} className="back-button">
+          {/* <Button onClick={handleBack} className="back-button">
             Back
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             type="primary"
             onClick={handleContinue}
             className="continue-button"
             style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
           >
             Continue
-          </Button>
+          </Button> */}
         </div>
       </div>
     </Card>
@@ -666,7 +689,23 @@ const Deposit: React.FC = () => {
       </div>
 
       <div className="step-content">
-        <Text>Please fill in the form below to get your bank deposit reference code.</Text>
+        {/* Selected Payment Method Display */}
+        <div className="selected-payment-method">
+          <div className="payment-method-info">
+            <div className="payment-method-icon">
+              <CreditCardOutlined className="payment-method-icon-inner" />
+            </div>
+            <div className="payment-method-details">
+              <h4>{selectedPaymentMethod.type}</h4>
+              <p>{selectedPaymentMethod.details}</p>
+            </div>
+          </div>
+          <Button className="change-button" onClick={() => setCurrentStep(2)} type="link">
+            Change
+          </Button>
+        </div>
+
+        <Text>Please fill in the form below to get your deposit reference code.</Text>
 
         <Form
           form={amountForm}
@@ -686,13 +725,21 @@ const Deposit: React.FC = () => {
             ]}
             style={{ marginTop: '16px' }}
           >
-            <Input placeholder="Enter amount" />
+            <Input placeholder="Enter amount" prefix="$" />
           </Form.Item>
 
+          <div className="info-box">
+            <div className="info-item">
+              <p className="info-label">Minimum Amount</p>
+              <p className="info-value">$50.00</p>
+            </div>
+            <div className="info-item">
+              <p className="info-label">Processing Time</p>
+              <p className="info-value">24/7 Instant</p>
+            </div>
+          </div>
+
           <div className="action-buttons">
-            <Button onClick={handleBack} className="back-button">
-              Back
-            </Button>
             <Button
               type="primary"
               htmlType="submit"
@@ -700,7 +747,7 @@ const Deposit: React.FC = () => {
               className="submit-button"
               style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
             >
-              Submit
+              Deposit Funds
             </Button>
           </div>
         </Form>
@@ -755,7 +802,7 @@ const Deposit: React.FC = () => {
                     )}
                     <Button
                       type="primary"
-                      onClick={() => handleredirect(link.url)}
+                      onClick={() => handleRedirect(link.url)}
                       style={{
                         marginTop: '16px',
                         backgroundColor: '#FAAD14',
@@ -789,11 +836,16 @@ const Deposit: React.FC = () => {
   const renderStep4 = () => (
     <Card className="step-card">
       <div className="account-headerr">
-        <div className="account-title">
-          <h2>Send Transaction Details</h2>
-          <div className="account-subtitle">
-            <span className="verification-tag">Step 4</span>
+        <div className="account-title-container">
+          <div className="account-title">
+            <h2>Send Transaction Details</h2>
+            <div className="account-subtitle">
+              <span className="verification-tag">Step 4</span>
+            </div>
           </div>
+          <Button className="change-button chang" onClick={() => setCurrentStep(3)} type="link">
+            Change
+          </Button>
         </div>
       </div>
 
@@ -813,9 +865,9 @@ const Deposit: React.FC = () => {
         </div>
 
         <div className="action-buttons">
-          <Button onClick={handleBack} className="back-button">
+          {/* <Button onClick={handleBack} className="back-button">
             Back
-          </Button>
+          </Button> */}
           <Button
             type="primary"
             onClick={handleFinalSubmit}
@@ -858,7 +910,7 @@ const Deposit: React.FC = () => {
                 </div>
               </Card>
 
-              <Card hoverable className="deposit-option-card" onClick={handleWithdrawClick}>
+              {/* <Card hoverable className="deposit-option-card" onClick={handleWithdrawClick}>
                 <div className="option-container">
                   <div className="icon-circle">
                     <ArrowLeftOutlined className="deposit-icon" />
@@ -869,7 +921,7 @@ const Deposit: React.FC = () => {
                     </Text>
                   </div>
                 </div>
-              </Card>
+              </Card> */}
             </div>
           </div>
         </Card>
@@ -903,7 +955,7 @@ const Deposit: React.FC = () => {
                   </div>
                 </Card>
 
-                <Card hoverable className="deposit-option-card" onClick={handleWithdrawClick}>
+                {/* <Card hoverable className="deposit-option-card" onClick={handleWithdrawClick}>
                   <div className="option-container">
                     <div className="icon-circle">
                       <ArrowLeftOutlined className="deposit-icon" />
@@ -914,7 +966,7 @@ const Deposit: React.FC = () => {
                       </Text>
                     </div>
                   </div>
-                </Card>
+                </Card> */}
               </div>
             </div>
           </Card>

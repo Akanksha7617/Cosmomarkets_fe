@@ -233,13 +233,13 @@
     access: 'canClient',
   },
 
-  {
-    path: '/admin/helpDeskUser',
-    name: 'Help Desk',
-    icon: 'team',
-    component: './Admin/HelpDeskUser',
-    access: 'canClient',
-  },
+  // {
+  //   path: '/admin/helpDeskUser',
+  //   name: 'Help Desk',
+  //   icon: 'team',
+  //   component: './Admin/HelpDeskUser',
+  //   access: 'canClient',
+  // },
   {
     path: '/signout',
     name: 'Sign Out',
