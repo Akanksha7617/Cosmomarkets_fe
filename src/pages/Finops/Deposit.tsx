@@ -3,7 +3,6 @@ import { Type } from '@/generated';
 import { Transfer } from '@/pages/Finops/common/Transfer';
 import { useModel } from '@@/exports';
 import {
-  ArrowLeftOutlined,
   ArrowRightOutlined,
   BankOutlined,
   CreditCardOutlined,
@@ -28,8 +27,8 @@ import {
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import CustomLoader from '../CustomLoader';
+import { DepositTransferCommon } from './common/DepositTransferCommon';
 import StatusPage from './common/StatusPage';
-import { DepositTransferCommon, Type1 } from './common/DepositTransferCommon';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -295,7 +294,7 @@ const Deposit: React.FC = () => {
         content: 'Amount has been successfully submitted.',
         icon: <span className="green-success-icon"> ✓ </span>,
         className: 'green-success-notification',
-        duration: 3,
+        duration: 6,
       });
     } else if (selectedPaymentMethod === 'tether-usdt') {
       setLoading(true);
@@ -561,10 +560,10 @@ const Deposit: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="step-header">
+      {/* <div className="step-header">
         <div className="step-badge"></div>
         <div className="step-title"></div>
-      </div>
+      </div> */}
 
       <div className="step-content">
         <Text strong>Choose Currency</Text>
@@ -579,9 +578,9 @@ const Deposit: React.FC = () => {
         </Select>
 
         <div className="action-buttons">
-          <Button onClick={resetToMainDeposit} className="back-button">
+          {/* <Button onClick={resetToMainDeposit} className="back-button">
             Back
-          </Button>
+          </Button> */}
           <Button
             type="primary"
             onClick={handleContinue}
@@ -693,11 +692,24 @@ const Deposit: React.FC = () => {
         <div className="selected-payment-method">
           <div className="payment-method-info">
             <div className="payment-method-icon">
-              <CreditCardOutlined className="payment-method-icon-inner" />
+              {/* Find the correct icon based on the selected payment method key */}
+              {selectedPaymentMethod === 'bank-transfer' && (
+                <BankOutlined className="payment-method-icon-inner" />
+              )}
+              {selectedPaymentMethod === 'tether-usdt' && (
+                <CreditCardOutlined className="payment-method-icon-inner" />
+              )}
+              {selectedPaymentMethod === 'other-payment' && (
+                <DollarOutlined className="payment-method-icon-inner" />
+              )}
             </div>
             <div className="payment-method-details">
-              <h4>{selectedPaymentMethod.type}</h4>
-              <p>{selectedPaymentMethod.details}</p>
+              <h4>
+                {paymentMethods.find((method) => method.key === selectedPaymentMethod)?.label}
+              </h4>
+              <p>
+                {paymentMethods.find((method) => method.key === selectedPaymentMethod)?.details}
+              </p>
             </div>
           </div>
           <Button className="change-button" onClick={() => setCurrentStep(2)} type="link">
@@ -883,8 +895,9 @@ const Deposit: React.FC = () => {
   );
 
   const renderMainContent = () => {
-    if (!showDepositFlow && !showWithdrawFlow) {
-      return (
+    // Always show deposit flow
+    return (
+      <div className="wallet-deposit-steps">
         <Card className="deposit-card">
           <div className="account-headerr">
             <div className="account-title">
@@ -910,84 +923,27 @@ const Deposit: React.FC = () => {
                 </div>
               </Card>
 
-              {/* <Card hoverable className="deposit-option-card" onClick={handleWithdrawClick}>
-                <div className="option-container">
-                  <div className="icon-circle">
-                    <ArrowLeftOutlined className="deposit-icon" />
-                  </div>
-                  <div className="card-text">
-                    <Text strong className="card-text-strong">
-                      Withdraw
-                    </Text>
-                  </div>
-                </div>
-              </Card> */}
+              {/* Withdraw option removed as requested */}
             </div>
           </div>
         </Card>
-      );
-    } else if (showDepositFlow) {
-      // If deposit flow is selected, show the appropriate step directly below the selection
-      return (
-        <div className="wallet-deposit-steps">
-          <Card className="deposit-card">
-            <div className="account-headerr">
-              <div className="account-title">
-                <h2>FUNDS MANAGEMENT</h2>
-                <div className="account-subtitle">
-                  <span className="verification-tag">Select Operation Type</span>
-                </div>
-              </div>
-            </div>
 
-            <div className="deposit-content">
-              <div className="deposit-options">
-                <Card hoverable className="deposit-option-card active-option">
-                  <div className="option-container">
-                    <div className="icon-circle" style={{ backgroundColor: '#FAAD14' }}>
-                      <ArrowRightOutlined className="deposit-icon" />
-                    </div>
-                    <div className="card-text">
-                      <Text strong className="card-text-strong">
-                        Deposit
-                      </Text>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* <Card hoverable className="deposit-option-card" onClick={handleWithdrawClick}>
-                  <div className="option-container">
-                    <div className="icon-circle">
-                      <ArrowLeftOutlined className="deposit-icon" />
-                    </div>
-                    <div className="card-text">
-                      <Text strong className="card-text-strong">
-                        Withdraw
-                      </Text>
-                    </div>
-                  </div>
-                </Card> */}
-              </div>
-            </div>
-          </Card>
-
-          {/* Account selection dropdown is always shown when deposit is selected */}
-          <div className="account-dropdown-container" style={{ marginTop: '16px' }}>
-            {renderAccountDropdown()}
-          </div>
-
-          {/* Deposit steps appear directly below the deposit options */}
-          {!isMt5 && (
-            <div className="wallet-steps-container" style={{ marginTop: '16px' }}>
-              {currentStep === 1 && renderStep1()}
-              {currentStep === 2 && renderStep2()}
-              {currentStep === 3 && renderStep3()}
-              {currentStep === 4 && renderStep4()}
-            </div>
-          )}
+        {/* Account selection dropdown is always shown */}
+        <div className="account-dropdown-container" style={{ marginTop: '16px' }}>
+          {renderAccountDropdown()}
         </div>
-      );
-    }
+
+        {/* Deposit steps appear directly below the deposit options */}
+        {!isMt5 && (
+          <div className="wallet-steps-container" style={{ marginTop: '16px' }}>
+            {currentStep === 1 && renderStep1()}
+            {currentStep === 2 && renderStep2()}
+            {currentStep === 3 && renderStep3()}
+            {currentStep === 4 && renderStep4()}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (

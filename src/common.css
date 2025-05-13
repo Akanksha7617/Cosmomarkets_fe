@@ -2147,6 +2147,7 @@ animation: animate 5s linear infinite;
 
   .ant-form {
     box-sizing: border-box;
+    
     /* margin: 0;
   padding: 0;
 
@@ -2763,8 +2764,7 @@ margin-left: -100px;
   width: 100%;
 }
 
-.dashboard-card1 {
-}
+
 
 .dashboard-card-img {
   display: flex;
@@ -3387,6 +3387,7 @@ margin-left: -100px;
     padding: 8px 12px;
     font-size: 14px;
   }
+  
 }
 
 @media screen and (max-width: 992px) {
@@ -5176,6 +5177,129 @@ margin-left: -100px;
 /* DepositPage.css end */
 
 /* withdraw page css */
+
+.step-card {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  max-width: 1000px;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.step-badge {
+  background-color: #FFF7E6;
+  color: #FAAD14;
+  border-radius: 16px;
+  padding: 2px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 12px;
+}
+
+.step-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.step-content {
+  padding: 0 8px;
+}
+
+.currency-select {
+  margin-top: 8px;
+  margin-bottom: 24px;
+}
+
+.action-buttons {
+  display: flex;
+  /* margin-top: 24px; */
+  gap: 12px;
+}
+
+.main-back-button {
+  margin-bottom: 16px;
+}
+
+.continue-button,
+.submit-button {
+  background-color: #FAAD14;
+  border-color: #FAAD14;
+}
+
+.back-button {
+  background-color: #f5f5f5;
+  border-color: #d9d9d9;
+}
+
+.payment-table-container {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+.payment-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.payment-table th,
+.payment-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: left;
+}
+
+.payment-table th {
+  background-color: #fafafa;
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 500;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+}
+
+.payment-icon-bg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #FFF7E6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.payment-icon {
+  font-size: 20px;
+  color: #FAAD14;
+}
+
+.payment-label {
+  font-weight: 500;
+}
+
+.selected-row {
+  background-color: #fff7e6 !important;
+}
+
+.withdraw-form {
+  margin-top: 16px;
+  max-width: 600px;
+}
+
+.visible-step {
+  display: block;
+}
+
+.hidden-step {
+  display: none;
+}
 .withdraw-card {
   margin-bottom: 24px;
   border-radius: 8px;
@@ -5302,6 +5426,9 @@ margin-left: -100px;
 /* withdraw page end */
 
 /* Dashboard ib tab */
+
+
+/* Dashboard ib tab */
 /* Default styles (already shared earlier) */
 .tab-label {
   width: 100%;
@@ -5310,7 +5437,6 @@ margin-left: -100px;
   color: #606266;
   font-weight: 400;
   text-align: center;
-  background-color: #fff;
   border: 1px solid transparent;
   border-bottom: 1px solid #eaecef;
   border-top-left-radius: 8px;
@@ -5320,7 +5446,6 @@ margin-left: -100px;
 .tab-label.active {
   color: #4b5563;
   font-weight: 500;
-  background-color: #f0f5fb;
   border: 1px solid #eaecef;
   border-bottom: none;
 }
@@ -5348,7 +5473,16 @@ margin-left: -100px;
   }
 }
 
+
+
+
+
 /* dashboard ib tab end */
+
+
+
+
+
 
 /* sign in sign up pages */
 
@@ -7470,25 +7604,6 @@ margin-left: -100px;
   border-radius: 8px;
 }
 
-.step-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.step-badge {
-  margin-right: 12px;
-  padding: 2px 12px;
-  color: #faad14;
-  font-weight: 500;
-  font-size: 14px;
-  border-radius: 16px;
-}
-
-.step-title {
-  font-weight: 600;
-  font-size: 18px;
-}
 
 .step-content {
   padding: 0 8px;
@@ -7497,7 +7612,7 @@ margin-left: -100px;
 .action-buttons {
   display: flex;
   gap: 12px;
-  margin-top: 24px;
+  /* margin-top: 24px; */
 }
 
 .continue-button,
@@ -7790,9 +7905,9 @@ margin-left: -100px;
 
 .verification-tag {
   padding: 2px 8px;
-  color: #faad14;
+  color: #fff7e6;
   font-size: 12px;
-  background-color: #fff7e6;
+  background-color: #faad14;
   border-radius: 10px;
 }
 
@@ -7818,7 +7933,7 @@ margin-left: -100px;
   background-color: #52c41a;
 }
 
-.yellow-warning-icon {
+/* .yellow-warning-icon {
   color: white;
   background-color: #faad14;
 }
@@ -7842,7 +7957,7 @@ margin-left: -100px;
 .yellow-warning-notification {
   background-color: #fffbe6;
   border: 1px solid #ffe58f;
-}
+} */
 .account-title-container {
   display: flex;
   justify-content: space-between;
@@ -7861,10 +7976,10 @@ margin-left: -100px;
 /* payments method 3 */
 
 @media (max-width: 500px) and (min-width: 320px) {
-  .account-headerr {
+  /* .account-headerr {
     flex-direction: column;
     align-items: flex-start;
-  }
+  } */
 
   .account-title-container {
     flex-direction: column;
@@ -7872,7 +7987,7 @@ margin-left: -100px;
   }
 
   .chang {
-    padding-left: 0 !important;
+    padding-left: 5px !important;
     margin-top: 8px;
     align-self: flex-start;
   }
@@ -7895,5 +8010,102 @@ margin-left: -100px;
 
 
 /* deposite card page end */
+
+/* deposit Mt5 trading account page css */
+.mt5-parent-class {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+}
+
+.mt5-card {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Responsive styles for mobile devices */
+@media screen and (max-width: 500px) {
+  .mt5-parent-class {
+    flex-direction: column;
+  }
+
+  .mt5-card {
+    width: 100%;
+  }
+
+ 
+  .ant-form-item-label {
+    padding-bottom: 4px;
+  }
+
+  .ant-form-item {
+    margin-bottom: 12px;
+  }
+
+
+  .ant-card-head {
+    padding: 0 12px;
+    min-height: 40px;
+  }
+
+  .ant-card-head-title {
+    padding: 8px 0;
+    font-size: 14px;
+  }
+
+  .ant-card-body {
+    padding: 12px;
+  }
+
+ 
+  /* .ant-select {
+    width: 100% !important;
+  } */
+
+  
+  .ant-descriptions-item {
+    padding-bottom: 8px;
+  }
+
+  .ant-descriptions-item-label,
+  .ant-descriptions-item-content {
+    font-size: 13px;
+  }
+
+  
+  .ant-input-textarea {
+    width: 100%;
+  }
+
+  
+  .ant-input-group-wrapper {
+    width: 100%;
+  }
+
+
+  .ant-btn {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+
+
+@media screen and (max-width: 375px) {
+  .ant-card-head-title {
+    font-size: 13px;
+  }
+
+  .ant-form-item-label > label {
+    font-size: 12px;
+  }
+
+  .ant-input, 
+  .ant-select-selector,
+  .ant-btn {
+    font-size: 12px;
+    height: 32px;
+  }
+}
 
 
