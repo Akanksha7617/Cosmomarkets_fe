@@ -76,7 +76,6 @@ const DashboardContent = () => {
       setLoading(false);
     }
   };
-  
 
   // Define table columns
   // const columns = [
@@ -160,7 +159,14 @@ const DashboardContent = () => {
       {/* Stats cards */}
       <Row gutter={16} style={{ marginTop: '24px' }}>
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card
+            style={{
+              backgroundColor: 'transparent',
+              border: '1px solid #d9d9d9',
+              borderRadius: '8px',
+              boxShadow: 'none',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div
                 style={{
@@ -174,12 +180,8 @@ const DashboardContent = () => {
                   marginRight: '16px',
                 }}
               >
-                <span
-                  role="img"
-                  aria-label="handshake"
-                  style={{ fontSize: '24px', color: '#FA8E21' }}
-                >
-                  ✅
+                <span role="img" aria-label="status" style={{ fontSize: '24px', color: '#FA8E21' }}>
+                  📊
                 </span>
               </div>
               <div>
@@ -193,8 +195,16 @@ const DashboardContent = () => {
             </div>
           </Card>
         </Col>
+
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card
+            style={{
+              backgroundColor: 'transparent',
+              border: '1px solid #d9d9d9',
+              borderRadius: '8px',
+              boxShadow: 'none',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div
                 style={{
@@ -208,12 +218,8 @@ const DashboardContent = () => {
                   marginRight: '16px',
                 }}
               >
-                <span
-                  role="img"
-                  aria-label="handshake"
-                  style={{ fontSize: '24px', color: '#FA8E21' }}
-                >
-                  🤝
+                <span role="img" aria-label="code" style={{ fontSize: '24px', color: '#FA8E21' }}>
+                  🔢
                 </span>
               </div>
               <div>
@@ -227,8 +233,16 @@ const DashboardContent = () => {
             </div>
           </Card>
         </Col>
+
         <Col xs={24} sm={12} md={6}>
-          <Card>
+          <Card
+            style={{
+              backgroundColor: 'transparent',
+              border: '1px solid #d9d9d9',
+              borderRadius: '8px',
+              boxShadow: 'none',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div
                 style={{
@@ -244,10 +258,10 @@ const DashboardContent = () => {
               >
                 <span
                   role="img"
-                  aria-label="handshake"
+                  aria-label="manager"
                   style={{ fontSize: '24px', color: '#FA8E21' }}
                 >
-                  👨‍💼
+                  🧑‍🏫
                 </span>
               </div>
               <div>
@@ -281,12 +295,8 @@ const DashboardContent = () => {
               : 'Pending approval'}
           </Text>
           {ibRequest.ibCode && (
-            <Button
-              style={{
-                position: 'absolute',
-                right: '12px',
-                top: '8px',
-              }}
+            <Button className='copy-button'
+             
               onClick={() => {
                 navigator.clipboard.writeText(
                   `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
@@ -303,9 +313,49 @@ const DashboardContent = () => {
             </Button>
           )}
         </div>
-        <Text type="secondary" style={{ marginTop: '12px', display: 'block' }}>
+
+        <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap',  }}>
+          <Button
+          
+            icon={<span>📧</span>}
+            onClick={() =>
+              window.open(
+                `mailto:?subject=Join Sigma&body=Sign up using this link: ${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
+                '_blank',
+              )
+            }
+          >
+            Share via Email
+          </Button>
+
+          <Button
+            icon={<span>📱</span>}
+            onClick={() =>
+              window.open(
+                `https://api.whatsapp.com/send?text=Join%20Sigma!%20Use%20my%20referral%20link:%20${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
+                '_blank',
+              )
+            }
+          >
+            Share via WhatsApp
+          </Button>
+
+          <Button
+            icon={<span>✈️</span>}
+            onClick={() =>
+              window.open(
+                `https://t.me/share/url?url=${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}&text=Join%20Sigma%20via%20my%20referral%20link!`,
+                '_blank',
+              )
+            }
+          >
+            Share via Telegram
+          </Button>
+        </div>
+
+        {/* <Text type="secondary" style={{ marginTop: '12px', display: 'block' }}>
           Share this link with potential clients to earn commissions.
-        </Text>
+        </Text> */}
       </Card>
     </div>
   );

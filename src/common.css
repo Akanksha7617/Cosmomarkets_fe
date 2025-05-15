@@ -5428,8 +5428,6 @@ margin-left: -100px;
 /* Dashboard ib tab */
 
 
-/* Dashboard ib tab */
-/* Default styles (already shared earlier) */
 .tab-label {
   width: 100%;
   margin-bottom: -1px;
@@ -5449,12 +5447,23 @@ margin-left: -100px;
   border: 1px solid #eaecef;
   border-bottom: none;
 }
+/* Ib Dashboard */
+.copy-button {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+}
+
+
+
+
+
 
 /* ✅ Responsive Styles for Mobile (320px to 500px) */
 @media (max-width: 500px) {
   .tab-label {
-    padding: 10px 20px; /* reduce horizontal padding */
-    font-size: 14px; /* slightly smaller text */
+    padding: 10px 20px; 
+    font-size: 14px; 
   }
 
   .custom-tab-bar {
@@ -5471,7 +5480,14 @@ margin-left: -100px;
   .ant-menu-light .ant-menu-item-selected :hover {
     background: linear-gradient(45deg, #ff8f00, #ffb74d) !important;
   }
+    .copy-button {
+    position: static;
+    margin-top: 10px;
+    width: 100%;
+  }
 }
+
+
 
 
 
@@ -7261,7 +7277,6 @@ margin-left: -100px;
 .account-wrapper {
   margin-bottom: 20px;
   overflow: hidden;
-  background-color: #f8f8f8;
   border-radius: 8px;
 }
 
