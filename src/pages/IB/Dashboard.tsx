@@ -1,8 +1,23 @@
 import { api } from '@/components/common/api';
 import { ApiError, IbRequestModel } from '@/generated';
 import Clients from '@/pages/IB/Clients';
-import { Button, Card, Col, message, Row, Tabs, Typography } from 'antd';
-import { useEffect, useState } from 'react';
+import {
+  BankOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CopyOutlined,
+  DashboardOutlined,
+  LinkOutlined,
+  MailOutlined,
+  SendOutlined,
+  StarOutlined,
+  TeamOutlined,
+  UserOutlined,
+  WhatsAppOutlined,
+} from '@ant-design/icons';
+import { Button, message, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import '../../common.css';
 import config from '../../components/config.json';
 import CustomLoader from '../CustomLoader';
 
@@ -22,6 +37,7 @@ const DashboardContent = () => {
   const [requested, setRequested] = useState(false);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   // Fetch data on component mount
   useEffect(() => {
@@ -57,8 +73,7 @@ const DashboardContent = () => {
       });
       message.success({
         content: 'IB account requested successfully!',
-        icon: <span className="orange-success-icon"> ✔ </span>,
-        className: 'orange-success-notification',
+        icon: <CheckCircleOutlined style={{ color: '#34a853' }} />,
         duration: 3,
       });
       setRequested(true);
@@ -68,45 +83,12 @@ const DashboardContent = () => {
       const er = e as ApiError;
       message.error({
         content: er.body.message,
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
         duration: 3,
       });
     } finally {
       setLoading(false);
     }
   };
-
-  // Define table columns
-  // const columns = [
-  //   {
-  //     title: 'Status',
-  //     dataIndex: 'status',
-  //     key: 'status',
-  //     render: (text) => (
-  //       <Tag color={text === 'Approved' ? 'success' : 'processing'}>
-  //         {text}
-  //       </Tag>
-  //     ),
-  //   },
-  //   {
-  //     title: 'Approving Manager',
-  //     dataIndex: 'managerName',
-  //     key: 'manager',
-  //   },
-  //   {
-  //     title: 'IB Code',
-  //     dataIndex: 'ibCode',
-  //     key: 'ibCode',
-  //   },
-  //   {
-  //     title: 'Referral URL',
-  //     key: 'referralUrl',
-  //     render: (_, record) => (
-  //       record.ibCode ? `${BaseUrl}/user/login/Signup?signup=true&promo=${record.ibCode}` : '-'
-  //     ),
-  //   },
-  // ];
 
   // Loading state
   if (loading) {
@@ -116,196 +98,147 @@ const DashboardContent = () => {
   // Not requested state
   if (!requested) {
     return (
-      <div
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}
-      >
-        <div style={{ maxWidth: '400px', marginRight: '40px' }}>
-          <Title level={3}>Become an IB Partner</Title>
-          <Text>Start earning commissions by referring clients to our platform.</Text>
+      <div className="ib-onboarding-container">
+        <div className="ib-onboarding-card">
+          <div style={{ marginBottom: '24px' }}>
+            <BankOutlined className="ib-onboarding-icon" />
+          </div>
+          <Title level={3} className="ib-onboarding-title">
+            Become an IB Partner
+          </Title>
+          <Text className="ib-onboarding-description">
+            Join our introducing broker program and earn commissions by referring clients to our
+            trading platform. Build your network and grow your revenue with our comprehensive
+            partnership program.
+          </Text>
           <Button
             type="primary"
-            style={{ marginTop: '20px', backgroundColor: '#FA8E21', borderColor: '#FA8E21' }}
+            size="large"
             onClick={requestIbAccount}
+            className="ib-primary-button"
+            icon={<StarOutlined />}
           >
-            Create IB Account
+            Request IB Account
           </Button>
-        </div>
-        <div>
-          <img
-            src="/images/create-IB.png"
-            alt="IB Partnership"
-            style={{ maxWidth: '100%', height: 'auto' }}
-          />
         </div>
       </div>
     );
   }
 
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+        return '#34a853';
+      case 'pending':
+        return '#fbbc04';
+      case 'rejected':
+        return '#ea4335';
+      default:
+        return '#1a73e8';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+        return <CheckCircleOutlined />;
+      case 'pending':
+        return <ClockCircleOutlined />;
+      default:
+        return <ClockCircleOutlined />;
+    }
+  };
+
   // Requested state
   return (
     <div>
-      <Title level={3} style={{ marginBottom: '24px' }}>
-        IB DASHBOARD
-      </Title>
+      {/* Page Header */}
+      <div className="ib-page-header">
+        <Title level={2} className="ib-page-title">
+          IB Dashboard
+        </Title>
+        <Text className="ib-page-subtitle">
+          Monitor your account status and manage your referral activities
+        </Text>
+      </div>
 
-      {/* Status table */}
-      {/* <Table 
-        dataSource={data} 
-        columns={columns} 
-        pagination={false}
-        rowKey="id"
-      /> */}
-
-      {/* Stats cards */}
-      <Row gutter={16} style={{ marginTop: '24px' }}>
-        <Col xs={24} sm={12} md={6}>
-          <Card
-            style={{
-              backgroundColor: 'transparent',
-              border: '1px solid #d9d9d9',
-              borderRadius: '8px',
-              boxShadow: 'none',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '50%',
-                  backgroundColor: '#FFF7E6',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: '16px',
-                }}
-              >
-                <span role="img" aria-label="status" style={{ fontSize: '24px', color: '#FA8E21' }}>
-                  📊
-                </span>
-              </div>
-              <div>
-                <Text type="secondary">Status</Text>
-                <div>
-                  <Text strong style={{ fontSize: '17px' }}>
-                    {ibRequest.status || 'Pending'}
-                  </Text>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </Col>
-
-        <Col xs={24} sm={12} md={6}>
-          <Card
-            style={{
-              backgroundColor: 'transparent',
-              border: '1px solid #d9d9d9',
-              borderRadius: '8px',
-              boxShadow: 'none',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '50%',
-                  backgroundColor: '#FFF7E6',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: '16px',
-                }}
-              >
-                <span role="img" aria-label="code" style={{ fontSize: '24px', color: '#FA8E21' }}>
-                  🔢
-                </span>
-              </div>
-              <div>
-                <Text type="secondary">IB Code</Text>
-                <div>
-                  <Text strong style={{ fontSize: '17px' }}>
-                    {ibRequest.ibCode || 'Pending'}
-                  </Text>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </Col>
-
-        <Col xs={24} sm={12} md={6}>
-          <Card
-            style={{
-              backgroundColor: 'transparent',
-              border: '1px solid #d9d9d9',
-              borderRadius: '8px',
-              boxShadow: 'none',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '50%',
-                  backgroundColor: '#FFF7E6',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: '16px',
-                }}
-              >
-                <span
-                  role="img"
-                  aria-label="manager"
-                  style={{ fontSize: '24px', color: '#FA8E21' }}
-                >
-                  🧑‍🏫
-                </span>
-              </div>
-              <div>
-                <Text type="secondary">Approving Manager</Text>
-                <div>
-                  <Text strong style={{ fontSize: '17px' }}>
-                    {ibRequest.managerName || 'Pending'}
-                  </Text>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Referral link */}
-      <Card style={{ marginTop: '24px' }}>
-        <Title level={5}>Your Referral Link</Title>
+      {/* Stats Grid */}
+      <div className="ib-stats-container">
         <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-            marginTop: '12px',
-            position: 'relative',
-          }}
+          className={`ib-stat-card ${hoveredCard === 'status' ? 'hovered' : ''}`}
+          onMouseEnter={() => setHoveredCard('status')}
+          onMouseLeave={() => setHoveredCard(null)}
         >
-          <Text style={{ display: 'block', wordBreak: 'break-all' }}>
+          <div
+            className="ib-icon-container status"
+            style={{ backgroundColor: getStatusColor(ibRequest.status || 'Pending') + '10' }}
+          >
+            {React.cloneElement(getStatusIcon(ibRequest.status || 'Pending'), {
+              style: { fontSize: '20px', color: getStatusColor(ibRequest.status || 'Pending') },
+            })}
+          </div>
+          <Text className="ib-stat-label">Account Status</Text>
+          <Title level={4} className="ib-stat-value">
+            {ibRequest.status || 'Pending'}
+          </Title>
+        </div>
+
+        <div
+          className={`ib-stat-card ${hoveredCard === 'code' ? 'hovered' : ''}`}
+          onMouseEnter={() => setHoveredCard('code')}
+          onMouseLeave={() => setHoveredCard(null)}
+        >
+          <div className="ib-icon-container code">
+            <LinkOutlined style={{ fontSize: '20px', color: '#1a73e8' }} />
+          </div>
+          <Text className="ib-stat-label">IB Code</Text>
+          <Title level={4} className="ib-stat-value code">
+            {ibRequest.ibCode || 'Pending'}
+          </Title>
+        </div>
+
+        <div
+          className={`ib-stat-card ${hoveredCard === 'manager' ? 'hovered' : ''}`}
+          onMouseEnter={() => setHoveredCard('manager')}
+          onMouseLeave={() => setHoveredCard(null)}
+        >
+          <div className="ib-icon-container manager">
+            <UserOutlined style={{ fontSize: '20px', color: '#5f6368' }} />
+          </div>
+          <Text className="ib-stat-label">Account Manager</Text>
+          <Title level={4} className="ib-stat-value">
+            {ibRequest.managerName || 'Not Assigned'}
+          </Title>
+        </div>
+      </div>
+
+      {/* Referral Section */}
+      <div className="ib-referral-card">
+        <Title level={4} className="ib-referral-title">
+          Referral Link
+        </Title>
+        <Text className="ib-referral-description">
+          Share this link with potential clients to earn commissions on their trading activities.
+        </Text>
+
+        <div className="ib-link-box">
+          <Text className="ib-link-text">
             {ibRequest.ibCode
               ? `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`
-              : 'Pending approval'}
+              : 'Your referral link will be generated once your account is approved'}
           </Text>
           {ibRequest.ibCode && (
-            <Button className='copy-button'
-             
+            <Button
+              className="ib-copy-button"
+              icon={<CopyOutlined />}
               onClick={() => {
                 navigator.clipboard.writeText(
                   `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
                 );
                 message.success({
-                  content: 'Link copied to clipboard successfully!',
-                  icon: <span className="orange-success-icon"> ✔ </span>,
-                  className: 'orange-success-notification',
-                  duration: 3,
+                  content: 'Link copied to clipboard',
+                  icon: <CheckCircleOutlined style={{ color: '#34a853' }} />,
+                  duration: 2,
                 });
               }}
             >
@@ -314,87 +247,86 @@ const DashboardContent = () => {
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap',  }}>
-          <Button
-          
-            icon={<span>📧</span>}
-            onClick={() =>
-              window.open(
-                `mailto:?subject=Join Sigma&body=Sign up using this link: ${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
-                '_blank',
-              )
-            }
-          >
-            Share via Email
-          </Button>
+        {ibRequest.ibCode && (
+          <div className="ib-share-buttons-container">
+            <Button
+              className="ib-share-button"
+              icon={<MailOutlined />}
+              onClick={() =>
+                window.open(
+                  `mailto:?subject=Trading Platform Invitation&body=Join our trading platform using my referral link: ${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
+                  '_blank',
+                )
+              }
+            >
+              Email
+            </Button>
 
-          <Button
-            icon={<span>📱</span>}
-            onClick={() =>
-              window.open(
-                `https://api.whatsapp.com/send?text=Join%20Sigma!%20Use%20my%20referral%20link:%20${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
-                '_blank',
-              )
-            }
-          >
-            Share via WhatsApp
-          </Button>
+            <Button
+              className="ib-share-button"
+              icon={<WhatsAppOutlined />}
+              onClick={() =>
+                window.open(
+                  `https://api.whatsapp.com/send?text=Join our trading platform using my referral link: ${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
+                  '_blank',
+                )
+              }
+            >
+              WhatsApp
+            </Button>
 
-          <Button
-            icon={<span>✈️</span>}
-            onClick={() =>
-              window.open(
-                `https://t.me/share/url?url=${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}&text=Join%20Sigma%20via%20my%20referral%20link!`,
-                '_blank',
-              )
-            }
-          >
-            Share via Telegram
-          </Button>
-        </div>
-
-        {/* <Text type="secondary" style={{ marginTop: '12px', display: 'block' }}>
-          Share this link with potential clients to earn commissions.
-        </Text> */}
-      </Card>
+            <Button
+              className="ib-share-button"
+              icon={<SendOutlined />}
+              onClick={() =>
+                window.open(
+                  `https://t.me/share/url?url=${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}&text=Join our trading platform via my referral link`,
+                  '_blank',
+                )
+              }
+            >
+              Telegram
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-// Main IB component with tabs
+// Main IB component with elegant tabs
 const IB = () => {
   const [activeKey, setActiveKey] = useState('1');
 
   return (
-    <Tabs
-      activeKey={activeKey}
-      onChange={setActiveKey}
-      renderTabBar={(props, DefaultTabBar) => (
-        <div className="custom-tab-bar-wrapper">
-          <DefaultTabBar {...props} className="custom-tab-bar" />
+    <div className="ib-container">
+      <div className="ib-content-wrapper">
+        <div className="ib-custom-tabs">
+          {/* Elegant Tab Header */}
+          <div className="ib-tab-header">
+            <button
+              className={`ib-tab-button ${activeKey === '1' ? 'active' : ''}`}
+              onClick={() => setActiveKey('1')}
+            >
+              <DashboardOutlined style={{ fontSize: '16px' }} />
+              Dashboard
+            </button>
+            <button
+              className={`ib-tab-button ${activeKey === '2' ? 'active' : ''}`}
+              onClick={() => setActiveKey('2')}
+            >
+              <TeamOutlined style={{ fontSize: '16px' }} />
+              Clients
+            </button>
+          </div>
+
+          {/* Tab Content */}
+          <div className="ib-tab-content">
+            {activeKey === '1' ? <DashboardContent /> : <Clients />}
+          </div>
         </div>
-      )}
-      items={[
-        {
-          key: '1',
-          label: (
-            <div className="tab-label-wrapper">
-              <div className={`tab-label ${activeKey === '1' ? 'active' : ''}`}>Dashboard</div>
-            </div>
-          ),
-          children: <DashboardContent />,
-        },
-        {
-          key: '2',
-          label: (
-            <div className="tab-label-wrapper">
-              <div className={`tab-label ${activeKey === '2' ? 'active' : ''}`}>Clients</div>
-            </div>
-          ),
-          children: <Clients />,
-        },
-      ]}
-    />
+      </div>
+    </div>
   );
 };
 

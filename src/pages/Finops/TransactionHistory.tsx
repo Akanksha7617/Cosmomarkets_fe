@@ -108,6 +108,11 @@ export default () => {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [chatInput, setChatInput] = useState<string>('');
   const [selectedQueryStatus, setSelectedQueryStatus] = useState<string | null>(null);
+  const [showQueryForm, setShowQueryForm] = useState(false);
+
+  const toggleQueryForm = () => {
+    setShowQueryForm(!showQueryForm);
+  };
 
   // ================ TRANSACTION HISTORY METHODS ================
   useEffect(() => {
@@ -767,71 +772,83 @@ export default () => {
 
       {/* HELP DESK TAB */}
       {activeMainTab === 'helpdesk' && (
-        <div className="query-page-container">
-          {/* ====== Submit Form ====== */}
-          <h1>Submit Your Query</h1>
-          <form className="query-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="queryType" className="form-label">
-                Query Title
-              </label>
-              <div className="select-wrapper">
-                <select
-                  id="queryType"
-                  value={queryType}
-                  onChange={(e) => setQueryType(e.target.value)}
-                  required
-                  className="modern-select"
-                >
-                  <option value="" disabled>
-                    Select Query Type
-                  </option>
-                  <option value="Deposit">Deposit</option>
-                  <option value="Withdraw">Withdraw</option>
-                  <option value="Technical">Technical</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="message" className="form-label">
-                Message
-              </label>
-              <textarea
-                id="message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={8}
-                maxLength={2000}
-                placeholder="Type your message here (200 words max)"
-                required
-                className="modern-textarea"
-              />
-            </div>
-            <button type="submit" className="submit-btn">
-              <span>Submit Query</span>
-              <svg
-                className="btn-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
+      <div className="query-page-container">
+        {showQueryForm ? (
+          // When showQueryForm is true, only show the form
+          <div className="query-form-container">
+            <button className="view-btn" onClick={toggleQueryForm}>
+              ← Back to Tickets
             </button>
-          </form>
+            <h1>Submit Your Query</h1>
+            <form className="query-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="queryType" className="form-label">
+                  Query Title
+                </label>
 
-          {/* ====== Queries Table ====== */}
+                <div className="select-wrapper">
+                  <select
+                    id="queryType"
+                    value={queryType}
+                    onChange={(e) => setQueryType(e.target.value)}
+                    required
+                    className="modern-select"
+                  >
+                    <option value="" disabled>
+                      Select Query Type
+                    </option>
+                    <option value="Deposit">Deposit</option>
+                    <option value="Withdraw">Withdraw</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label htmlFor="message" className="form-label">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={8}
+                  maxLength={2000}
+                  placeholder="Type your message here (200 words max)"
+                  required
+                  className="modern-textarea"
+                />
+              </div>
+              <div className="form-buttons">
+                <button type="submit" className="submit-btn">
+                  <span>Submit Query</span>
+                  <svg
+                    className="btn-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          // When showQueryForm is false, show the queries table
           <div className="queries-table-container">
             <div className="filters-wrapper">
               <div className="filters-container">
+                <button className="view-btn" onClick={toggleQueryForm}>
+                  + New Ticket
+                </button>
                 {/* Date Range Picker */}
                 <div className="date-filter">
                   <RangePicker
@@ -908,6 +925,7 @@ export default () => {
             {/* Queries Table */}
             <div className="queries-list">
               <h2>Your Queries</h2>
+
               <div className="table-container">
                 <table className="queries-table">
                   <thead>
@@ -917,56 +935,54 @@ export default () => {
                       <th>Query Type</th>
                       <th>Status</th>
                       <th>Issue Date</th>
-                      {/* <th>Last Updated</th> */}
                       <th>Resolved Date</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                {queries.length > 0 ? (
-                  queries.map((q) => (
-                    <tr key={q.id}>
-                      <td>{q.id}</td>
-                      <td>{q.name}</td>
-                      <td>{q.queryType}</td>
-                      <td>
-                        <span
-                          style={{
-                            padding: '3px 8px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            backgroundColor: q.status === 'Resolved' ? '#c6f6d5' : '#feebc8',
-                            color: q.status === 'Resolved' ? '#22543d' : '#7b341e',
-                          }}
-                        >
-                          {q.status}
-                        </span>
-                      </td>
-                      <td>{formatDate(q.createdAt)}</td>
-                      {/* <td>{formatDate(q.updatedAt)}</td> */}
-                      <td>{q.status === 'Resolved' ? formatDate(q.resolvedAt) : '-'}</td>
-                      <td>
-                        <button className="view-btn" onClick={() => handleView(q.id)}>
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={9} style={{ textAlign: 'center' }}>
-                      {isRefreshing
-                        ? 'Loading queries...'
-                        : 'No queries found matching your filters.'}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
+                    {queries.length > 0 ? (
+                      queries.map((q) => (
+                        <tr key={q.id}>
+                          <td>{q.id}</td>
+                          <td>{q.name}</td>
+                          <td>{q.queryType}</td>
+                          <td>
+                            <span
+                              style={{
+                                padding: '3px 8px',
+                                borderRadius: '12px',
+                                fontSize: '12px',
+                                backgroundColor: q.status === 'Resolved' ? '#c6f6d5' : '#feebc8',
+                                color: q.status === 'Resolved' ? '#22543d' : '#7b341e',
+                              }}
+                            >
+                              {q.status}
+                            </span>
+                          </td>
+                          <td>{formatDate(q.createdAt)}</td>
+                          <td>{q.status === 'Resolved' ? formatDate(q.resolvedAt) : '-'}</td>
+                          <td>
+                            <button className="view-btn" onClick={() => handleView(q.id)}>
+                              View
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={9} style={{ textAlign: 'center' }}>
+                          {isRefreshing
+                            ? 'Loading queries...'
+                            : 'No queries found matching your filters.'}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
                 </table>
               </div>
 
               {/* Pagination */}
-              <div className="pagination-container">
+               <div className="pagination-container">
                 <Pagination
                   current={filterParams.pageNumber}
                   pageSize={filterParams.pageSize}
@@ -976,6 +992,8 @@ export default () => {
                 />
               </div>
             </div>
+          </div>
+        )}
 
             {/* Chat Panel */}
             {selectedQueryId !== null && (
@@ -1068,7 +1086,7 @@ export default () => {
               </div>
             )}
           </div>
-        </div>
+      
       )}
     </div>
   );
