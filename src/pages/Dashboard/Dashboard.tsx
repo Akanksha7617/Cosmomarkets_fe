@@ -67,52 +67,52 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
     }
   };
 
-  useEffect(() => {
+ useEffect(() => {
     const tabs =
       appUser.UserDtos?.map((u) => {
         return {
           key: u.Login,
           title: u.Login,
           content: (
-            <div className="account-card-wrapper">
-              <div className="account-top-strip"></div>
-              <div className="account-container">
+            <div className="live-account-card-wrapper">
+              <div className="live-account-top-strip"></div>
+              <div className="live-account-container">
                 {/* Header Row */}
-                <div className="account-header">
-                  <h3 className="account-title">Live Account</h3>
+                <div className="live-account-header">
+                  <h3 className="live-account-title">Live Account</h3>
                   <button className="arrow-button" onClick={() => setModalVisible(true)}>
                     +MT5 Sub Account
                   </button>
                 </div>
 
                 {/* Account Info Grid */}
-                <div className="account-grid">
-                  <div className="account-field">
+                <div className="live-account-grid">
+                  <div className="live-account-field">
                     <div className="label">Account ID</div>
                     <div className="value bolda">{u.Login}</div>
                   </div>
-                  <div className="account-field">
+                  <div className="live-account-field">
                     <div className="label">Balance</div>
                     <div className="value bolda">${u.Balance?.toFixed(2) ?? '0.00'}</div>
                   </div>
-                  <div className="account-field">
+                  <div className="live-account-field">
                     <div className="label">Equity</div>
                     <div className="value">${u.EquityPrevDay?.toFixed(2) ?? '0.00'}</div>
                   </div>
-                  <div className="account-field">
+                  <div className="live-account-field">
                     <div className="label">Free Margin</div>
                     <div className="value">${u.MarginFree?.toFixed(2) ?? '0.00'}</div>
                   </div>
 
-                  <div className="account-field">
+                  <div className="live-account-field">
                     <div className="label">Margin</div>
                     <div className="value">${u.Margin?.toFixed(2) ?? '0.00'}</div>
                   </div>
-                  <div className="account-field">
+                  <div className="live-account-field">
                     <div className="label">Margin Level</div>
                     <div className="value">{u.MarginLevel?.toFixed(2) ?? '0.00'}%</div>
                   </div>
-                  <div className="account-field">
+                  <div className="live-account-field">
                     <div className="label">Agent Code</div>
                     <div className="value">{appUser.Promo || '--'}</div>
                   </div>
@@ -196,7 +196,7 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
         </Space>
       </Row>
 
-      <Row justify="space-between">
+       <Row justify="space-between">
         <Col>
           <ProCard>
             <Tabs className="tabs">
@@ -626,71 +626,76 @@ const Dashboard: React.FC = () => {
               {`@ ${userData.FirstName} ${userData.LastName}`}
             </div> */}
             <PageContainer>
-              <div className="unified-card-container">
-                <div className="unified-card">
-                  {/* Header Section: Wallet ID and Balance side by side */}
-                  <div className="unified-header">
-                    <div className="wallet-id-balance">
-                      <div>
-                        <div className="unified-label">WALLET ID</div>
-                        <div className="unified-value">{`# ${userData.Wallet?.Id} USD`}</div>
+              <div className="dashboard-main-layout">
+                
+                {/* Left Section - Wallet Card */}
+                <div className="dashboard-left-section">
+                  <div className="unified-card-container">
+                    <div className="unified-card">
+                      {/* Header Section: Wallet ID and Balance side by side */}
+                      <div className="unified-header">
+                        <div className="wallet-id-balance">
+                          <div>
+                            <div className="unified-label">WALLET ID</div>
+                            <div className="unified-value">{`# ${userData.Wallet?.Id} USD`}</div>
+                          </div>
+                          <div>
+                            <div className="unified-label">WALLET BALANCE</div>
+                            <div className="unified-value">${userData.Wallet?.Balance ?? '0.00'}</div>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="unified-label">WALLET BALANCE</div>
-                        <div className="unified-value">${userData.Wallet?.Balance ?? '0.00'}</div>
+
+                      {/* Summary Section */}
+                      <div className="unified-summary">
+                        <div className="unified-summary-grid">
+                          <div className="unified-summary-item">
+                            <label>Total Deposit</label>
+                            <span>${data.totalDeposit}</span>
+                          </div>
+                          <div className="unified-summary-item">
+                            <label>Total Withdrawal</label>
+                            <span>${data.totalWithdraw}</span>
+                          </div>
+                          <div className="unified-summary-item">
+                            <label>Total MT5 Deposit</label>
+                            <span>${data.totalMt5Deposit}</span>
+                          </div>
+                          <div className="unified-summary-item">
+                            <label>Total MT5 Withdrawal</label>
+                            <span>${data.totalMt5Withdraw}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="unified-buttons">
+                        <button
+                          onClick={() => history.push('/finops/deposit')}
+                          className="unified-btn deposit"
+                        >
+                          ↓ Deposit
+                        </button>
+                        <button
+                          onClick={() => history.push('/finops/withdraw')}
+                          className="unified-btn withdraw"
+                        >
+                          ↑ Withdraw
+                        </button>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Button Section */}
-
-                  {/* Summary Section */}
-                  <div className="unified-summary">
-                    <div className="unified-summary-grid">
-                      <div className="unified-summary-item">
-                        <label>Total Deposit</label>
-                        <span>${data.totalDeposit}</span>
-                      </div>
-                      <div className="unified-summary-item">
-                        <label>Total Withdrawal</label>
-                        <span>${data.totalWithdraw}</span>
-                      </div>
-                      <div className="unified-summary-item">
-                        <label>Total MT5 Deposit</label>
-                        <span>${data.totalMt5Deposit}</span>
-                      </div>
-                      <div className="unified-summary-item">
-                        <label>Total MT5 Withdrawal</label>
-                        <span>${data.totalMt5Withdraw}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="unified-buttons">
-                    <button
-                      onClick={() => history.push('/finops/deposit')}
-                      className="unified-btn deposit"
-                    >
-                      ↓ Deposit
-                    </button>
-                    <button
-                      onClick={() => history.push('/finops/withdraw')}
-                      className="unified-btn withdraw"
-                    >
-                      ↑ Withdraw
-                    </button>
                   </div>
                 </div>
+
+                {/* Right Section - Live Accounts */}
+                <div className="dashboard-right-section">
+                  <Tabs defaultActiveKey="1" items={tabs} onChange={onTabChange} />
+                </div>
+                
               </div>
 
               <Divider />
 
-              {/* MOVED: Live Accounts section */}
-              <Tabs defaultActiveKey="1" items={tabs} onChange={onTabChange} />
-
-              <Divider />
-
-              {/* MOVED: Last Five Wallet Transactions section */}
+              {/* Last Five Wallet Transactions section */}
               <Title level={5} style={{ fontFamily: 'math' }}>
                 Last Five Wallet Transactions
               </Title>
