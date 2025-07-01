@@ -1,9 +1,15 @@
 import { api } from '@/components/common/api';
 import { ProofRequestModel, SignUpRequest } from '@/generated';
-import { LoadingOutlined, LockOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  LoadingOutlined,
+  LockOutlined,
+  PlusOutlined,
+  SafetyCertificateOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { history } from '@umijs/max';
-import type { FormInstance, TabsProps } from 'antd';
-import { Button, Card, Checkbox, Form, Input, message, Tabs, Upload } from 'antd';
+import type { FormInstance } from 'antd';
+import { Button, Card, Checkbox, Form, Input, message, Upload, Space } from 'antd';
 import Select from 'antd/es/select';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import React, { useEffect, useState } from 'react';
@@ -48,14 +54,6 @@ const beforeUpload = (file: RcFile) => {
   return isJpgOrPng && isLt2M;
 };
 
-// const [step2Visible, setStep2Visible] = useState(false)
-
-// function handleChange(value: any, option: DefaultOptionType | DefaultOptionType[]): void {
-//     console.log("onSelect")
-//     setStep2Visible(true)
-
-//throw new Error('Function not implemented.');
-//   }
 type LayoutType = Parameters<typeof Form>[0]['layout'];
 
 const ProfileSettings: React.FC = () => {
@@ -69,6 +67,8 @@ const ProfileSettings: React.FC = () => {
   const [step3Visible, setStep3Visible] = useState(false);
   const [step4Visible, setStep4Visible] = useState(false);
   const [step5Visible, setStep5Visible] = useState(false);
+  const [activeTab, setActiveTab] = useState('1');
+  const [isMobile, setIsMobile] = useState(false);
 
   const [backpage, setBackPage] = useState(false);
 
@@ -104,8 +104,27 @@ const ProfileSettings: React.FC = () => {
     setFormLayout(layout);
   };
 
-  const formItemLayout =
-    formLayout === 'horizontal' ? { labelCol: { span: 4 }, wrapperCol: { span: 14 } } : null;
+  // Check for mobile screen size on mount and window resize
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth <= 500);
+    };
+    
+    // Initial check
+    checkIsMobile();
+    
+    // Set up event listener for window resize
+    window.addEventListener('resize', checkIsMobile);
+    
+    // Clean up event listener
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  const formItemLayout = isMobile
+    ? null
+    : formLayout === 'horizontal'
+    ? { labelCol: { span: 4 }, wrapperCol: { span: 14 } }
+    : null;
 
   const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
     setFileList(newFileList);
@@ -149,17 +168,11 @@ const ProfileSettings: React.FC = () => {
         Submit
       </Button>
     );
-    const uploadButton = (
-      <div>
-        <PlusOutlined />
-        <div style={{ marginTop: 8 }}>Upload</div>
-      </div>
-    );
   };
+
   const handleButton = () => {
     setIsFlipped(!isFlipped);
   };
-  // const history = useHistory();
 
   function handleSubmit() {
     console.log('onClick');
@@ -196,13 +209,7 @@ const ProfileSettings: React.FC = () => {
     setStep3Visible(false);
     setStep4Visible(false);
   }
-  //   export type ConView = {
-  //     Status: Status,
-  //     color: string,
-  //     text: string,
-  //     desc: string,
-  //     image: string
-  //   }
+
   const descId =
     'Please Upload An Identification Documents(Passport/National Id/Driving\n' +
     '          License)in Colour Where Your Full Name Is Display';
@@ -210,7 +217,6 @@ const ProfileSettings: React.FC = () => {
   const descAddress =
     'Proof Of Address Is not Older Than 180 Days(Electric Bill/Bank Statement/Other\n' +
     '          Official Document With Your Name And Address On It)';
-  // const Verification: React.FC = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -241,9 +247,6 @@ const ProfileSettings: React.FC = () => {
         const ext = r.addressProofName.split('.').pop().toLowerCase();
         addressImageDataUrl = `data:image/${ext};base64,${r.addressProof}`;
       }
-      /*  if (r.status === Status.REQUESTED) {
-                setIsRequested(true);
-              } */
       setManagerComment(r.managerComment || ``);
     }
 
@@ -293,7 +296,6 @@ const ProfileSettings: React.FC = () => {
       console.log(info.fileList);
     },
   };
-  
 
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -311,14 +313,9 @@ const ProfileSettings: React.FC = () => {
   };
 
   const handleOk = () => {
-    // setLoading(true)
     form
       .validateFields()
       .then(async (values) => {
-        //const formData = new FormData();
-        // formData.append('userName', values.userName);
-        // formData.append('managerName', values.managerName);
-
         const idFile = idFileList[0];
         const addrFile = addressFileList[0];
 
@@ -331,11 +328,9 @@ const ProfileSettings: React.FC = () => {
         await api.proof.postProofRequest(formData);
         init();
       })
-      .catch((e) => console.log(e))
-      .finally(() => {
-        // setLoading(false)
-      });
+      .catch((e) => console.log(e));
   };
+
   async function getDetails() {
     var record = await api.app.getMe();
     const password = record;
@@ -353,77 +348,99 @@ const ProfileSettings: React.FC = () => {
   }
 
   const handleOkForm = () => {
-    // setLoading(false)
-    form
-      .validateFields()
-      .then(async (values) => {
-        await api.app.putMe({ ...values });
-        getDetails().then();
-      })
-      .finally(() => {
-        // setLoading(false)
-      });
+    form.validateFields().then(async (values) => {
+      await api.app.putMe({ ...values });
+      getDetails().then();
+    });
   };
 
-  const items: TabsProps['items'] = [
+  // Tabs items with custom vertical styling
+  const tabItems = [
     {
       key: '1',
-      label: (
-        <div className="custom-tab-horizontal">
-          <LockOutlined className="tab-icon-left" />
-          <div className="tab-content">
-            <div className="tab-title">My Account</div>
-            <div className="tab-subtext">Update your profile details</div>
-          </div>
-        </div>
-      ),
-      children: <MyDetails />,
+      component: <MyDetails />,
+      icon: <UserOutlined />,
+      title: 'My Account',
+      subtitle: 'Update your profile details',
     },
     {
       key: '2',
-      label: (
-        <div className="custom-tab-horizontal">
-          <LockOutlined className="tab-icon-left" />
-          <div className="tab-content">
-            <div className="tab-title">Approval</div>
-            <div className="tab-subtext">Submit ID and address proof</div>
-          </div>
-        </div>
-      ),
-      children: <Verification />,
+      component: <Verification />,
+      icon: <SafetyCertificateOutlined />,
+      title: 'Approval',
+      subtitle: 'Submit ID and address proof',
     },
     {
       key: '3',
-      label: (
-        <div className="custom-tab-horizontal">
-          <LockOutlined className="tab-icon-left" />
-          <div className="tab-content">
-            <div className="tab-title">Reset Password</div>
-            <div className="tab-subtext">Change your client area password</div>
-          </div>
-        </div>
-      ),
-      children: <Password />,
+      component: <Password />,
+      icon: <LockOutlined />,
+      title: 'Reset Password',
+      subtitle: 'Change your client area password',
     },
   ];
 
+  // Handle tab change
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+    onChange(key);
+  };
+
+  // Get the current active component
+  const getActiveComponent = () => {
+    return tabItems.find((item) => item.key === activeTab)?.component;
+  };
+
   return (
     <>
-      <>
-        {loading ? (
-          <CustomLoader />
-        ) : (
-          <Card style={{ backgroundColor: '#f7f7f3' }} className="profile-setting-parent">
-            <h2>ACCOUNT CUSTOMIZATION</h2>
-            <Tabs
-              defaultActiveKey="1"
-              items={items}
-              onChange={onChange}
-              indicatorSize={(origin) => origin - 16}
-            />
-          </Card>
-        )}
-      </>
+      {loading ? (
+        <CustomLoader />
+      ) : (
+        <Card style={{ backgroundColor: '#f7f7f3' }} className="profile-setting-parent">
+          <h2>Profile</h2>
+
+          <div className="vertical-tabs-wrapper" style={{ display: 'flex' }}>
+            {/* Sidebar Navigation */}
+            <div className="vertical-tabs-container" style={{ width: isMobile ? '100%' : '250px', borderRight: isMobile ? 'none' : '1px solid #e8e8e8' }}>
+              {/* <div className="vertical-tabs-header" style={{ padding: isMobile ? '10px' : '15px',  color: 'black' }}>
+                <UserOutlined className="header-icon" />
+                <span></span>
+              </div> */}
+              <div className="vertical-tab-list">
+                {tabItems.map((item) => (
+                  <div
+                    key={item.key}
+                    className={`vertical-tab-item ${activeTab === item.key ? 'active' : ''}`}
+                    onClick={() => handleTabChange(item.key)}
+                    style={{
+                      padding: isMobile ? '8px 12px' : '15px',
+                      borderBottom: '1px solid #e8e8e8',
+                      backgroundColor: activeTab === item.key ? '#f8f8f8' : 'transparent',
+                    }}
+                  >
+                    <div className="custom-tab-vertical" style={{ display: 'flex', alignItems: 'center' }}>
+                      {item.icon}
+                      <div className="tab-content" style={{ marginLeft: isMobile ? '0' : '10px' }}>
+                        <div className="tab-title">{item.title}</div>
+                        <div className="tab-subtext" style={{ fontSize: '12px', color: '#888', display: isMobile ? 'none' : 'block' }}>
+                          {item.subtitle}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Content Area */}
+            <div className="vertical-tabs-content" style={{ 
+              width: isMobile ? '100%' : 'calc(100% - 250px)', 
+              padding: isMobile ? '10px 0' : '15px' 
+            }}>
+              {getActiveComponent()}
+            </div>
+          </div>
+        </Card>
+      )}
 
       {step5Visible && (
         <>
@@ -442,37 +459,40 @@ const ProfileSettings: React.FC = () => {
               headStyle={{ backgroundColor: '#f89d42', color: 'white' }}
             >
               <Form.Item label="Please select which country You are operating your IB Program from:">
-                <Select>
+                <Select placeholder="Select country">
                   <Select.Option value="demo">Demo</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item label="What is the main region you will be referring clients from?">
-                <Select>
+                <Select placeholder="Select region">
                   <Select.Option value="demo">Demo</Select.Option>
                 </Select>
               </Form.Item>
               <p>
                 Do you hold relevant regulatory/licensing permissions in the EEA to refer clients?
               </p>
-              <Form.Item label="Yes">
-                <Checkbox></Checkbox>
-              </Form.Item>
-              <Form.Item label="No">
-                <Checkbox></Checkbox>
-              </Form.Item>
+              <Space direction={isMobile ? 'vertical' : 'horizontal'} style={{ width: '100%' }}>
+                <Form.Item label="Yes">
+                  <Checkbox></Checkbox>
+                </Form.Item>
+                <Form.Item label="No">
+                  <Checkbox></Checkbox>
+                </Form.Item>
+              </Space>
             </Card>
             <Card
               title="Program Information"
               headStyle={{ backgroundColor: '#f89d42', color: 'white' }}
             >
-              <div className="img-para">
-                <div className="program-img">
+              <div className="img-para" style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}>
+                <div className="program-img" style={{ width: isMobile ? '100%' : '30%', textAlign: isMobile ? 'center' : 'left' }}>
                   <img
                     src="./images/program-information.png"
                     alt="Image"
                     style={{
-                      width: 190,
-                      height: 200,
+                      width: isMobile ? '150px' : '190px',
+                      height: 'auto',
+                      maxHeight: '200px',
                       verticalAlign: 'bottom',
                       marginBottom: 20,
                       marginTop: 20,
@@ -480,19 +500,19 @@ const ProfileSettings: React.FC = () => {
                   />
                 </div>
 
-                <div className="programinfo">
+                <div className="programinfo" style={{ width: isMobile ? '100%' : '70%' }}>
                   <Form.Item label="What type of IB program do you operate?">
-                    <Select>
+                    <Select placeholder="Select program type">
                       <Select.Option value="demo">Demo</Select.Option>
                     </Select>
                   </Form.Item>
                   <Form.Item label="Do you hold a regulatory license/authorisation?">
-                    <Select>
+                    <Select placeholder="Select option">
                       <Select.Option value="demo">Demo</Select.Option>
                     </Select>
                   </Form.Item>
                   <Form.Item label="What is the frequency of communication you have with clients?">
-                    <Select>
+                    <Select placeholder="Select frequency">
                       <Select.Option value="demo">Demo</Select.Option>
                     </Select>
                   </Form.Item>
@@ -526,7 +546,7 @@ const ProfileSettings: React.FC = () => {
                 </p>
               </div>
               <Form.Item>
-                <Button type="button" className="submit-btn">
+                <Button type="button" className="submit-btn" style={{ width: isMobile ? '100%' : 'auto' }}>
                   Submit
                 </Button>
               </Form.Item>

@@ -1,6 +1,6 @@
 import { api } from '@/components/common/api';
 import { AccountType, SignUpRequest } from '@/generated';
-import { Button, Card, Col, Divider, Form, Input, message, Row, Select, Tabs } from 'antd';
+import { Avatar, Button, Card, Col, Divider, Form, Input, message, Row, Select, Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
 import '../../common.css';
 
@@ -10,7 +10,8 @@ const MyDetails: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isFormChanged, setIsFormChanged] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('1');
-  const [isNextAction, setIsNextAction] = useState(false); // New state to track Next action
+  const [isNextAction, setIsNextAction] = useState(false);
+  const [userInitial, setUserInitial] = useState('');
 
   useEffect(() => {
     getDetails();
@@ -28,25 +29,30 @@ const MyDetails: React.FC = () => {
 
     form.setFieldsValue(s);
     form.setFieldValue('logins', mtClient?.login);
+
+    // Set the user initial for the avatar
+    if (record.firstName) {
+      setUserInitial(record.firstName.charAt(0).toUpperCase());
+    }
   }
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
     if (!isEditing) {
-      setIsFormChanged(false); // Reset form change detection when exiting edit mode
+      setIsFormChanged(false);
     }
   };
 
   const handleNextClick = () => {
-    setIsNextAction(true); // Indicate that the Next button was clicked
+    setIsNextAction(true);
     const nextTab = (parseInt(activeTab) + 1).toString();
     setActiveTab(nextTab);
   };
 
   const handleOk = async () => {
     if (isNextAction) {
-      setIsNextAction(false); // Reset the Next action state
-      return; // Skip the update logic when Next button is clicked
+      setIsNextAction(false);
+      return;
     }
 
     setLoading(true);
@@ -69,17 +75,22 @@ const MyDetails: React.FC = () => {
       if (response.message.includes('User Details Updated')) {
         message.success({
           content: response.message,
-          icon: <span className="orange-success-icon"> ✓ </span>,
-          className: 'orange-success-notification',
+          icon: <span className="success-icon"> ✓ </span>,
+          className: 'success-notification',
           duration: 3,
         });
         setIsEditing(false);
-        setIsFormChanged(false); // Reset change state after successful update
+        setIsFormChanged(false);
+
+        // Update user initial after successful update
+        if (values.firstName) {
+          setUserInitial(values.firstName.charAt(0).toUpperCase());
+        }
       } else {
         message.error({
           content: response.message,
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
+          icon: <span className="error-icon"> ✘ </span>,
+          className: 'error-notification',
           duration: 3,
         });
       }
@@ -87,8 +98,8 @@ const MyDetails: React.FC = () => {
     } catch (error) {
       message.error({
         content: 'An error occurred during the update. Please try again later.',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
+        icon: <span className="error-icon"> ✘ </span>,
+        className: 'error-notification',
         duration: 3,
       });
     } finally {
@@ -97,18 +108,30 @@ const MyDetails: React.FC = () => {
   };
 
   const handleFieldsChange = () => {
-    setIsFormChanged(true); // Mark the form as changed when any field is edited
+    setIsFormChanged(true);
   };
 
   return (
-    <>
-      <div className="btn-at-end">
-        {/* <Button type="button" onClick={() => history.push('/dashboard')} className="back-btn">
-          Back
-        </Button> */}
-      </div>
-      <Card className="mydetail-card">
-        <h2 className="profile-heading">My Account</h2>
+    <div className="profile-container">
+      <Card className="profile-card">
+        <div className="profile-header">
+          <div className="profile-info">
+            <div className="avatar-container">
+              <Avatar className="user-avatar" size={80}>
+                {userInitial}
+              </Avatar>
+            </div>
+            <div className="user-info">
+              <h2 className="user-name">MY ACCOUNT</h2>
+              {form.getFieldValue('logins') && (
+              <span className="account-badge">
+              {form.getFieldValue('firstName')} {form.getFieldValue('lastName')}
+            </span>
+              )}
+            </div>
+          </div>
+        </div>
+
         <Form
           form={form}
           onFinish={handleOk}
@@ -118,12 +141,13 @@ const MyDetails: React.FC = () => {
         >
           <Tabs
             activeKey={activeTab}
-            onChange={(key) => setActiveTab(key)} // Handle tab changes
+            onChange={(key) => setActiveTab(key)}
             defaultActiveKey="1"
             type="card"
+            className="profile-tabs"
           >
             <Tabs.TabPane tab="Personal Info" key="1">
-              <Row gutter={16}>
+              <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
                     name="firstName"
@@ -147,9 +171,10 @@ const MyDetails: React.FC = () => {
                     <Input
                       placeholder="John"
                       readOnly={!isEditing}
+                      className="form-input"
                       onChange={(e) => {
                         let value = e.target.value.replace(/[<>]/g, '');
-                        value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(); // Capitalize first letter
+                        value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
                         form.setFieldValue('firstName', value);
                       }}
                     />
@@ -179,6 +204,7 @@ const MyDetails: React.FC = () => {
                     <Input
                       placeholder="Doe"
                       readOnly={!isEditing}
+                      className="form-input"
                       onChange={(e) => {
                         let value = e.target.value.replace(/[<>]/g, '');
                         value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
@@ -189,7 +215,7 @@ const MyDetails: React.FC = () => {
                 </Col>
               </Row>
 
-              <Row gutter={16}>
+              <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
                     name="email"
@@ -200,7 +226,12 @@ const MyDetails: React.FC = () => {
                       { type: 'email', message: 'Please enter a valid email address.' },
                     ]}
                   >
-                    <Input placeholder="example@mail.com" readOnly={!isEditing} />
+                    <Input
+                      placeholder="example@mail.com"
+                      readOnly={!isEditing}
+                      className="form-input"
+                      prefix={<span className="input-icon">✉️</span>}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -213,16 +244,17 @@ const MyDetails: React.FC = () => {
                     <Input
                       placeholder="Phone Number"
                       readOnly={!isEditing}
+                      className="form-input"
+                      prefix={<span className="input-icon">📞</span>}
                       onKeyPress={(e) => {
-                        // Allow only numbers
                         if (!/^\d$/.test(e.key)) {
-                          e.preventDefault(); // Prevent non-numeric input
+                          e.preventDefault();
                         }
                       }}
                       onPaste={(e) => {
                         const pastedText = e.clipboardData.getData('Text');
                         if (!/^\d+$/.test(pastedText) || pastedText.length > 10) {
-                          e.preventDefault(); // Prevent invalid pasted content
+                          e.preventDefault();
                         }
                       }}
                     />
@@ -230,7 +262,7 @@ const MyDetails: React.FC = () => {
                 </Col>
               </Row>
 
-              <Row gutter={16}>
+              <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
                     name="password"
@@ -245,14 +277,18 @@ const MyDetails: React.FC = () => {
                       },
                     ]}
                   >
-                    <Input.Password placeholder="••••••••" readOnly={!isEditing} />
+                    <Input.Password
+                      placeholder="••••••••"
+                      readOnly={!isEditing}
+                      className="form-input"
+                    />
                   </Form.Item>
                 </Col>
               </Row>
             </Tabs.TabPane>
 
             <Tabs.TabPane tab="Mt5 Accounts" key="2">
-              <Row gutter={16}>
+              <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
                     name="logins"
@@ -260,7 +296,7 @@ const MyDetails: React.FC = () => {
                     className="form-item"
                     rules={[{ required: true, message: 'MT5 Account is required.' }]}
                   >
-                    <Input disabled />
+                    <Input disabled className="form-input" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -270,11 +306,11 @@ const MyDetails: React.FC = () => {
                     className="form-item"
                     rules={[{ required: true, message: 'Master Password is required.' }]}
                   >
-                    <Input.Password />
+                    <Input.Password className="form-input" />
                   </Form.Item>
                 </Col>
               </Row>
-              <Row gutter={16}>
+              <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
                     name="investorPassword"
@@ -282,14 +318,14 @@ const MyDetails: React.FC = () => {
                     className="form-item"
                     rules={[{ required: true, message: 'Investor Password is required.' }]}
                   >
-                    <Input.Password />
+                    <Input.Password className="form-input" />
                   </Form.Item>
                 </Col>
               </Row>
             </Tabs.TabPane>
 
             <Tabs.TabPane tab="Additional Info" key="3">
-              <Row gutter={16}>
+              <Row gutter={24}>
                 <Col span={12}>
                   <Form.Item
                     name="promo"
@@ -297,7 +333,7 @@ const MyDetails: React.FC = () => {
                     className="form-item"
                     rules={[{ required: true, message: 'Please enter your promo code.' }]}
                   >
-                    <Input disabled />
+                    <Input disabled className="form-input" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -305,13 +341,15 @@ const MyDetails: React.FC = () => {
                     name="region"
                     label="Region"
                     className="form-item"
-                    rules={[{ required: true, message: 'Please select your region.' }]}
+                    rules={[{ required: true, message: 'Please select your country.' }]}
                   >
                     <Select
-                      placeholder="Select Region"
+                      placeholder="Select Country"
                       disabled={!isEditing}
                       showSearch
                       optionFilterProp="children"
+                      className="form-select"
+                      prefix={<span className="input-icon">🌎</span>}
                     >
                       {[
                         'United Arab Emirates',
@@ -333,33 +371,18 @@ const MyDetails: React.FC = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              {/* <Row gutter={16}>
-                <Col span={24}>
-                  <Form.Item name="isEnabled" valuePropName="checked" className="form-switch">
-                    <Switch />
-                  </Form.Item>
-                </Col>
-              </Row> */}
             </Tabs.TabPane>
           </Tabs>
 
-          <Divider />
-          <Form.Item className="form-item-container">
+          <Divider className="form-divider" />
+          <div className="form-actions">
             {isEditing && (
               <>
-                <Button
-                  type="button"
-                  onClick={handleEditClick}
-                  className="mydetails-btn cancel-btn"
-                >
+                <Button type="button" onClick={handleEditClick} className="action-btn cancel-btn">
                   Cancel
                 </Button>
                 {activeTab !== '3' && (
-                  <Button
-                    type="button"
-                    onClick={handleNextClick}
-                    className="mydetails-btn next-btn"
-                  >
+                  <Button type="button" onClick={handleNextClick} className="action-btn next-btn">
                     Next
                   </Button>
                 )}
@@ -368,7 +391,7 @@ const MyDetails: React.FC = () => {
                     type="submit"
                     htmlType="submit"
                     loading={loading}
-                    className="mydetails-btn update-btn"
+                    className="action-btn update-btn"
                   >
                     Update
                   </Button>
@@ -376,14 +399,15 @@ const MyDetails: React.FC = () => {
               </>
             )}
             {!isEditing && (
-              <Button type="button" onClick={handleEditClick} className="mydetails-btn">
+              <Button type="button" onClick={handleEditClick} className="action-btn edit-btn">
                 Edit Profile
               </Button>
             )}
-          </Form.Item>
+          </div>
         </Form>
       </Card>
-    </>
+    </div>
   );
 };
+
 export default MyDetails;

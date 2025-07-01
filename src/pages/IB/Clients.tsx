@@ -105,7 +105,9 @@ const Clients: React.FC = () => {
       key: 'name',
       render: (_, record) => (
         <div>
-          <div style={{ fontWeight: 500 }}>{`${record.firstName} ${record.lastName}`}</div>
+          <div style={{ fontWeight: 500, color: '#1890ff' }}>
+            {`${record.firstName} ${record.lastName}`}
+          </div>
           <div style={{ color: '#8c8c8c', fontSize: '12px' }}>{record.email}</div>
         </div>
       ),
@@ -116,7 +118,7 @@ const Clients: React.FC = () => {
       render: (_, record) => (
         <div>
           <div style={{ fontWeight: 500 }}>
-            {`${record.wallet?.balance || 0} USD`}
+            {`$${(record.wallet?.balance || 0).toFixed(2)}`}
           </div>
         </div>
       ),
@@ -126,7 +128,7 @@ const Clients: React.FC = () => {
       key: 'totalWithdraw',
       render: (_, record) => (
         <div>
-          <div style={{ fontWeight: 500 }}>{`${record.totalWithdraw || 0} USD`}</div>
+          <div style={{ fontWeight: 500 }}>{`$${(record.totalWithdraw || 0).toFixed(2)}`}</div>
         </div>
       ),
     },
@@ -135,27 +137,56 @@ const Clients: React.FC = () => {
       key: 'totalDeposit',
       render: (_, record) => {
         const amount = record.totalDeposit || 0;
-        return `${amount.toFixed(2)} USD`;
+        return (
+          <div style={{ fontWeight: 500 }}>
+            {`$${amount.toFixed(2)}`}
+          </div>
+        );
       },
-      align: 'right',
     },
     {
       title: 'Total MT5 Deposit',
       key: 'totalMt5Deposit',
       render: (_, record) => {
         const amount = record.totalMt5Deposit || 0;
-        return `${amount.toFixed(2)} USD`;
+        return (
+          <div style={{ fontWeight: 500 }}>
+            {`$${amount.toFixed(2)}`}
+          </div>
+        );
       },
-      align: 'right',
     },
     {
       title: 'Total MT5 Withdraw',
       key: 'totalMt5Withdraw',
       render: (_, record) => {
         const amount = record.totalMt5Withdraw || 0;
-        return `${amount.toFixed(2)} USD`;
+        return (
+          <div style={{ fontWeight: 500 }}>
+            {`$${amount.toFixed(2)}`}
+          </div>
+        );
       },
-      align: 'right',
+    },
+    {
+      title: 'Status',
+      key: 'status',
+      render: (_, record) => (
+        <Tag 
+          color="#faad14"
+          style={{
+            backgroundColor: '#fff7e6',
+            borderColor: '#ffd666',
+            color: '#d48806',
+            borderRadius: '6px',
+            fontSize: '12px',
+            fontWeight: 500,
+            padding: '2px 8px'
+          }}
+        >
+          Active
+        </Tag>
+      ),
     },
   ];
 
@@ -219,7 +250,53 @@ const Clients: React.FC = () => {
           showSizeChanger: true,
         }}
         loading={loading}
+        rowClassName={(record, index) => 
+          index % 2 === 1 ? 'table-row-dark' : 'table-row-light'
+        }
+        style={{
+          backgroundColor: '#fff',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+        }}
+        className="custom-clients-table"
       />
+      
+      <style jsx>{`
+        .custom-clients-table .ant-table-thead > tr > th {
+          background-color: #f5f5f5;
+          color: #595959;
+          font-weight: 600;
+          border-bottom: 1px solid #e8e8e8;
+          padding: 16px;
+        }
+        
+        .custom-clients-table .ant-table-tbody > tr.table-row-light {
+          background-color: #ffffff;
+        }
+        
+        .custom-clients-table .ant-table-tbody > tr.table-row-dark {
+          background-color: #fafafa;
+        }
+        
+        .custom-clients-table .ant-table-tbody > tr:hover {
+          background-color: #e6f7ff !important;
+        }
+        
+        .custom-clients-table .ant-table-tbody > tr > td {
+          padding: 16px;
+          border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .custom-clients-table .ant-table {
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        
+        .custom-clients-table .ant-table-container {
+          border-radius: 8px;
+        }
+      `}</style>
     </div>
   );
 };

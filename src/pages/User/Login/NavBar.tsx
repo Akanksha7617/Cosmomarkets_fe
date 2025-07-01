@@ -5,8 +5,8 @@ export const Navbar = () => {
   return (
     <div className="header-section">
       <div className="container-fluid">
-        <a href="logo" className="site-logo">
-          <img src="/images/logo.png" alt="" style={{ width: 197, height: 56 }}></img>
+        <a href="logo" className="ant-pro-global-header-logo">
+          <img src="/images/logo.png" alt="logo" />
         </a>
 
         {/* <a href="Signup" className="site-btn"> Request Demo</a> */}

@@ -103,42 +103,7 @@ const DepositTransferCommon: React.FC<{
     }
   };
 
-  //    const [balance, setBalance] = useState<number>(0);
-  //  /*  const wallet = initialState?.currentUser?.wallet
-  //    const balance = `${wallet?.balance?.toFixed(2)} ${wallet?.currency}` */
-  //    const onFinish = async (values: any) => {
-  //     setLoading(true);
-  //     const { amount } = values;
-
-  //    if (amount > balance) {
-  //       setLoading(false);
-  //       message.error("User does not have enough wallet balance!");
-  //       return;
-  //     }
-
-  //     try {
-  //       await form.validateFields();
-
-  //       console.log("amt", amount);
-  //       console.log("bal", balance);
-
-  //       const response = await api.transaction.putTransaction({
-  //         ...values,
-  //         type: type,
-  //         currency: "USD",
-  //       });
-
-  //       await fetchUserInfo();
-  //       form.resetFields();
-  //       message.success(successMsg);
-  //       history.push("/finops/transaction_history");
-  //     } catch (error) {
-  //       console.error(error);
-  //       message.error(failureMsg);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+ 
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
@@ -162,66 +127,16 @@ const DepositTransferCommon: React.FC<{
   };
 
   return (
-    // <Card title={title}>
-    //   <Form
-    //     form={form}
-    //     initialValues={{ currency: "USD" }}
-    //     onFinish={onFinish}
-    //     onFinishFailed={onFinishFailed}
-    //     //layout={'inline'}
-    //     labelCol={{ span: 8 }}
-    //     wrapperCol={{ span: 16 }}
-    //     style={{ maxWidth: 500 }}
-    //   >
-    //     <Form.Item
-    //       label="MT5 Account"
-    //       name="login"
-    //       rules={[{ required: true, message: 'Please select a MT5 account' }]}
-    //     >
-    //       <Select
-    //         options={mtLogins}
-    //         onChange={(e) => {
-    //           handleSelectChange(e);
-    //         }}
-    //       />
-    //     </Form.Item>
-    //     <Form.Item
-    //       label="Amount"
-    //       name="amount"
-    //       rules={[{
-    //         required: true,
-    //         pattern: /^(?!0\d{15,})(\d{1,16})(\.\d{0,2})?$/,
-    //         message: 'Please input a positive value up to 2 decimal places!'
-    //       }]}
-    //     >
-    //       <InputNumber addonAfter={<Form.Item name="currency" noStyle>USD</Form.Item>} style={{ width: '100%' }} />
-    //     </Form.Item>
-
-    //     <Form.Item
-    //       label="Comment"
-    //       name="comment"
-    //       rules={[{ required: true, message: 'Please input comment!' }]}
-    //     >
-    //       <Input />
-    //     </Form.Item>
-
-    //     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-    //       <Button type="primary" htmlType="submit" loading={loading}>
-    //         Submit
-    //       </Button>
-    //     </Form.Item>
-    //   </Form>
-    // </Card>
+   
     <div className="mt5-parent-class">
       <div className="mt5-card">
         <ConfigProvider locale={enUS}>
           <Card
             title={title}
             headStyle={{
-              background: '#ffb74d',
+              background: '#f9f7f0',
               textTransform: 'uppercase',
-              // backgroundColor: '#f89d42',
-              // Other styles you want to apply to the header
+              
             }}
           >
             <ProForm
@@ -230,7 +145,7 @@ const DepositTransferCommon: React.FC<{
               layout="vertical"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 20 }}
-              style={{ maxWidth: 500 }}
+              // style={{ maxWidth: 500}}
               initialValues={{ currency: 'USD' }}
               submitter={{}}
             >
@@ -281,19 +196,7 @@ const DepositTransferCommon: React.FC<{
                         );
                       },
                     }),
-                    // ({ getFieldValue }) => ({
-                    //   validator(_, value) {
-                    //     const enteredAmount = parseFloat(value);
-
-                    //     /*  if (Number(value) >= balance) {
-                    //          return Promise.reject(new Error("User does not have enough wallet balance!"));
-                    //        }  */
-                    //     if (enteredAmount <= freeMargin) {
-                    //       return Promise.resolve();
-                    //     }
-                    //     return Promise.reject(new Error(`Must be less than or equal to Free Margin (${freeMargin}) !`));
-                    //   },
-                    // }),
+                   
                   ]}
                   fieldProps={{
                     addonAfter: 'USD',
@@ -327,9 +230,9 @@ const DepositTransferCommon: React.FC<{
           </Card>
         </ConfigProvider>
       </div>
-      <div className="mt5-img-class">
+      {/* <div className="mt5-img-class">
         <img src="\images\step.png" alt="" width={'100%'} height={350} />
-      </div>
+      </div> */}
     </div>
   );
 };
