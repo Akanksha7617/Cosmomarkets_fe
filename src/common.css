@@ -1357,7 +1357,7 @@ a {
   margin-right: auto;
   margin-left: auto;
   padding: 1rem;
- background: linear-gradient(135deg, #102040 0%, #0b2b4b 35%, #15457a 65%, #1e60a2 100%);
+  background: linear-gradient(135deg, #102040 0%, #0b2b4b 35%, #15457a 65%, #1e60a2 100%);
 }
 
 *,
@@ -2436,7 +2436,7 @@ margin-left: -100px;
   width: 100%;
   padding: 40px 30px;
   text-align: center;
- background: linear-gradient(135deg, #102040 0%, #0b2b4b 35%, #15457a 65%, #1e60a2 100%);
+  background: linear-gradient(135deg, #102040 0%, #0b2b4b 35%, #15457a 65%, #1e60a2 100%);
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
@@ -2497,7 +2497,11 @@ margin-left: -100px;
 }
 
 .ant-menu-submenu-popup .ant-menu-vertical.ant-menu-sub:not([class*='-active']) {
-  background-color: black;
+  background: linear-gradient(135deg, #102040 0%, #0b2b4b 35%, #15457a 65%, #1e60a2 100%);
+  
+}
+.ant-menu-title-content{
+  color: white;
 }
 
 /* Responsive adjustments */
@@ -3272,15 +3276,14 @@ margin-left: -100px;
 /* user side card end  */
 
 /* Live account card styling  */
-
 .live-account-card-wrapper {
   width: 150%;
 
   margin-bottom: 20px;
   overflow: hidden;
   color: #ffffff;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
-  border: 1px solid #2d3748;
+  /* background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+  border: 1px solid #2d3748; */
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -3293,7 +3296,7 @@ margin-left: -100px;
 
 .live-account-top-strip {
   height: 4px;
-  background: linear-gradient(90deg, #00d4ff, #90e0ef, #00d4ff);
+  background: linear-gradient(135deg, #102040 0%, #0b2b4b 35%, #15457a 65%, #1e60a2 100%);
 }
 
 .live-account-container {
@@ -3360,8 +3363,9 @@ margin-left: -100px;
   justify-content: center;
   padding: 24px;
   text-align: center;
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff; /* Changed to white */
   border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
 }
 
 .main-balance {
@@ -3372,7 +3376,7 @@ margin-left: -100px;
 }
 
 .balance-label {
-  color: #a0aec0;
+  color: #4a5568; /* Changed to dark color for visibility on white */
   font-weight: 400;
   font-size: 14px;
 }
@@ -3438,15 +3442,19 @@ margin-left: -100px;
 
 .account-details-section {
   flex: 1;
+  padding: 20px; /* Added padding */
+  background: #ffffff; /* Added white background */
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
 }
 
 .section-title {
   margin: 0 0 16px 0;
   padding-bottom: 8px;
-  color: #ffffff;
+  color: #2d3748; /* Changed to dark color for visibility on white */
   font-weight: 600;
   font-size: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(45, 55, 72, 0.2); /* Changed border color */
 }
 
 .live-account-grid {
@@ -3457,20 +3465,20 @@ margin-left: -100px;
 
 .live-account-field {
   padding: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.03); /* Light gray background for contrast */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
   border-radius: 8px;
 }
 
 .live-account-field .label {
   margin-bottom: 4px;
-  color: #a0aec0;
+  color: #4a5568; /* Dark color for visibility */
   font-weight: 400;
   font-size: 11px;
 }
 
 .live-account-field .value {
-  color: #ffffff;
+  color: #2d3748; /* Dark color for visibility */
   font-weight: 600;
   font-size: 13px;
 }
@@ -3550,6 +3558,7 @@ margin-left: -100px;
 .mt5-cards .ant-pro-card-body {
   background: transparent !important;
 }
+
 @media screen and (max-width: 768px) {
   .main-content-wrapper {
     flex-direction: column;
