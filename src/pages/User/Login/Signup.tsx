@@ -25,19 +25,6 @@ const countryCodes = [
   { code: '+966', name: 'Saudi Arabia' }
 ];
 
-// Slider content
-const sliderContent = [
-  {
-    image: '/images/s1.jpg',
-  },
-  {
-    image: '/images/s2.jpg',
-  },
-  {
-    image: '/images/s3.jpg',
-  },
-];
-
 const SignUp = () => {
   // State management
   const [userLoginState, setUserLoginState] = useState({});
@@ -46,18 +33,6 @@ const SignUp = () => {
   const [showDeclarationError, setShowDeclarationError] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { initialState, setInitialState } = useModel('@@initialState');
-
-  // State for slider
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  // Slider auto-rotation effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % sliderContent.length);
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   const LoginMessage = ({ content }) => {
     return (
@@ -100,13 +75,11 @@ const SignUp = () => {
         updateAPIToken();
         try {
           await fetchUserInfo();
-          // If fetchUserInfo succeeds, token is valid
           const redirect = urlSearchParams.get('redirect') || '/dashboard';
           history.replace(redirect);
           return;
         } catch (error) {
           console.error('Token verification failed:', error);
-          // Invalid token, clear it
           sessionStorage.removeItem('jwtToken');
           updateAPIToken();
         }
@@ -135,7 +108,6 @@ const SignUp = () => {
   const handleSubmit = async (values) => {
     setIsProcessing(true);
 
-    // Sign up logic
     if (!declarationChecked) {
       setShowDeclarationError(true);
       setIsProcessing(false);
@@ -192,7 +164,6 @@ const SignUp = () => {
     }
   };
 
-  // Show loading state while processing
   if (isProcessing) {
     return (
       <div className="loading-container">
@@ -207,9 +178,7 @@ const SignUp = () => {
       {/* Top navigation */}
       <div className="nav-container">
         <div className="nav-links">
-          <a href="logo" className="site-logo">
-            <img src="/images/logo.png" alt="" style={{ width: 197, height: 56 }}></img>
-          </a>
+          {/* Logo removed */}
         </div>
         <div className="nav-buttons">
           <Button type="default" ghost onClick={() => history.push('/user/login')}>
@@ -223,9 +192,9 @@ const SignUp = () => {
 
       {/* Combined main content */}
       <div className="combined-container">
-        <div className="combined-content">
+        <div className="combined-content" style={{ display: 'flex', justifyContent: 'center' }}>
           {/* Auth form section */}
-          <div className="auth-form-section">
+          <div className="auth-form-section" style={{ maxWidth: '500px', width: '100%' }}>
             <div className="auth-card">
               <div className="auth-header">
                 <h2>Welcome to Xyleum</h2>
@@ -260,11 +229,9 @@ const SignUp = () => {
                         {
                           validator: (_, value) => {
                             if (!value) return Promise.resolve();
-
                             const isCapitalized =
                               value.charAt(0) === value.charAt(0).toUpperCase() &&
                               value.slice(1) === value.slice(1).toLowerCase();
-
                             if (!isCapitalized) {
                               return Promise.resolve();
                             }
@@ -296,11 +263,9 @@ const SignUp = () => {
                         {
                           validator: (_, value) => {
                             if (!value) return Promise.resolve();
-
                             const isCapitalized =
                               value.charAt(0) === value.charAt(0).toUpperCase() &&
                               value.slice(1) === value.slice(1).toLowerCase();
-
                             if (!isCapitalized) {
                               return Promise.resolve();
                             }
@@ -455,35 +420,6 @@ const SignUp = () => {
                     </span>
                   </div>
                 </Form>
-              </div>
-            </div>
-          </div>
-
-          {/* Image Slider Section */}
-          <div className="slider-section">
-            <div className="slider-container">
-              {sliderContent.map((slide, index) => (
-                <div key={index} className={`slide ${index === currentSlide ? 'active' : ''}`}>
-                  <img
-                    src={slide.image}
-                    alt="Slider image"
-                    className="slide-image"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = '/placeholder-image.png'; // Fallback image
-                    }}
-                  />
-                </div>
-              ))}
-
-              <div className="slider-indicators">
-                {sliderContent.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`indicator ${index === currentSlide ? 'active' : ''}`}
-                    onClick={() => setCurrentSlide(index)}
-                  />
-                ))}
               </div>
             </div>
           </div>
