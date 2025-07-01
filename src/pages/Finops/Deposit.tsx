@@ -586,7 +586,7 @@ const Deposit: React.FC = () => {
             onClick={handleContinue}
             disabled={!selectedCurrency}
             className="continue-button"
-            style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
+            style={{ backgroundColor: '#9BF8F4', borderColor: '9BF8F4' ,color: '#000'}}
           >
             Continue
           </Button>
@@ -757,7 +757,7 @@ const Deposit: React.FC = () => {
               htmlType="submit"
               loading={loading}
               className="submit-button"
-              style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
+              style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4' , color: '#000'}}
             >
               Deposit Funds
             </Button>
@@ -785,7 +785,7 @@ const Deposit: React.FC = () => {
                 type="primary"
                 onClick={() => setCurrentStep(4)}
                 className="continue-button"
-                style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
+                style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4' }}
               >
                 Continue to Next Step
               </Button>
@@ -817,8 +817,8 @@ const Deposit: React.FC = () => {
                       onClick={() => handleRedirect(link.url)}
                       style={{
                         marginTop: '16px',
-                        backgroundColor: '#FAAD14',
-                        borderColor: '#FAAD14',
+                        backgroundColor: '#9BF8F4',
+                        borderColor: '#9BF8F4',
                       }}
                     >
                       Pay Now
@@ -885,7 +885,7 @@ const Deposit: React.FC = () => {
             onClick={handleFinalSubmit}
             loading={loading}
             className="confirm-button"
-            style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
+            style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4' }}
           >
             Confirm and Proceed
           </Button>

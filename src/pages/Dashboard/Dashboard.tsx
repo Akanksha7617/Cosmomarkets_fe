@@ -67,7 +67,7 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
     }
   };
 
- useEffect(() => {
+  useEffect(() => {
     const tabs =
       appUser.UserDtos?.map((u) => {
         return {
@@ -177,26 +177,10 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
               Create MT5 Account
             </Button>
           )}
-          {/* {!isAdmin && (
-            <Button
-              type="button"
-              onClick={() => {
-                if (tabs.length >= 5) {
-                  ShowError({ body: 'MT users limit (5 per account) is reached!' });
-                } else {
-                  setModalVisible(true);
-                }
-              }}
-              style={{ marginBottom: 15 }}
-              className="attachmt5-btn"
-            >
-              Attach MT5 Account
-            </Button>
-          )} */}
         </Space>
       </Row>
 
-       <Row justify="space-between">
+      <Row justify="space-between">
         <Col>
           <ProCard>
             <Tabs className="tabs">
@@ -208,11 +192,6 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
             </Tabs>
           </ProCard>
         </Col>
-        {/* <img src="/images/step.png" alt="Account Info" className="account-side-img" /> */}
-
-        <div>
-          {/* <img src="/images/dashimg1.png" alt="" style={{ height: 450, width: 500}} className='dashimg1-dashboard' /> */}
-        </div>
       </Row>
       <ConfigProvider locale={enUS}>
         <Modal open={modalVisible} footer={null} onCancel={handleCancel}>
@@ -276,10 +255,8 @@ const Dashboard: React.FC = () => {
   const [isAttach, setIsAttach] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
-  /*  setTimeout(() => {
-     setLoading(true);
-   }, 1000);
-  */
+  // Add this new state for main tabs
+  const [activeMainTab, setActiveMainTab] = useState('wallet');
 
   const handleSearch = (
     selectedKeys: string[],
@@ -375,28 +352,6 @@ const Dashboard: React.FC = () => {
     setIsModalVisible(false);
   };
 
-  // const onFinish = (values) => {
-  //   // Prevent the default form submission behavior
-  //   // This will prevent the modal from closing automatically
-  //   console.log('Form values:', values);
-  // };
-
-  // const onOk = () => {
-
-  //   onClick={handleAttach}
-  // }
-
-  //  const handleAttach = async () => {
-  //   try {
-  //      const values = form.getFieldsValue();
-  // const MT5Response = await api.app.AttachMtLogin(values);
-  //     console.log(MT5Response);
-  //     form.resetFields();
-  //   } catch (error) {
-  //   console.error('Error attaching MT5 login:', error);
-  //       }
-  // };
-
   const columnsTransaction = [
     {
       name: 'Ticket',
@@ -469,29 +424,98 @@ const Dashboard: React.FC = () => {
         return <span style={{ color: statusValue.status }}>{statusValue.text}</span>;
       },
     },
-    // {
-    //   name: 'Status',
-    //   selector: 'status',
-    //   sortable: true,
-    // },
   ];
 
   const lastFiveTransactions = transactions;
 
-  const tabs: TabsProps['items'] = [
+  // Live Account tabs (sub-tabs within Live Account main tab)
+  const liveAccountTabs: TabsProps['items'] = [
     {
       key: '1',
-      label: <span className="live-account-tab">Live Accounts</span>, 
+      label: <span className="live-account-tab">Live Accounts</span>,
       children: <LiveAccount appUser={userData} getUser={getUser} />,
     },
+  ];
 
-    // {
-    //   key: '2',
-    //   label: `Partner Account`,
-    //   children: `Partner Account`,
-    //   className: 'dashboard-tabs',
+  // Main tabs (Wallet and Live Account)
+  const mainTabs: TabsProps['items'] = [
+    {
+      key: 'wallet',
+      label: <span className="main-tab">Wallet</span>,
+      children: (
+        <div className="dashboard-main-layout">
+          {/* Left Section - Wallet Card */}
+          <div className="dashboard-left-section">
+            <div className="unified-card-container">
+              <div className="unified-card">
+                {/* Header Section: Wallet ID and Balance side by side */}
+                <div className="unified-header">
+                  <div className="wallet-id-balance">
+                    <div>
+                      <div className="unified-label">WALLET ID</div>
+                      <div className="unified-value">{`# ${userData.Wallet?.Id} USD`}</div>
+                    </div>
+                    <div>
+                      <div className="unified-label">WALLET BALANCE</div>
+                      <div className="unified-value">${userData.Wallet?.Balance ?? '0.00'}</div>
+                    </div>
+                  </div>
+                </div>
 
-    // },
+                {/* Summary Section */}
+                <div className="unified-summary">
+                  <div className="unified-summary-grid">
+                    <div className="unified-summary-item">
+                      <label>Total Deposit</label>
+                      <span>${data.totalDeposit}</span>
+                    </div>
+                    <div className="unified-summary-item">
+                      <label>Total Withdrawal</label>
+                      <span>${data.totalWithdraw}</span>
+                    </div>
+                    <div className="unified-summary-item">
+                      <label>Total MT5 Deposit</label>
+                      <span>${data.totalMt5Deposit}</span>
+                    </div>
+                    <div className="unified-summary-item">
+                      <label>Total MT5 Withdrawal</label>
+                      <span>${data.totalMt5Withdraw}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="unified-buttons">
+                  <button
+                    onClick={() => history.push('/finops/deposit')}
+                    className="unified-btn deposit"
+                  >
+                    ↓ Deposit
+                  </button>
+                  <button
+                    onClick={() => history.push('/finops/withdraw')}
+                    className="unified-btn withdraw"
+                  >
+                    ↑ Withdraw
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'liveaccount',
+      label: <span className="main-tab">Live Account</span>,
+      children: (
+        <div className="dashboard-main-layout">
+          {/* Right Section - Live Accounts */}
+          <div className="dashboard-right-section">
+            <Tabs defaultActiveKey="1" items={liveAccountTabs} onChange={onTabChange} />
+          </div>
+        </div>
+      ),
+    },
   ];
 
   const handleChange = () => {};
@@ -566,11 +590,6 @@ const Dashboard: React.FC = () => {
                   hidden
                 />
               </Form.Item>
-              {/* <div style={{ marginLeft: 170 }}>
-                <Button type="primary" onClick={handleAttach}>
-                  Attach
-                </Button>
-              </div> */}
             </Form>
           </Card>
         </Modal>
@@ -579,37 +598,73 @@ const Dashboard: React.FC = () => {
   };
   console.log('isAdmin::', isAdmin);
 
-  const customStyles = {
+  const enhancedCustomStyles = {
+    table: {
+      style: {
+        backgroundColor: 'white',
+        borderRadius: '0 0 12px 12px',
+        overflow: 'hidden',
+      },
+    },
     header: {
       style: {
-        fontSize: '16px',
-        fontWeight: '600',
-        color: '#111827',
+        backgroundColor: 'white',
+        borderRadius: '12px 12px 0 0',
+        padding: '0',
+        margin: '0',
+        border: 'none',
+        boxShadow: 'none',
       },
     },
     headRow: {
       style: {
-        backgroundColor: '#f4f7fb',
+        backgroundColor: '#f8fafc',
+        borderBottom: '2px solid #e2e8f0',
+        minHeight: '56px',
+        fontWeight: '600',
+      },
+    },
+    headCells: {
+      style: {
+        padding: '16px 20px',
         fontSize: '13px',
         fontWeight: '600',
         textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+        color: '#64748b',
+        borderRight: '1px solid #f1f5f9',
       },
     },
     rows: {
       style: {
         fontSize: '14px',
-        color: '#1f2937',
-        minHeight: '48px',
+        fontWeight: '500',
+        color: '#1e293b',
+        minHeight: '60px',
+        borderBottom: '1px solid #f1f5f9',
+        transition: 'all 0.2s ease',
+        cursor: 'default',
       },
-    },
-    headCells: {
-      style: {
-        padding: '12px',
+      highlightOnHoverStyle: {
+        backgroundColor: '#f8fafc',
+        borderBottomColor: '#e2e8f0',
+        transform: 'translateY(-1px)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
       },
     },
     cells: {
       style: {
-        padding: '12px',
+        padding: '16px 20px',
+        fontSize: '14px',
+        fontWeight: '500',
+        borderRight: '1px solid #f1f5f9',
+      },
+    },
+    pagination: {
+      style: {
+        backgroundColor: '#f8fafc',
+        borderTop: '1px solid #e2e8f0',
+        padding: '12px 20px',
       },
     },
   };
@@ -622,97 +677,23 @@ const Dashboard: React.FC = () => {
       ) : !isUserError ? (
         !isAdmin ? (
           <div className="dashboard-container">
-            {/* <div className="voco-username-tag">
-              {`@ ${userData.FirstName} ${userData.LastName}`}
-            </div> */}
             <PageContainer>
-              <div className="dashboard-main-layout">
-                
-                {/* Left Section - Wallet Card */}
-                <div className="dashboard-left-section">
-                  <div className="unified-card-container">
-                    <div className="unified-card">
-                      {/* Header Section: Wallet ID and Balance side by side */}
-                      <div className="unified-header">
-                        <div className="wallet-id-balance">
-                          <div>
-                            <div className="unified-label">WALLET ID</div>
-                            <div className="unified-value">{`# ${userData.Wallet?.Id} USD`}</div>
-                          </div>
-                          <div>
-                            <div className="unified-label">WALLET BALANCE</div>
-                            <div className="unified-value">${userData.Wallet?.Balance ?? '0.00'}</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Summary Section */}
-                      <div className="unified-summary">
-                        <div className="unified-summary-grid">
-                          <div className="unified-summary-item">
-                            <label>Total Deposit</label>
-                            <span>${data.totalDeposit}</span>
-                          </div>
-                          <div className="unified-summary-item">
-                            <label>Total Withdrawal</label>
-                            <span>${data.totalWithdraw}</span>
-                          </div>
-                          <div className="unified-summary-item">
-                            <label>Total MT5 Deposit</label>
-                            <span>${data.totalMt5Deposit}</span>
-                          </div>
-                          <div className="unified-summary-item">
-                            <label>Total MT5 Withdrawal</label>
-                            <span>${data.totalMt5Withdraw}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="unified-buttons">
-                        <button
-                          onClick={() => history.push('/finops/deposit')}
-                          className="unified-btn deposit"
-                        >
-                          ↓ Deposit
-                        </button>
-                        <button
-                          onClick={() => history.push('/finops/withdraw')}
-                          className="unified-btn withdraw"
-                        >
-                          ↑ Withdraw
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Section - Live Accounts */}
-                <div className="dashboard-right-section">
-                  <Tabs defaultActiveKey="1" items={tabs} onChange={onTabChange} />
-                </div>
-                
-              </div>
+              {/* Main Tabs - Wallet and Live Account */}
+              <Tabs
+                defaultActiveKey="wallet"
+                items={mainTabs}
+                onChange={(key) => setActiveMainTab(key)}
+                className="main-dashboard-tabs"
+              />
 
               <Divider />
 
-              {/* Last Five Wallet Transactions section */}
-              <Title level={5} style={{ fontFamily: 'math' }}>
-                Last Five Wallet Transactions
-              </Title>
-
+              {/* Last Five Wallet Transactions section - Always visible */}
               <div className="recent-transactions">
                 <DataTable
                   title={
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        width: '100%',
-                      }}
-                    >
-                      <span style={{ fontFamily: 'math', fontSize: '16px' }}></span>
-
+                    <div className="recent-transactions-header">
+                      <h3 className="recent-transactions-title">Last Five Wallet Transactions</h3>
                       <Link to="/finops/transaction_history" className="view-all-btn">
                         <ClockCircleOutlined className="view-all-icon" />
                         View All
@@ -721,13 +702,24 @@ const Dashboard: React.FC = () => {
                   }
                   columns={columnsTransaction}
                   data={lastFiveTransactions}
-                  customStyles={customStyles}
+                  customStyles={enhancedCustomStyles}
                   keyField="transactionId"
                   highlightOnHover
                   responsive
                   selectableRows={false}
-                  dense
-                  progressComponent={<div>Loading...</div>}
+                  dense={false}
+                  progressComponent={
+                    <div className="loading-wrapper">
+                      <div className="loading-spinner"></div>
+                      <span>Loading transactions...</span>
+                    </div>
+                  }
+                  noDataComponent={
+                    <div className="no-data-wrapper">
+                      <div className="no-data-icon">📊</div>
+                      <div className="no-data-text">No transactions found</div>
+                    </div>
+                  }
                 />
               </div>
 

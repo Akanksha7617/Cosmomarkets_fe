@@ -212,8 +212,9 @@ const Login = () => {
       <div className="nav-container">
         <div className="nav-links">
           <a href="logo" className="site-logo">
-            <img src="/images/logo.png" alt="" style={{ width: 197, height: 56 }}></img>
+            <img src="/images/logo.png" alt="logo"></img>
           </a>
+           {/* style={{ width: 197, height: 56 }} */}
         </div>
         <div className="nav-buttons">
           <Button type="default" ghost onClick={() => history.push('/user/login')}>

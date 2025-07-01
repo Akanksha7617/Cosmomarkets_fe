@@ -94,15 +94,7 @@ const StatusPage: React.FC = () => {
                   >
                     Start Verification
                   </Button>
-                  <Button
-                    type="default"
-                    className="secondary-button"
-                    onClick={() => {
-                      console.log('Learn more clicked');
-                    }}
-                  >
-                    Learn More
-                  </Button>
+                 
                 </div>
               </div>
             </div>

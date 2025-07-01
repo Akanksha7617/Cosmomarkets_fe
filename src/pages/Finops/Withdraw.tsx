@@ -419,7 +419,7 @@ const Withdraw: React.FC = () => {
             onClick={handleContinue}
             disabled={!selectedCurrency}
             className="continue-button"
-            style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
+            style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4', color: '#000' }}
           >
             Continue
           </Button>
@@ -601,7 +601,7 @@ const Withdraw: React.FC = () => {
               htmlType="submit"
               loading={loading}
               className="submit-button"
-              style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
+              style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4' , color: "#000" }}
             >
               Submit
             </Button>
@@ -682,7 +682,7 @@ const Withdraw: React.FC = () => {
               htmlType="submit"
               loading={loading}
               className="submit-button"
-              style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
+              style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4' }}
             >
               Submit
             </Button>
