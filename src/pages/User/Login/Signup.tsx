@@ -22,7 +22,7 @@ const countryCodes = [
   { code: '+81', name: 'Japan' },
   { code: '+86', name: 'China' },
   { code: '+7', name: 'Russia' },
-  { code: '+966', name: 'Saudi Arabia' }
+  { code: '+966', name: 'Saudi Arabia' },
 ];
 
 // Slider content
@@ -207,10 +207,7 @@ const SignUp = () => {
       {/* Top navigation */}
       <div className="nav-container">
         <div className="nav-links">
-          <a href="logo" className="site-logo">
-            <img src="/images/logo.png" alt="logo" ></img>
-          </a>
-          {/* style={{ width: 197, height: 56 }} */}
+          <img src="/images/logo.png" alt="logo" style={{ height: '56px', width: '197px' }} />
         </div>
         <div className="nav-buttons">
           <Button type="default" ghost onClick={() => history.push('/user/login')}>

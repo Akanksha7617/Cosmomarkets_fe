@@ -79,42 +79,60 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
               <div className="live-account-container">
                 {/* Header Row */}
                 <div className="live-account-header">
-                  <h3 className="live-account-title">Live Account</h3>
+                 
                   <button className="arrow-button" onClick={() => setModalVisible(true)}>
                     +MT5 Sub Account
                   </button>
                 </div>
 
-                {/* Account Info Grid */}
-                <div className="live-account-grid">
-                  <div className="live-account-field">
-                    <div className="label">Account ID</div>
-                    <div className="value bolda">{u.Login}</div>
-                  </div>
-                  <div className="live-account-field">
-                    <div className="label">Balance</div>
-                    <div className="value bolda">${u.Balance?.toFixed(2) ?? '0.00'}</div>
-                  </div>
-                  <div className="live-account-field">
-                    <div className="label">Equity</div>
-                    <div className="value">${u.EquityPrevDay?.toFixed(2) ?? '0.00'}</div>
-                  </div>
-                  <div className="live-account-field">
-                    <div className="label">Free Margin</div>
-                    <div className="value">${u.MarginFree?.toFixed(2) ?? '0.00'}</div>
+                {/* Main Content - Horizontal Layout */}
+                <div className="main-content-wrapper">
+                  {/* Left Side - Balance Display */}
+                  <div className="balance-display-section">
+                    <div className="main-balance">
+                      <div className="balance-label">Account Balance</div>
+                      <div className="balance-amount">${u.Balance?.toFixed(2) ?? '0.00'}</div>
+                      <div className="balance-subtitle">Available for trading</div>
+                    </div>
+
+                    {/* Quick Action Buttons */}
+                    <div className="quick-actions">
+                      <button  onClick={() => history.push('/finops/withdraw')} className="action-btn withdraw-btn">Withdraw</button>
+                      <button   onClick={() => history.push('/finops/deposit')} className="action-btn deposit-btn">Deposit</button>
+                    </div>
                   </div>
 
-                  <div className="live-account-field">
-                    <div className="label">Margin</div>
-                    <div className="value">${u.Margin?.toFixed(2) ?? '0.00'}</div>
-                  </div>
-                  <div className="live-account-field">
-                    <div className="label">Margin Level</div>
-                    <div className="value">{u.MarginLevel?.toFixed(2) ?? '0.00'}%</div>
-                  </div>
-                  <div className="live-account-field">
-                    <div className="label">Agent Code</div>
-                    <div className="value">{appUser.Promo || '--'}</div>
+                  {/* Right Side - Account Details & Performance */}
+                  <div className="right-content">
+                    {/* Account Details Grid */}
+                    <div className="account-details-section">
+                      <h4 className="section-title">Account Details</h4>
+                      <div className="live-account-grid">
+                        <div className="live-account-field">
+                          <div className="label">Equity</div>
+                          <div className="value">${u.EquityPrevDay?.toFixed(2) ?? '0.00'}</div>
+                        </div>
+                        <div className="live-account-field">
+                          <div className="label">Free Margin</div>
+                          <div className="value">${u.MarginFree?.toFixed(2) ?? '0.00'}</div>
+                        </div>
+                        <div className="live-account-field">
+                          <div className="label">Used Margin</div>
+                          <div className="value">${u.Margin?.toFixed(2) ?? '0.00'}</div>
+                        </div>
+                        <div className="live-account-field">
+                          <div className="label">Margin Level</div>
+                          <div className={`value ${u.MarginLevel > 100 ? 'positive' : 'negative'}`}>
+                            {u.MarginLevel?.toFixed(2) ?? '0.00'}%
+                          </div>
+                        </div>
+                        <div className="live-account-field">
+                          <div className="label">Agent Code</div>
+                          <div className="value">{appUser.Promo || '--'}</div>
+                        </div>
+                        
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -126,6 +144,20 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
     getUserAccount();
     setTabs(tabs);
   }, [appUser]);
+  const tabBarStyle = {
+    background: 'transparent',
+    border: 'none',
+    marginBottom: '0',
+  };
+
+  const tabStyle = {
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: '8px',
+    color: '#00d4ff',
+    fontWeight: '600',
+    marginRight: '8px',
+  };
 
   const handleCancel = () => {
     setModalVisible(false);
@@ -448,55 +480,195 @@ const Dashboard: React.FC = () => {
           <div className="dashboard-left-section">
             <div className="unified-card-container">
               <div className="unified-card">
-                {/* Header Section: Wallet ID and Balance side by side */}
-                <div className="unified-header">
-                  <div className="wallet-id-balance">
-                    <div>
-                      <div className="unified-label">WALLET ID</div>
-                      <div className="unified-value">{`# ${userData.Wallet?.Id} USD`}</div>
+                {/* Left side content - Wallet info and buttons */}
+                <div className="wallet-left-content">
+                  {/* Two Box Layout for Wallet Balance and ID */}
+                  <div className="wallet-top-section">
+                    <div className="wallet-id-box">
+                      <div className="wallet-box-header">
+                        <svg
+                          className="wallet-icon"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <rect
+                            x="1"
+                            y="4"
+                            width="22"
+                            height="16"
+                            rx="2"
+                            ry="2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            fill="none"
+                          />
+                          <line
+                            x1="1"
+                            y1="10"
+                            x2="23"
+                            y2="10"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                        </svg>
+                        <span className="wallet-label">Wallet ID</span>
+                      </div>
+                      <div className="wallet-id-value">#{userData.Wallet?.Id ?? '00000'}</div>
+                      <div className="wallet-currency">USD</div>
                     </div>
-                    <div>
-                      <div className="unified-label">WALLET BALANCE</div>
-                      <div className="unified-value">${userData.Wallet?.Balance ?? '0.00'}</div>
+                    <div className="wallet-balance-box">
+                      <div className="wallet-box-header">
+                        <svg
+                          className="wallet-icon"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M19 7h-1V6a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V10a3 3 0 0 0-3-3zM5 4h10a1 1 0 0 1 1 1v1H5a1 1 0 0 1 0-2zm15 14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8.83A3 3 0 0 0 5 9h14a1 1 0 0 1 1 1z"
+                            fill="currentColor"
+                          />
+                          <circle cx="15" cy="13" r="2" fill="currentColor" />
+                        </svg>
+                        <span className="wallet-label">Wallet Balance</span>
+                      </div>
+                      <div className="wallet-amount">${userData.Wallet?.Balance ?? '0.00'}</div>
+                      <div className="wallet-trend">
+                        <svg
+                          className="trend-icon positive"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        ></svg>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="action-buttons">
+                    <button
+                      onClick={() => history.push('/finops/deposit')}
+                      className="action-btn deposit-btn"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="m7 17 5-5 5 5M12 12v9"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      Deposit
+                    </button>
+                    <button
+                      onClick={() => history.push('/finops/withdraw')}
+                      className="action-btn withdraw-btn"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="m7 7 5 5 5-5M12 3v9"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      Withdraw
+                    </button>
                   </div>
                 </div>
 
-                {/* Summary Section */}
-                <div className="unified-summary">
-                  <div className="unified-summary-grid">
-                    <div className="unified-summary-item">
-                      <label>Total Deposit</label>
-                      <span>${data.totalDeposit}</span>
+                {/* Right side content - History Section */}
+                <div className="wallet-right-content">
+                  <div className="history-section">
+                    <div className="history-header">
+                      <h3>History</h3>
+                      <button className="view-all-btn">View All</button>
                     </div>
-                    <div className="unified-summary-item">
-                      <label>Total Withdrawal</label>
-                      <span>${data.totalWithdraw}</span>
-                    </div>
-                    <div className="unified-summary-item">
-                      <label>Total MT5 Deposit</label>
-                      <span>${data.totalMt5Deposit}</span>
-                    </div>
-                    <div className="unified-summary-item">
-                      <label>Total MT5 Withdrawal</label>
-                      <span>${data.totalMt5Withdraw}</span>
+
+                    <div className="history-list">
+                      <div className="history-item deposit">
+                        <div className="history-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="m7 17 5-5 5 5M12 12v9"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div className="history-details">
+                          <div className="history-title">Total Deposit</div>
+                          <div className="history-date">All time</div>
+                        </div>
+                        <div className="history-amount positive">+${data.totalDeposit}</div>
+                      </div>
+
+                      <div className="history-item withdraw">
+                        <div className="history-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="m7 7 5 5 5-5M12 3v9"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div className="history-details">
+                          <div className="history-title">Total Withdrawal</div>
+                          <div className="history-date">All time</div>
+                        </div>
+                        <div className="history-amount negative">-${data.totalWithdraw}</div>
+                      </div>
+
+                      <div className="history-item mt5_deposit">
+                        <div className="history-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="m7 14 5-5 5 5"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div className="history-details">
+                          <div className="history-title">Total MT5 Deposit</div>
+                          <div className="history-date">All time</div>
+                        </div>
+                        <div className="history-amount positive">+${data.totalMt5Deposit}</div>
+                      </div>
+
+                      <div className="history-item mt5_withdraw">
+                        <div className="history-icon">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="m7 10 5-5 5 5"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div className="history-details">
+                          <div className="history-title">Total MT5 Withdrawal</div>
+                          <div className="history-date">All time</div>
+                        </div>
+                        <div className="history-amount negative">-${data.totalMt5Withdraw}</div>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="unified-buttons">
-                  <button
-                    onClick={() => history.push('/finops/deposit')}
-                    className="unified-btn deposit"
-                  >
-                    ↓ Deposit
-                  </button>
-                  <button
-                    onClick={() => history.push('/finops/withdraw')}
-                    className="unified-btn withdraw"
-                  >
-                    ↑ Withdraw
-                  </button>
                 </div>
               </div>
             </div>

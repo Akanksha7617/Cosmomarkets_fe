@@ -1,7 +1,7 @@
 import { api, updateAPIToken } from '@/components/common/api';
-import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
-import { Alert, Button, Checkbox, Form, Input, message, Modal, Select } from 'antd';
+import { Alert, Button, Form, Input, message, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import 'react-phone-input-2/lib/style.css';
@@ -211,10 +211,8 @@ const Login = () => {
       {/* Top navigation */}
       <div className="nav-container">
         <div className="nav-links">
-          <a href="logo" className="site-logo">
-            <img src="/images/logo.png" alt="logo"></img>
-          </a>
-           {/* style={{ width: 197, height: 56 }} */}
+          <img src="/images/logo.png" alt="logo" style={{ height: '56px', width: '197px' }} />
+         
         </div>
         <div className="nav-buttons">
           <Button type="default" ghost onClick={() => history.push('/user/login')}>
@@ -299,8 +297,8 @@ const Login = () => {
 
                   <div className="bottom-text">
                     <span>
-                      Don't have an account? <a onClick={() => history.push('/User/Login/Signup')}>Signup</a>{' '}
-                      now
+                      Don't have an account?{' '}
+                      <a onClick={() => history.push('/User/Login/Signup')}>Signup</a> now
                     </span>
                   </div>
                 </Form>
