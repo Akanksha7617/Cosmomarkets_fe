@@ -1,7 +1,11 @@
+// Handle refresh after operations
+const handleRefresh = () => {
+  handleClose();
+};
 import { api } from '@/components/common/api';
-import { MailTwoTone } from '@ant-design/icons';
-import { Button, Form, Input, message as antMessage, Modal, Tabs } from 'antd';
-import React, { useState } from 'react';
+import { BoldOutlined, ItalicOutlined, MailTwoTone, UploadOutlined } from '@ant-design/icons';
+import { Button, Form, Input, message as antMessage, Modal, Space, Tabs, Upload } from 'antd';
+import React, { useRef, useState } from 'react';
 import '../../crm-components.css';
 import BalanceManagementTsx from './BalanceManagement';
 import CRMProcess from './CRMProcess';
@@ -32,6 +36,9 @@ const CRMModal: React.FC<CRMModalProps> = ({
   const [activeTab, setActiveTab] = useState('1');
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState<any[]>([]);
+  const [messageContent, setMessageContent] = useState('');
+  const editorRef = useRef<HTMLDivElement>(null);
 
   // Handle operation completion messages from child components
   const handleOperationComplete = (success: boolean, msg: string) => {
@@ -45,12 +52,62 @@ const CRMModal: React.FC<CRMModalProps> = ({
   // Handle modal closure
   const handleClose = () => {
     setActiveTab('1');
+    setFileList([]);
+    setMessageContent('');
     onCancel();
   };
 
-  // Handle refresh after operations
-  const handleRefresh = () => {
-    handleClose();
+  // Handle rich text editor content change
+  const handleEditorChange = () => {
+    if (editorRef.current) {
+      const content = editorRef.current.innerHTML;
+      setMessageContent(content);
+      form.setFieldsValue({ message: content });
+    }
+  };
+
+  // Handle text formatting with actual bold/italic
+  const handleTextFormat = (type: 'bold' | 'italic') => {
+    if (!editorRef.current) return;
+
+    editorRef.current.focus();
+
+    if (type === 'bold') {
+      document.execCommand('bold', false);
+    } else if (type === 'italic') {
+      document.execCommand('italic', false);
+    }
+
+    handleEditorChange();
+  };
+
+  // Handle file upload
+  const handleFileUpload = {
+    beforeUpload: (file: any) => {
+      const isValidType =
+        file.type.includes('image/') ||
+        file.type.includes('video/') ||
+        file.type === 'application/pdf';
+
+      if (!isValidType) {
+        antMessage.error('You can only upload image, video, or PDF files!');
+        return false;
+      }
+
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        antMessage.error('File must be smaller than 10MB!');
+        return false;
+      }
+
+      return false; // Prevent auto upload
+    },
+    onChange: (info: any) => {
+      setFileList(info.fileList);
+    },
+    onRemove: (file: any) => {
+      setFileList((prev) => prev.filter((item) => item.uid !== file.uid));
+    },
   };
 
   // Handle email sending
@@ -59,15 +116,33 @@ const CRMModal: React.FC<CRMModalProps> = ({
       setLoading(true);
 
       const values = await form.validateFields();
-      const response = await api.app.sendCustomEmail({
-        email: values.email,
-        subject: values.subject,
-        message: values.message,
+
+      // Get the rich text content
+      const messageHtml = messageContent || '';
+
+      // Prepare form data for file upload
+      const formData = new FormData();
+      formData.append('email', values.email);
+      formData.append('subject', values.subject);
+      formData.append('message', messageHtml);
+
+      // Add files to form data
+      fileList.forEach((file) => {
+        if (file.originFileObj) {
+          formData.append('attachments', file.originFileObj);
+        }
       });
+
+      const response = await api.app.sendCustomEmail(formData);
 
       if (response) {
         antMessage.success('Email sent successfully');
         form.resetFields();
+        setFileList([]);
+        setMessageContent('');
+        if (editorRef.current) {
+          editorRef.current.innerHTML = '';
+        }
       } else {
         antMessage.error(response?.message || 'Failed to send email');
       }
@@ -164,9 +239,62 @@ const CRMModal: React.FC<CRMModalProps> = ({
             <Form.Item
               name="message"
               label="Message"
-              rules={[{ required: true, message: 'Please enter email content' }]}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter email content',
+                  validator: (_, value) => {
+                    if (!messageContent.trim()) {
+                      return Promise.reject(new Error('Please enter email content'));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
             >
-              <Input.TextArea rows={6} />
+              <div>
+                <Space style={{ marginBottom: 8 }}>
+                  <Button
+                    type="text"
+                    icon={<BoldOutlined />}
+                    onClick={() => handleTextFormat('bold')}
+                    title="Bold"
+                  />
+                  <Button
+                    type="text"
+                    icon={<ItalicOutlined />}
+                    onClick={() => handleTextFormat('italic')}
+                    title="Italic"
+                  />
+                </Space>
+                <div
+                  ref={editorRef}
+                  contentEditable
+                  onInput={handleEditorChange}
+                  style={{
+                    minHeight: '120px',
+                    border: '1px solid #d9d9d9',
+                    borderRadius: '6px',
+                    padding: '8px 12px',
+                    fontSize: '14px',
+                    lineHeight: '1.5',
+                    outline: 'none',
+                    backgroundColor: '#fff',
+                  }}
+                  placeholder="Type your message here. Select text and use the buttons above to format."
+                />
+              </div>
+            </Form.Item>
+
+            <Form.Item label="Attachments">
+              <Upload
+                {...handleFileUpload}
+                fileList={fileList}
+                multiple
+                accept="image/*,video/*,.pdf"
+              >
+                <Button icon={<UploadOutlined />}>Upload Files (Image, Video, PDF)</Button>
+              </Upload>
             </Form.Item>
 
             <Form.Item>
@@ -293,9 +421,62 @@ const CRMModal: React.FC<CRMModalProps> = ({
               <Form.Item
                 name="message"
                 label="Message"
-                rules={[{ required: true, message: 'Please enter email content' }]}
+                rules={[{ 
+                  required: true, 
+                  message: 'Please enter email content',
+                  validator: (_, value) => {
+                    if (!messageContent.trim()) {
+                      return Promise.reject(new Error('Please enter email content'));
+                    }
+                    return Promise.resolve();
+                  }
+                }]}
               >
-                <Input.TextArea rows={6} />
+                <div>
+                  <Space style={{ marginBottom: 8 }}>
+                    <Button
+                      type="text"
+                      icon={<BoldOutlined />}
+                      onClick={() => handleTextFormat('bold')}
+                      title="Bold"
+                    />
+                    <Button
+                      type="text"
+                      icon={<ItalicOutlined />}
+                      onClick={() => handleTextFormat('italic')}
+                      title="Italic"
+                    />
+                  </Space>
+                  <div
+                    ref={editorRef}
+                    contentEditable
+                    onInput={handleEditorChange}
+                    style={{
+                      minHeight: '120px',
+                      border: '1px solid #d9d9d9',
+                      borderRadius: '6px',
+                      padding: '8px 12px',
+                      fontSize: '14px',
+                      lineHeight: '1.5',
+                      outline: 'none',
+                      backgroundColor: '#fff'
+                    }}
+                    placeholder="Type your message here. Select text and use the buttons above to format."
+                  />
+                </div>
+              </Form.Item>
+
+              <Form.Item label="Attachments">
+                <Upload
+                  {...handleFileUpload}
+                  fileList={fileList}
+                  multiple
+                  accept="image/*,video/*,.pdf"
+                >
+                  <Button icon={<UploadOutlined />}>
+                    Upload Files (Image, Video, PDF)
+                  </Button>
+                </Upload>
               </Form.Item>
               
               <Form.Item>
