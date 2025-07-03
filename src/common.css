@@ -13,6 +13,9 @@
   border: 2px solid lavender;
   border-radius: 8px;
 }
+.ant-pro-sider-collapsed-button{
+  display: none;
+}
 
 .ant-pro-top-nav-header-logo {
   width: 150px;

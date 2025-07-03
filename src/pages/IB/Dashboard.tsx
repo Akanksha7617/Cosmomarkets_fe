@@ -252,12 +252,19 @@ const DashboardContent = () => {
             <Button
               className="ib-share-button"
               icon={<MailOutlined />}
-              onClick={() =>
+              onClick={() => {
+                const link = `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`;
+                navigator.clipboard.writeText(link);
+                message.success({
+                  content: 'Link copied to clipboard',
+                  icon: <CheckCircleOutlined style={{ color: '#34a853' }} />,
+                  duration: 2,
+                });
                 window.open(
-                  `mailto:?subject=Trading Platform Invitation&body=Join our trading platform using my referral link: ${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
+                  `mailto:?subject=Trading Platform Invitation&body=Join our trading platform using my referral link: ${link}`,
                   '_blank',
-                )
-              }
+                );
+              }}
             >
               Email
             </Button>
@@ -265,12 +272,19 @@ const DashboardContent = () => {
             <Button
               className="ib-share-button"
               icon={<WhatsAppOutlined />}
-              onClick={() =>
+              onClick={() => {
+                const link = `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`;
+                navigator.clipboard.writeText(link);
+                message.success({
+                  content: 'Link copied to clipboard',
+                  icon: <CheckCircleOutlined style={{ color: '#34a853' }} />,
+                  duration: 2,
+                });
                 window.open(
-                  `https://api.whatsapp.com/send?text=Join our trading platform using my referral link: ${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
+                  `https://api.whatsapp.com/send?text=Join our trading platform using my referral link: ${link}`,
                   '_blank',
-                )
-              }
+                );
+              }}
             >
               WhatsApp
             </Button>
@@ -278,12 +292,19 @@ const DashboardContent = () => {
             <Button
               className="ib-share-button"
               icon={<SendOutlined />}
-              onClick={() =>
+              onClick={() => {
+                const link = `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`;
+                navigator.clipboard.writeText(link);
+                message.success({
+                  content: 'Link copied to clipboard',
+                  icon: <CheckCircleOutlined style={{ color: '#34a853' }} />,
+                  duration: 2,
+                });
                 window.open(
-                  `https://t.me/share/url?url=${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}&text=Join our trading platform via my referral link`,
+                  `https://t.me/share/url?url=${link}&text=Join our trading platform via my referral link`,
                   '_blank',
-                )
-              }
+                );
+              }}
             >
               Telegram
             </Button>
