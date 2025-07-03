@@ -25,6 +25,7 @@ const countryCodes = [
 ];
 
 const SignUp = () => {
+    const [form] = Form.useForm();
   const [userLoginState, setUserLoginState] = useState({});
   const [promoCode, setPromo] = useState('0');
   const [declarationChecked, setDeclarationChecked] = useState(false);
@@ -48,7 +49,12 @@ const SignUp = () => {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const promoParam = urlSearchParams.get('promo');
       const tokenParam = urlSearchParams.get('token');
-      if (promoParam) setPromo(promoParam);
+     
+    if (promoParam) {
+      setPromo(promoParam);
+      // Add this line to update the form field immediately
+      form.setFieldsValue({ promo: promoParam });
+    }
       if (tokenParam) {
         sessionStorage.setItem('jwtToken', tokenParam);
         updateAPIToken();
@@ -333,6 +339,7 @@ const SignUp = () => {
           overflowY: 'auto'
         }}>
           <Form
+           form={form}
             name="auth_form"
             initialValues={{
               autoLogin: true,
