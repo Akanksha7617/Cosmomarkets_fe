@@ -569,7 +569,7 @@ const SignUp = () => {
                   >
                     Terms & Conditions
                   </a>{' '}
-                  of Xyleum Technologies Limited.
+                  of Mevora Capital.
                 </span>
               </Checkbox>
               {showDeclarationError && (

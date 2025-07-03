@@ -130,7 +130,7 @@
   {
     path: '/ProfileSettings',
     icon: 'profile',
-    name: 'MEVORA CAPITAL',
+    name: 'Account Customization',
     component: './Profile/ProfileSettings',
     access: 'canClient',
   },

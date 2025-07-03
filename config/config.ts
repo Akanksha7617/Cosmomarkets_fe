@@ -75,7 +75,7 @@ export default defineConfig({
    * @name layout strrstrr
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'Xyleum Technologies Limited',
+  title: 'Mevora Capital',
   layout: {
     locale: true,
     ...defaultSettings,
