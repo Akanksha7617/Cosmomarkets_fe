@@ -13,7 +13,7 @@
   border: 2px solid lavender;
   border-radius: 8px;
 }
-.ant-pro-sider-collapsed-button{
+.ant-pro-sider-collapsed-button {
   display: none;
 }
 
@@ -2501,9 +2501,8 @@ margin-left: -100px;
 
 .ant-menu-submenu-popup .ant-menu-vertical.ant-menu-sub:not([class*='-active']) {
   background: linear-gradient(135deg, #102040 0%, #0b2b4b 35%, #15457a 65%, #1e60a2 100%);
-  
 }
-.ant-menu-title-content{
+.ant-menu-title-content {
   color: white;
 }
 
@@ -8932,9 +8931,8 @@ margin-left: -100px;
 }
 
 .verification-cancel-button {
-  color: white !important;
-  background-color: #e68a00 !important;
-  border-color: #e68a00;
+  color: #000 !important;
+  background-color: #9bf8f4 !important;
 }
 
 @media (max-width: 768px) {
@@ -9323,7 +9321,7 @@ margin-left: -100px;
 }
 
 .chang {
-  margin-left: 310% !important;
+  margin-left: 273% !important;
   font-weight: 500;
 }
 

@@ -39,7 +39,7 @@ enum Type1 {
 
 type LoginFreeMargin = {
   login: string;
-  freeMargin: number;
+  balance: number;
 };
 
 const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failureMsg: string }> = ({
@@ -53,7 +53,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
   const { initialState, setInitialState } = useModel('@@initialState');
   const [mtLogins, setMtLogins] = useState<string[]>([]);
   const [loginToFreeMargin, setLoginToFreeMargin] = useState<LoginFreeMargin[]>([]);
-  const [balance	, setbalance	] = useState<number>(0);
+  const [balance, setbalance] = useState<number>(0);
 
   useEffect(() => {
     init().then();
@@ -65,9 +65,10 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
     const loginToFreeMargin =
       userResponse.userDtos?.map((u) => {
         const login = u.login?.toString() || '';
-        const fm = u.marginFree || 0;
-        return { login: login, freeMargin: fm };
+        const balance = u.balance || 0; // ✅ use balance instead of marginFree
+        return { login, balance };
       }) || [];
+
     setLoginToFreeMargin(loginToFreeMargin);
     setMtLogins(loginToFreeMargin.map((l) => l.login));
     console.log('=======>' + mtLogins);
@@ -157,11 +158,10 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
 
   const handleSelectChange = async (value: any) => {
     const foundEntry = loginToFreeMargin.find((entry) => entry.login === value);
-    setbalance(foundEntry?.freeMargin || 0);
+    setbalance(foundEntry?.balance || 0);
   };
 
   return (
-    
     <div className="mt5-parent-class">
       <div className="mt5-card">
         <ConfigProvider locale={enUS}>
@@ -170,7 +170,6 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
             headStyle={{
               background: '#f9f7f0',
               textTransform: 'uppercase',
-             
             }}
           >
             <ProForm
@@ -196,8 +195,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
                 }}
               />
               <ProDescriptions column={1}>
-                <ProDescriptions.Item label="Balance	">{balance	}</ProDescriptions.Item>
-               
+                <ProDescriptions.Item label="Balance	">{balance}</ProDescriptions.Item>
               </ProDescriptions>
 
               {type === Type.MT_TO_WALLET ? (
@@ -219,16 +217,15 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
                           return Promise.reject(new Error('Amount cannot be zero!'));
                         }
 
-                        if (enteredAmount <= balance	) {
+                        if (enteredAmount <= balance) {
                           return Promise.resolve();
                         }
 
                         return Promise.reject(
-                          new Error(`Must be less than or equal to balance	 (${balance	}) !`),
+                          new Error(`Must be less than or equal to balance	 (${balance}) !`),
                         );
                       },
                     }),
-                    
                   ]}
                   fieldProps={{
                     addonAfter: 'USD',
