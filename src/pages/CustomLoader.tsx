@@ -1,5 +1,4 @@
 import React from 'react';
-import { Spin } from 'antd';
 import './master.scss'
 import { DollarCircleFilled } from '@ant-design/icons';
 import { RingLoader } from 'react-spinners'; 
