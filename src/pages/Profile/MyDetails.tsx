@@ -30,7 +30,6 @@ const MyDetails: React.FC = () => {
     form.setFieldsValue(s);
     form.setFieldValue('logins', mtClient?.login);
 
-    // Set the user initial for the avatar
     if (record.firstName) {
       setUserInitial(record.firstName.charAt(0).toUpperCase());
     }
@@ -82,7 +81,6 @@ const MyDetails: React.FC = () => {
         setIsEditing(false);
         setIsFormChanged(false);
 
-        // Update user initial after successful update
         if (values.firstName) {
           setUserInitial(values.firstName.charAt(0).toUpperCase());
         }
@@ -124,9 +122,9 @@ const MyDetails: React.FC = () => {
             <div className="user-info">
               <h2 className="user-name">MY ACCOUNT</h2>
               {form.getFieldValue('logins') && (
-              <span className="account-badge">
-              {form.getFieldValue('firstName')} {form.getFieldValue('lastName')}
-            </span>
+                <span className="account-badge">
+                  {form.getFieldValue('firstName')} {form.getFieldValue('lastName')}
+                </span>
               )}
             </div>
           </div>
@@ -384,14 +382,41 @@ const MyDetails: React.FC = () => {
           </Tabs>
 
           <Divider className="form-divider" />
-          <div className="form-actions">
+          <div
+            className="form-actions"
+            style={{
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'flex-end',
+              flexWrap: 'wrap',
+              marginTop: 16,
+            }}
+          >
             {isEditing && (
               <>
-                <Button type="button" onClick={handleEditClick} className="action-btn cancel-btn">
+                <Button
+                  type="button"
+                  onClick={handleEditClick}
+                  className="action-btn cancel-btn"
+                  style={{
+                    minWidth: 110,
+                    fontSize: 16,
+                    padding: '8px 16px',
+                  }}
+                >
                   Cancel
                 </Button>
                 {activeTab !== '3' && (
-                  <Button type="button" onClick={handleNextClick} className="action-btn next-btn">
+                  <Button
+                    type="button"
+                    onClick={handleNextClick}
+                    className="action-btn next-btn"
+                    style={{
+                      minWidth: 110,
+                      fontSize: 16,
+                      padding: '8px 16px',
+                    }}
+                  >
                     Next
                   </Button>
                 )}
@@ -401,6 +426,11 @@ const MyDetails: React.FC = () => {
                     htmlType="submit"
                     loading={loading}
                     className="action-btn update-btn"
+                    style={{
+                      minWidth: 110,
+                      fontSize: 16,
+                      padding: '8px 16px',
+                    }}
                   >
                     Update
                   </Button>
@@ -408,13 +438,56 @@ const MyDetails: React.FC = () => {
               </>
             )}
             {!isEditing && (
-              <Button type="button" onClick={handleEditClick} className="action-btn edit-btn">
+              <Button
+                type="button"
+                onClick={handleEditClick}
+                className="action-btn edit-btn"
+                style={{
+                  minWidth: 140,
+                  fontSize: 18,
+                  padding: '10px 24px',
+                  fontWeight: 600,
+                  borderRadius: 8,
+                  background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  boxShadow: '0 2px 8px rgba(102,126,234,0.10)',
+                  transition: 'background 0.3s, color 0.3s',
+                  width: '100%',
+                  maxWidth: 220,
+                }}
+              >
                 Edit Profile
               </Button>
             )}
           </div>
         </Form>
       </Card>
+      <style>
+        {`
+        @media (max-width: 600px) {
+          .profile-card {
+            padding: 0 !important;
+          }
+          .profile-header {
+            flex-direction: column;
+            align-items: center;
+          }
+          .form-actions {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 10px !important;
+            margin-top: 18px !important;
+          }
+          .action-btn, .edit-btn {
+            width: 100% !important;
+            min-width: 0 !important;
+            font-size: 16px !important;
+            padding: 10px 0 !important;
+          }
+        }
+        `}
+      </style>
     </div>
   );
 };
