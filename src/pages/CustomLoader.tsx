@@ -15,7 +15,7 @@ const CustomLoader = () => {
     <div className="loader-container">
             {/* <RingLoader  size={150} color={'#123abc'} loading={true} /> */}
 
-     <div className="loader"><img src='/images/loder.gif' style={{width:100,height:120}} /></div>
+     <div className="loader"><img src='/images/loder.gif' style={{width:200,height:200}} /></div>
     </div>
   );
 };
