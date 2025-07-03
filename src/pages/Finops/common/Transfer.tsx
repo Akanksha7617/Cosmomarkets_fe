@@ -53,7 +53,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
   const { initialState, setInitialState } = useModel('@@initialState');
   const [mtLogins, setMtLogins] = useState<string[]>([]);
   const [loginToFreeMargin, setLoginToFreeMargin] = useState<LoginFreeMargin[]>([]);
-  const [freeMargin, setFreeMargin] = useState<number>(0);
+  const [balance	, setbalance	] = useState<number>(0);
 
   useEffect(() => {
     init().then();
@@ -157,7 +157,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
 
   const handleSelectChange = async (value: any) => {
     const foundEntry = loginToFreeMargin.find((entry) => entry.login === value);
-    setFreeMargin(foundEntry?.freeMargin || 0);
+    setbalance(foundEntry?.freeMargin || 0);
   };
 
   return (
@@ -196,7 +196,7 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
                 }}
               />
               <ProDescriptions column={1}>
-                <ProDescriptions.Item label="Free Margin">{freeMargin}</ProDescriptions.Item>
+                <ProDescriptions.Item label="Balance	">{balance	}</ProDescriptions.Item>
                
               </ProDescriptions>
 
@@ -219,12 +219,12 @@ const Transfer: React.FC<{ title: string; type: Type; successMsg: String; failur
                           return Promise.reject(new Error('Amount cannot be zero!'));
                         }
 
-                        if (enteredAmount <= freeMargin) {
+                        if (enteredAmount <= balance	) {
                           return Promise.resolve();
                         }
 
                         return Promise.reject(
-                          new Error(`Must be less than or equal to Free Margin (${freeMargin}) !`),
+                          new Error(`Must be less than or equal to balance	 (${balance	}) !`),
                         );
                       },
                     }),

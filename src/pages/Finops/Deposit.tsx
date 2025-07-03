@@ -1,6 +1,5 @@
 import { api } from '@/components/common/api';
 import { Type } from '@/generated';
-import { Transfer } from '@/pages/Finops/common/Transfer';
 import { useModel } from '@@/exports';
 import {
   ArrowRightOutlined,
@@ -958,7 +957,7 @@ const Deposit: React.FC = () => {
 
               {/* Conditional Render for MT5 */}
               {isMt5 && (
-                <Transfer
+                <DepositTransferCommon
                   title={'Deposit to MT5'}
                   type={Type.WALLET_TO_MT}
                   successMsg={{

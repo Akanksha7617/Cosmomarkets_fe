@@ -39,6 +39,8 @@ const sliderContent = [
 ];
 
 const SignUp = () => {
+  // promo code
+  const [form] = Form.useForm();
   // State management
   const [userLoginState, setUserLoginState] = useState({});
   const [promoCode, setPromo] = useState('0');
@@ -83,6 +85,8 @@ const SignUp = () => {
 
       if (promoParam) {
         setPromo(promoParam);
+        // Add this line to update the form field immediately
+        form.setFieldsValue({ promo: promoParam });
       }
 
       if (tokenParam) {
@@ -213,7 +217,7 @@ const SignUp = () => {
           <Button type="default" ghost onClick={() => history.push('/user/login')}>
             Log In
           </Button>
-          <Button type="primary" onClick={() => history.push('/user/signup')}>
+          <Button type="primary" onClick={() => history.push('/User/Login/Signup')}>
             Sign Up
           </Button>
         </div>
@@ -231,6 +235,7 @@ const SignUp = () => {
 
               <div className="auth-form-container">
                 <Form
+                  form={form}
                   name="auth_form"
                   className="auth-form"
                   initialValues={{
@@ -256,6 +261,10 @@ const SignUp = () => {
                           message: 'Please enter valid characters only.',
                         },
                         {
+                          pattern: /^[^0-9]*$/,
+                          message: 'Numbers are not allowed in name fields.',
+                        },
+                        {
                           validator: (_, value) => {
                             if (!value) return Promise.resolve();
 
@@ -277,6 +286,7 @@ const SignUp = () => {
                         size="large"
                       />
                     </Form.Item>
+                    
                     <Form.Item
                       label="Last Name"
                       name="lastName"
@@ -290,6 +300,10 @@ const SignUp = () => {
                         {
                           pattern: /^[a-zA-Z0-9. _]*$/,
                           message: 'Please enter valid characters only',
+                        },
+                        {
+                          pattern: /^[^0-9]*$/,
+                          message: 'Numbers are not allowed in name fields.',
                         },
                         {
                           validator: (_, value) => {

@@ -3139,7 +3139,7 @@ margin-left: -100px;
 }
 
 .history-item.deposit .history-icon {
-  color: #0b2b4b;
+  color: #4ecdc4;
   background: rgba(255, 107, 107, 0.2);
 }
 
@@ -3149,7 +3149,7 @@ margin-left: -100px;
 }
 
 .history-item.mt5_deposit .history-icon {
-  color: #0b2b4b;
+  color: #4ecdc4;
   background: rgba(255, 193, 7, 0.2);
 }
 
@@ -9320,7 +9320,7 @@ margin-left: -100px;
 }
 
 .chang {
-  padding-left: 566px !important;
+  margin-left: 310% !important;
   font-weight: 500;
 }
 
@@ -9340,7 +9340,7 @@ margin-left: -100px;
   .chang {
     align-self: flex-start;
     margin-top: 8px;
-    padding-left: 5px !important;
+    margin-left: 5px !important;
   }
 
   .account-title h2 {
