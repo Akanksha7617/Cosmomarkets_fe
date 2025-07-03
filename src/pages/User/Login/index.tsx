@@ -13,12 +13,10 @@ const Login = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
 
   useEffect(() => {
-    // Set background image on body for full bleed
     document.body.style.background = `url('/images/hd.png') center center / cover no-repeat`;
     document.body.style.minHeight = '100vh';
     document.body.style.width = '100vw';
     document.body.style.overflow = 'hidden';
-
     return () => {
       document.body.style.background = '';
       document.body.style.minHeight = '';
@@ -30,12 +28,10 @@ const Login = () => {
   useEffect(() => {
     const checkAndHandleAdminImpersonation = async () => {
       setIsProcessing(true);
-
       const urlSearchParams = new URLSearchParams(window.location.search);
       const userId = urlSearchParams.get('userId');
       const adminImpersonating = urlSearchParams.get('adminImpersonating');
       const impersonationToken = urlSearchParams.get('impersonationToken');
-
       if (userId && adminImpersonating === 'true' && impersonationToken) {
         const currentToken = sessionStorage.getItem('jwtToken');
         if (currentToken && !sessionStorage.getItem('adminToken')) {
@@ -49,7 +45,6 @@ const Login = () => {
         history.replace('/dashboard');
         return;
       }
-
       if (urlSearchParams.get('returnToAdmin') === 'true') {
         const adminToken = sessionStorage.getItem('adminToken');
         if (adminToken) {
@@ -62,7 +57,6 @@ const Login = () => {
           return;
         }
       }
-
       const tokenParam = urlSearchParams.get('token');
       if (tokenParam) {
         sessionStorage.setItem('jwtToken', tokenParam);
@@ -72,7 +66,6 @@ const Login = () => {
         history.replace(redirect);
         return;
       }
-
       const existingToken = sessionStorage.getItem('jwtToken');
       if (existingToken) {
         updateAPIToken();
@@ -88,7 +81,6 @@ const Login = () => {
       }
       setIsProcessing(false);
     };
-
     checkAndHandleAdminImpersonation();
   }, []);
 
@@ -113,7 +105,6 @@ const Login = () => {
         email: values.email,
         password: values.password,
       });
-
       if (msg.status === 'ok') {
         sessionStorage.setItem('jwtToken', msg.token);
         updateAPIToken();
@@ -170,7 +161,6 @@ const Login = () => {
         color: 'white',
         position: 'relative'
       }}>
-        {/* Overlay */}
         <div style={{
           position: 'fixed',
           top: 0, left: 0, width: '100vw', height: '100vh',
@@ -178,7 +168,6 @@ const Login = () => {
           zIndex: 2,
           pointerEvents: 'none'
         }} />
-        {/* Loader */}
         <div style={{ textAlign: 'center', zIndex: 3, position: 'relative' }}>
           <div style={{
             width: '40px',
@@ -209,7 +198,6 @@ const Login = () => {
       position: 'relative',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     }}>
-      {/* Overlay for better contrast */}
       <div style={{
         position: 'fixed',
         top: 0, left: 0, width: '100vw', height: '100vh',
@@ -218,7 +206,7 @@ const Login = () => {
         pointerEvents: 'none'
       }} />
 
-      {/* Login Card - Left of center, floating */}
+      {/* Login Card with Curved Top */}
       <div style={{
         position: 'absolute',
         top: '50%',
@@ -235,14 +223,28 @@ const Login = () => {
         zIndex: 3,
         border: '1px solid rgba(255, 255, 255, 0.3)'
       }}>
-        {/* Header Section with Gradient */}
+        {/* Curved Header Section */}
         <div style={{
           position: 'relative',
-          height: '140px',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          borderRadius: '24px 24px 0 0',
-          overflow: 'hidden'
+          width: '100%',
+          height: '130px',
+          background: 'transparent',
+          overflow: 'hidden',
         }}>
+          {/* SVG Curve */}
+          <svg viewBox="0 0 350 130" width="100%" height="130" style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}>
+            <defs>
+              <linearGradient id="loginGradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#667eea" />
+                <stop offset="100%" stopColor="#764ba2" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M0,0 L350,0 L350,80 Q175,140 0,80 Z"
+              fill="url(#loginGradient)"
+            />
+          </svg>
+
           {/* Logo */}
           <div style={{
             width: '100%',
@@ -250,7 +252,7 @@ const Login = () => {
             justifyContent: 'center',
             alignItems: 'center',
             position: 'absolute',
-            top: '50%',
+            top: '38%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
             zIndex: 3
@@ -259,19 +261,19 @@ const Login = () => {
               src="/images/Mevora_Capital.png"
               alt="Mevora Capital"
               style={{
-                height: '150px',
+                height: '180px',
                 width: 'auto',
-                maxWidth: '180px',
+                maxWidth: '160px',
                 objectFit: 'contain',
                 filter: 'brightness(1.1) drop-shadow(0 2px 8px rgba(0,0,0,0.2))',
                 animation: 'fadeInScale 0.8s ease-out'
               }}
             />
           </div>
-          
+
           {/* Back Arrow */}
           <div style={{
-            padding: '16px 20px',
+            padding: '14px 18px',
             position: 'absolute',
             top: 0,
             left: 0,
@@ -284,26 +286,6 @@ const Login = () => {
               opacity: 0.9
             }} onClick={() => window.history.back()} />
           </div>
-
-          {/* Decorative Elements */}
-          <div style={{
-            position: 'absolute',
-            top: '-(-50px)',
-            right: '-50px',
-            width: '100px',
-            height: '100px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '50%'
-          }}></div>
-          <div style={{
-            position: 'absolute',
-            bottom: '-30px',
-            left: '-30px',
-            width: '60px',
-            height: '60px',
-            background: 'rgba(255, 255, 255, 0.08)',
-            borderRadius: '50%'
-          }}></div>
         </div>
 
         {/* Form Container */}
@@ -318,7 +300,6 @@ const Login = () => {
             layout="vertical"
             style={{ width: '100%' }}
           >
-            {/* Email Input */}
             <Form.Item
               name="email"
               rules={[{ required: true, message: 'Please input your email address!' }]}
@@ -352,8 +333,6 @@ const Login = () => {
                 />
               </div>
             </Form.Item>
-
-            {/* Password Input */}
             <Form.Item
               name="password"
               rules={[{ required: true, message: 'Please input your password!' }]}
@@ -387,8 +366,6 @@ const Login = () => {
                 />
               </div>
             </Form.Item>
-
-            {/* Forgot Password Link */}
             <div style={{
               textAlign: 'right',
               marginBottom: '24px'
@@ -407,15 +384,11 @@ const Login = () => {
                 Forgot Password?
               </a>
             </div>
-
-            {/* Error Message */}
             {userLoginState.status === 'error' && (
               <div style={{ marginBottom: '16px' }}>
                 <LoginMessage content="Failed to sign in. Please try again." />
               </div>
             )}
-
-            {/* Login Button */}
             <Form.Item style={{ marginBottom: '20px' }}>
               <Button
                 type="primary"
@@ -438,8 +411,6 @@ const Login = () => {
                 Sign In
               </Button>
             </Form.Item>
-
-            {/* Sign Up Link */}
             <div style={{
               textAlign: 'center',
               color: '#718096',
@@ -463,7 +434,6 @@ const Login = () => {
           </Form>
         </div>
       </div>
-
       <style jsx>{`
         @keyframes fadeInScale {
           0% { 
@@ -475,45 +445,36 @@ const Login = () => {
             transform: translate(-50%, -50%) scale(1);
           }
         }
-        
         .custom-light-input input {
           background: transparent !important;
           color: #2d3748 !important;
           border: none !important;
         }
-        
         .custom-light-input input::placeholder {
           color: #a0aec0 !important;
         }
-        
         .custom-light-input .ant-input-prefix {
           margin-right: 12px;
         }
-        
         .custom-light-input:hover {
           border-color: #667eea !important;
           box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
         }
-        
         .custom-light-input:focus-within {
           border-color: #667eea !important;
           box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
         }
-        
         .light-login-button:hover {
           background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
           transform: translateY(-2px);
           box-shadow: 0 12px 35px rgba(102, 126, 234, 0.35) !important;
         }
-        
         .light-login-button:active {
           transform: translateY(0px);
         }
-        
         .forgot-link:hover {
           color: #5a67d8 !important;
         }
-        
         .signup-link:hover {
           color: #5a67d8 !important;
         }

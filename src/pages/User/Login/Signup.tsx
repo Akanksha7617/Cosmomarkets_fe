@@ -1,11 +1,12 @@
 import { api, updateAPIToken } from '@/components/common/api';
-import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, MailOutlined, UserOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Alert, Button, Checkbox, Form, Input, message, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import '../../../common.css'; // Assuming this file has global styles like orange-success-icon etc.
 
 const { Option } = Select;
 
@@ -36,6 +37,12 @@ const SignUp = () => {
   );
 
   useEffect(() => {
+    // Set background image on body for full bleed, matching login page
+    document.body.style.background = `url('/images/hd.png') center center / cover no-repeat`;
+    document.body.style.minHeight = '100vh';
+    document.body.style.width = '100vw';
+    document.body.style.overflow = 'hidden';
+
     const checkAndHandleParams = async () => {
       setIsProcessing(true);
       const urlSearchParams = new URLSearchParams(window.location.search);
@@ -66,6 +73,14 @@ const SignUp = () => {
       setIsProcessing(false);
     };
     checkAndHandleParams();
+
+    return () => {
+      // Clean up body styles on component unmount
+      document.body.style.background = '';
+      document.body.style.minHeight = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+    };
     // eslint-disable-next-line
   }, []);
 
@@ -145,27 +160,27 @@ const SignUp = () => {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        background: `url('/images/hd.png') center center / cover no-repeat`,
-        color: '#fff',
+        color: 'white',
         position: 'relative'
       }}>
         {/* Overlay */}
         <div style={{
           position: 'fixed',
-          top: 0, left: 0, width: '130vw', height: '130vh',
+          top: 0, left: 0, width: '100vw', height: '100vh',
           background: 'linear-gradient(120deg, rgba(10,29,62,0.10) 60%, rgba(14,62,138,0.06) 100%)',
           zIndex: 2,
           pointerEvents: 'none'
         }} />
-        <div style={{ textAlign: 'center', zIndex: 3 }}>
+        {/* Loader */}
+        <div style={{ textAlign: 'center', zIndex: 3, position: 'relative' }}>
           <div style={{
             width: '40px',
             height: '40px',
-            border: '4px solid #8D40FF',
-            borderTop: '4px solid transparent',
+            border: '4px solid rgba(255,255,255,0.3)',
+            borderTop: '4px solid #ff6ec7', // Using a color from login page
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
-            margin: '0 auto 20px'
+            margin: '0 auto 16px'
           }}></div>
           <p>Loading...</p>
         </div>
@@ -184,15 +199,12 @@ const SignUp = () => {
       style={{
         minHeight: '100vh',
         width: '100vw',
-        background: `url('/images/hd.png') center center / cover no-repeat`,
-        display: 'flex',
-        alignItems: 'center',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        overflow: 'hidden',
         position: 'relative',
-        justifyContent: 'flex-start'
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
-      {/* Overlay for better contrast */}
+      {/* Overlay for better contrast, matching login page */}
       <div
         style={{
           position: 'fixed',
@@ -207,52 +219,118 @@ const SignUp = () => {
       />
       <div
         style={{
-          width: '410px', // increased width
-          minHeight: 'auto',
-          background: '#fff',
+          position: 'absolute',
+          top: '50%',
+          left: '30%', // Shifted to left
+          transform: 'translate(-45%, -48%)', // Adjust to center the card based on new left
+          width: '90%',
+          maxWidth: '350px', // Fixed max-width for consistency
+          background: 'rgba(255, 255, 255, 0.95)',
           borderRadius: '24px',
-          boxShadow: '0 12px 40px 0 rgba(0,0,0,0.10), 0 2px 8px 0 rgba(0,0,0,0.16)',
-          overflow: 'hidden',
-          position: 'relative',
-          zIndex: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          marginLeft: '85px', // move card to left, adjust as needed
-          marginTop: '0',
-          marginBottom: '0'
+          padding: '0',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.08)',
+          overflow: 'hidden', // Ensures scrollbar is inside
+          backdropFilter: 'blur(20px)',
+          zIndex: 3,
+          border: '1px solid rgba(255, 255, 255, 0.3)'
         }}
       >
-        {/* Card Header with Gradient and Logo */}
+        {/* Card Header with Gradient and Logo, matching login page */}
         <div style={{
-          width: '100%',
-          height: 70, // reduced header height
-          background: 'linear-gradient(135deg, #6a5cff 0%, #7f53ac 100%)',
-          borderTopLeftRadius: '24px',
-          borderTopRightRadius: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative'
+          position: 'relative',
+          height: '140px',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', // Login page gradient
+          borderRadius: '24px 24px 0 0',
+          overflow: 'hidden'
         }}>
-          <img
-            src="/images/Mevora_Capital.png"
-            alt="Mevora Capital"
+          {/* Logo */}
+          <div style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 3
+          }}>
+            <img
+              src="/images/Mevora_Capital.png"
+              alt="Mevora Capital"
+              style={{
+                height: '180px',
+                width: 'auto',
+                maxWidth: '160px',
+                objectFit: 'contain',
+                filter: 'brightness(1.1) drop-shadow(0 2px 8px rgba(0,0,0,0.2))',
+                animation: 'fadeInScale 0.8s ease-out'
+              }}
+            />
+          </div>
+          {/* Back Arrow - added from login page */}
+          <div style={{
+            padding: '16px 20px',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            zIndex: 4
+          }}>
+            <ArrowLeftOutlined style={{
+              color: '#fff',
+              fontSize: '18px',
+              cursor: 'pointer',
+              opacity: 0.9
+            }} onClick={() => history.push('/user/login')} /> {/* Link back to login */}
+          </div>
+          {/* Decorative Elements (from login page) */}
+          <div style={{
+            position: 'absolute',
+            top: '-(-50px)',
+            right: '-50px',
+            width: '100px',
+            height: '100px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '50%'
+          }}></div>
+          <div style={{
+            position: 'absolute',
+            bottom: '-30px',
+            left: '-30px',
+            width: '60px',
+            height: '60px',
+            background: 'rgba(255, 255, 255, 0.08)',
+            borderRadius: '50%'
+          }}></div>
+          {/* SVG Curve at Bottom (from login page) */}
+          <svg
+            viewBox="0 0 350 40"
+            width="100%"
+            height="40"
             style={{
-              width: 140, // larger logo
-              height: 140,
-              objectFit: 'contain',
+              position: 'absolute',
+              bottom: '-1px',
+              left: 0,
+              zIndex: 5,
               display: 'block'
             }}
-          />
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,0 C80,40 270,40 350,0 L350,40 L0,40 Z"
+              fill="rgba(255, 255, 255, 0.95)" // Match card background color
+              fillOpacity="1"
+            />
+          </svg>
         </div>
-        {/* Form Section */}
+
+        {/* Form Section with internal scroll */}
         <div style={{
-          background: 'transparent',
-          borderRadius: '0 0 24px 24px',
-          padding: '16px 28px 16px 28px', // reduced padding for less height
-          width: '100%',
-          boxSizing: 'border-box'
+          padding: '20px 24px 24px', // Reduced top padding for more compact form
+          position: 'relative',
+          zIndex: 1,
+          maxHeight: '400px', // Fixed height for scrollable form area
+          overflowY: 'auto'
         }}>
           <Form
             name="auth_form"
@@ -264,79 +342,92 @@ const SignUp = () => {
             layout="vertical"
             requiredMark={false}
           >
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <Form.Item
-                label={<span style={{ color: '#6a5cff', fontWeight: 500 }}>First Name</span>}
+                label={<span style={{ color: '#4a5568', fontWeight: 600, fontSize: '14px' }}>First Name</span>}
                 name="firstName"
                 normalize={(value) => value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : ''}
                 rules={[
-                  { required: true, message: 'Please enter FirstName' },
-                  { min: 3, message: 'FirstName must be at least 3 characters' },
-                  { pattern: /^[a-zA-Z0-9. _]*$/, message: 'Please enter valid characters only.' },
+                  { required: true, message: 'Please enter First Name' },
+                  { min: 3, message: 'First Name must be at least 3 characters' },
+                  { pattern: /^[a-zA-Z\s.-]*$/, message: 'Please enter valid characters only.' },
                 ]}
-                style={{ flex: 1 }}
+                style={{ flex: 1, marginBottom: '20px' }}
               >
                 <Input
-                  prefix={<UserOutlined style={{ color: '#6a5cff' }} />}
+                  prefix={<UserOutlined style={{ color: '#667eea' }} />} // Login page icon color
                   placeholder="First Name"
                   size="large"
                   style={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #e7eafc',
+                    backgroundColor: '#f8fafc',
+                    border: '2px solid #e2e8f0',
                     borderRadius: '12px',
-                    color: '#222',
-                    fontSize: '15px'
+                    color: '#2d3748',
+                    fontSize: '15px',
+                    padding: '12px 16px',
+                    height: 'auto',
+                    transition: 'all 0.3s ease'
                   }}
+                  className="custom-light-input"
                 />
               </Form.Item>
               <Form.Item
-                label={<span style={{ color: '#6a5cff', fontWeight: 500 }}>Last Name</span>}
+                label={<span style={{ color: '#4a5568', fontWeight: 600, fontSize: '14px' }}>Last Name</span>}
                 name="lastName"
                 normalize={(value) => value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : ''}
                 rules={[
-                  { required: true, message: 'Please enter LastName' },
+                  { required: true, message: 'Please enter Last Name' },
                   { min: 3, message: 'Last Name must be at least 3 characters' },
-                  { pattern: /^[a-zA-Z0-9. _]*$/, message: 'Please enter valid characters only' },
+                  { pattern: /^[a-zA-Z\s.-]*$/, message: 'Please enter valid characters only' },
                 ]}
-                style={{ flex: 1 }}
+                style={{ flex: 1, marginBottom: '20px' }}
               >
                 <Input
-                  prefix={<UserOutlined style={{ color: '#6a5cff' }} />}
+                  prefix={<UserOutlined style={{ color: '#667eea' }} />}
                   placeholder="Last Name"
                   size="large"
                   style={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #e7eafc',
+                    backgroundColor: '#f8fafc',
+                    border: '2px solid #e2e8f0',
                     borderRadius: '12px',
-                    color: '#222',
-                    fontSize: '15px'
+                    color: '#2d3748',
+                    fontSize: '15px',
+                    padding: '12px 16px',
+                    height: 'auto',
+                    transition: 'all 0.3s ease'
                   }}
+                  className="custom-light-input"
                 />
               </Form.Item>
             </div>
             <Form.Item
-              label={<span style={{ color: '#6a5cff', fontWeight: 500 }}>Email Address</span>}
+              label={<span style={{ color: '#4a5568', fontWeight: 600, fontSize: '14px' }}>Email Address</span>}
               name="email"
               rules={[
                 { required: true, message: 'Please enter email address!' },
                 { type: 'email', message: 'Invalid email format' },
               ]}
+              style={{ marginBottom: '20px' }}
             >
               <Input
-                prefix={<MailOutlined style={{ color: '#6a5cff' }} />}
+                prefix={<MailOutlined style={{ color: '#667eea' }} />}
                 placeholder="Email address"
                 size="large"
                 style={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e7eafc',
+                  backgroundColor: '#f8fafc',
+                  border: '2px solid #e2e8f0',
                   borderRadius: '12px',
-                  color: '#222',
-                  fontSize: '15px'
+                  color: '#2d3748',
+                  fontSize: '15px',
+                  padding: '12px 16px',
+                  height: 'auto',
+                  transition: 'all 0.3s ease'
                 }}
+                className="custom-light-input"
               />
             </Form.Item>
             <Form.Item
-              label={<span style={{ color: '#6a5cff', fontWeight: 500 }}>Phone Number</span>}
+              label={<span style={{ color: '#4a5568', fontWeight: 600, fontSize: '14px' }}>Phone Number</span>}
               name="phone"
               rules={[
                 { required: true, message: 'Please enter phone number with country code' },
@@ -349,43 +440,52 @@ const SignUp = () => {
                   },
                 }),
               ]}
+              style={{ marginBottom: '20px' }}
             >
               <PhoneInput
                 country="ae"
                 inputStyle={{
-                  background: '#fff',
-                  border: '1px solid #e7eafc',
+                  background: '#f8fafc',
+                  border: '2px solid #e2e8f0',
                   borderRadius: '12px',
-                  color: '#222',
+                  color: '#2d3748',
                   fontSize: '15px',
                   width: '100%',
-                  height: '40px'
+                  height: '48px', // Match Ant Design Input height
+                  padding: '12px 16px 12px 55px', // Adjust padding for country code
+                  transition: 'all 0.3s ease'
                 }}
                 buttonStyle={{
-                  background: '#fff',
-                  border: '1px solid #e7eafc',
-                  borderRadius: '12px 0 0 12px'
+                  background: '#f8fafc',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '12px 0 0 12px',
+                  transition: 'all 0.3s ease'
                 }}
                 containerStyle={{ width: '100%' }}
                 inputProps={{ placeholder: 'Phone number', required: true }}
               />
             </Form.Item>
             <Form.Item
-              label={<span style={{ color: '#6a5cff', fontWeight: 500 }}>Country</span>}
+              label={<span style={{ color: '#4a5568', fontWeight: 600, fontSize: '14px' }}>Country</span>}
               name="region"
               rules={[{ required: true, message: 'Please select your country!' }]}
+              style={{ marginBottom: '20px' }}
             >
               <Select
                 placeholder="Select country"
                 size="large"
                 style={{
                   borderRadius: '12px',
-                  background: '#fff',
-                  color: '#222'
+                  background: '#f8fafc',
+                  border: '2px solid #e2e8f0',
+                  color: '#2d3748',
+                  height: '48px'
                 }}
+                className="custom-light-select" // Added for consistent styling
                 dropdownStyle={{
                   background: '#fff',
-                  border: '1px solid #e7eafc'
+                  border: '1px solid #e7eafc',
+                  borderRadius: '8px'
                 }}
               >
                 {countryCodes.map((country) => (
@@ -396,7 +496,7 @@ const SignUp = () => {
               </Select>
             </Form.Item>
             <Form.Item
-              label={<span style={{ color: '#6a5cff', fontWeight: 500 }}>Password</span>}
+              label={<span style={{ color: '#4a5568', fontWeight: 600, fontSize: '14px' }}>Password</span>}
               name="password"
               rules={[
                 { required: true, message: 'Please input your password!' },
@@ -405,40 +505,50 @@ const SignUp = () => {
                   message: 'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special symbol, and be at least 8 characters long!',
                 },
               ]}
+              style={{ marginBottom: '20px' }}
             >
               <Input.Password
-                prefix={<LockOutlined style={{ color: '#6a5cff' }} />}
+                prefix={<LockOutlined style={{ color: '#667eea' }} />}
                 placeholder="Create a strong password"
                 size="large"
                 style={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e7eafc',
+                  backgroundColor: '#f8fafc',
+                  border: '2px solid #e2e8f0',
                   borderRadius: '12px',
-                  color: '#222',
-                  fontSize: '15px'
+                  color: '#2d3748',
+                  fontSize: '15px',
+                  padding: '12px 16px',
+                  height: 'auto',
+                  transition: 'all 0.3s ease'
                 }}
+                className="custom-light-input"
               />
             </Form.Item>
             <Form.Item
-              label={<span style={{ color: '#6a5cff', fontWeight: 500 }}>Promo Code</span>}
+              label={<span style={{ color: '#4a5568', fontWeight: 600, fontSize: '14px' }}>Promo Code</span>}
               name="promo"
               initialValue={promoCode}
               rules={[
                 { required: true, message: 'Please enter the promo code of the Introducing Broker!' },
                 { pattern: /^[0-9]+$/, message: 'Please enter a valid numeric promo code.' },
               ]}
+              style={{ marginBottom: '20px' }}
             >
               <Input
                 placeholder="Promo code"
                 size="large"
                 disabled={promoCode !== '0'}
                 style={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e7eafc',
+                  backgroundColor: '#f8fafc',
+                  border: '2px solid #e2e8f0',
                   borderRadius: '12px',
-                  color: '#222',
-                  fontSize: '15px'
+                  color: '#2d3748',
+                  fontSize: '15px',
+                  padding: '12px 16px',
+                  height: 'auto',
+                  transition: 'all 0.3s ease'
                 }}
+                className="custom-light-input"
               />
             </Form.Item>
             <Form.Item style={{ marginBottom: '16px' }}>
@@ -448,14 +558,14 @@ const SignUp = () => {
                   setDeclarationChecked(e.target.checked);
                   setShowDeclarationError(false);
                 }}
-                style={{ color: '#6a5cff' }}
+                style={{ color: '#4a5568' }} // Adjusted color for better contrast
               >
-                <span style={{ color: '#6a5cff', fontSize: '14px' }}>
+                <span style={{ color: '#4a5568', fontSize: '14px' }}>
                   I declare and confirm that I accept all{' '}
                   <a
                     href="https://xyleum.com/terms-and-conditions/"
                     target="blank"
-                    style={{ color: '#ff6ec7', textDecoration: 'underline' }}
+                    style={{ color: '#667eea', textDecoration: 'underline', fontWeight: 500 }} // Login link color
                   >
                     Terms & Conditions
                   </a>{' '}
@@ -463,7 +573,7 @@ const SignUp = () => {
                 </span>
               </Checkbox>
               {showDeclarationError && (
-                <div style={{ color: '#ff8a95', marginTop: '8px' }}>
+                <div style={{ color: '#ff4d4f', marginTop: '8px', fontSize: '12px' }}>
                   Please accept the Terms & Conditions to proceed.
                 </div>
               )}
@@ -471,34 +581,32 @@ const SignUp = () => {
             {userLoginState.status === 'signUpError' && (
               <LoginMessage content="Failed to signup. Please try again later." />
             )}
-            <Form.Item>
+            <Form.Item style={{ marginBottom: '20px' }}>
               <Button
                 type="primary"
                 htmlType="submit"
                 loading={isProcessing}
                 size="large"
                 style={{
-                  background: 'linear-gradient(90deg, #6a5cff 0%, #7f53ac 100%)',
+                  width: '100%',
+                  height: '48px',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', // Login button gradient
                   border: 'none',
                   borderRadius: '12px',
-                  color: '#fff',
+                  fontSize: '16px',
                   fontWeight: '600',
-                  fontSize: '17px',
-                  height: '48px',
-                  width: '100%',
-                  boxShadow: '0 8px 25px rgba(62,215,199,0.12)',
-                  margin: '0 auto',
-                  display: 'block'
+                  color: '#fff',
+                  boxShadow: '0 8px 25px rgba(102, 126, 234, 0.25)', // Login button shadow
+                  transition: 'all 0.3s ease'
                 }}
-                className="login-button"
+                className="light-login-button" // Apply login button hover effects
               >
                 Create Account
               </Button>
             </Form.Item>
             <div style={{
               textAlign: 'center',
-              marginTop: '10px',
-              color: '#6a5cff',
+              color: '#718096', // Login text color
               fontSize: '14px'
             }}>
               <span>
@@ -506,11 +614,13 @@ const SignUp = () => {
                 <a
                   onClick={() => history.push('/user/login')}
                   style={{
-                    color: '#6a5cff',
+                    color: '#667eea', // Login link color
                     fontWeight: '600',
                     cursor: 'pointer',
-                    textDecoration: 'none'
+                    textDecoration: 'none',
+                    transition: 'color 0.3s ease'
                   }}
+                  className="signup-link" // Apply login link hover effects
                 >
                   Sign In
                 </a>
@@ -519,29 +629,116 @@ const SignUp = () => {
           </Form>
         </div>
       </div>
-      <style>{`
-        .ant-input::placeholder,
-        .ant-input-password input::placeholder {
-          color: #b0aefd !important;
+      <style jsx>{`
+        @keyframes fadeInScale {
+          0% { 
+            opacity: 0; 
+            transform: translate(-50%, -50%) scale(0.8);
+          }
+          100% { 
+            opacity: 1; 
+            transform: translate(-50%, -50%) scale(1);
+          }
         }
-        .ant-form-item-explain-error {
-          color: #ff8a95 !important;
+        
+        .custom-light-input input {
+          background: transparent !important;
+          color: #2d3748 !important;
+          border: none !important;
         }
-        .ant-checkbox-wrapper {
-          color: #6a5cff !important;
+        
+        .custom-light-input input::placeholder {
+          color: #a0aec0 !important;
         }
-        .ant-checkbox-checked .ant-checkbox-inner {
-          background-color: #6a5cff !important;
-          border-color: #6a5cff !important;
+        
+        .custom-light-input .ant-input-prefix {
+          margin-right: 12px;
         }
-        .ant-select-selector {
-          background: #fff !important;
-          border: 1px solid #e7eafc !important;
+        
+        .custom-light-input:hover {
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        }
+        
+        .custom-light-input:focus-within {
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+        }
+
+        /* Phone Input specific styling for hover/focus to match custom-light-input */
+        .react-phone-input.focused .form-control,
+        .react-phone-input .form-control:focus {
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+        }
+        .react-phone-input .form-control:hover {
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        }
+        .react-phone-input .special-label { /* Hide the floating label for react-phone-input-2 */
+          display: none !important;
+        }
+        .react-phone-input .flag-dropdown.open .selected-flag {
+          background: #f8fafc !important; /* Keep background consistent */
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+        }
+        .react-phone-input .flag-dropdown.open {
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+        }
+
+        /* Custom Ant Design Select styling to match inputs */
+        .custom-light-select .ant-select-selector {
+          background-color: #f8fafc !important;
+          border: 2px solid #e2e8f0 !important;
           border-radius: 12px !important;
-          color: #222 !important;
+          color: #2d3748 !important;
+          height: 48px !important;
+          padding: 8px 16px !important; /* Adjust padding to match input */
         }
-        .ant-select-selection-placeholder {
-          color: #b0aefd !important;
+        .custom-light-select .ant-select-selection-placeholder {
+          color: #a0aec0 !important;
+          line-height: 32px !important; /* Adjust line-height */
+        }
+        .custom-light-select:hover .ant-select-selector {
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        }
+        .custom-light-select.ant-select-focused .ant-select-selector {
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+        }
+
+
+        .light-login-button:hover {
+          background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+          transform: translateY(-2px);
+          box-shadow: 0 12px 35px rgba(102, 126, 234, 0.35) !important;
+        }
+        
+        .light-login-button:active {
+          transform: translateY(0px);
+        }
+        
+        .forgot-link:hover { /* This class is not directly used on signup, but kept for consistency if needed */
+          color: #5a67d8 !important;
+        }
+        
+        .signup-link:hover {
+          color: #5a67d8 !important;
+        }
+
+        /* Scrollbar styling for the form section */
+        div[style*="overflow-y: auto"]::-webkit-scrollbar {
+          width: 6px;
+        }
+        div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb {
+          background: rgba(102, 126, 234, 0.3); /* Match theme color */
+          border-radius: 4px;
+        }
+        div[style*="overflow-y: auto"]::-webkit-scrollbar-track {
+          background: transparent;
         }
       `}</style>
     </div>
