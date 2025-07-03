@@ -57,7 +57,7 @@ const MyDetails: React.FC = () => {
 
     setLoading(true);
     try {
-      const excludedFields = ['masterPassword', 'investorPassword'];
+      const excludedFields = ['masterPassword', 'investorPassword', 'password'];
       const fieldNamesToValidate = Object.keys(form.getFieldsValue()).filter(
         (fieldName) => !excludedFields.includes(fieldName),
       );
@@ -279,8 +279,9 @@ const MyDetails: React.FC = () => {
                   >
                     <Input.Password
                       placeholder="••••••••"
-                      readOnly={!isEditing}
+                      readOnly={true}
                       className="form-input"
+                      style={{ backgroundColor: '#f5f5f5' }}
                     />
                   </Form.Item>
                 </Col>
@@ -306,7 +307,11 @@ const MyDetails: React.FC = () => {
                     className="form-item"
                     rules={[{ required: true, message: 'Master Password is required.' }]}
                   >
-                    <Input.Password className="form-input" />
+                    <Input.Password 
+                      className="form-input"
+                      readOnly={true}
+                      style={{ backgroundColor: '#f5f5f5' }}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -318,7 +323,11 @@ const MyDetails: React.FC = () => {
                     className="form-item"
                     rules={[{ required: true, message: 'Investor Password is required.' }]}
                   >
-                    <Input.Password className="form-input" />
+                    <Input.Password 
+                      className="form-input"
+                      readOnly={true}
+                      style={{ backgroundColor: '#f5f5f5' }}
+                    />
                   </Form.Item>
                 </Col>
               </Row>

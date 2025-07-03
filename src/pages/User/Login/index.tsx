@@ -1,69 +1,32 @@
+import { api, updateAPIToken } from '@/components/common/api';
+import { LockOutlined, MailOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { history, useModel } from '@umijs/max';
+import { Alert, Button, Form, Input, message } from 'antd';
 import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
+import 'react-phone-input-2/lib/style.css';
+import '../../../common.css';
 
 const Login = () => {
-  // State management
   const [userLoginState, setUserLoginState] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [errors, setErrors] = useState({});
+  const { initialState, setInitialState } = useModel('@@initialState');
 
-  const LoginMessage = ({ content }) => {
-    return (
-      <div style={{
-        marginBottom: '24px',
-        padding: '12px 16px',
-        background: 'rgba(255, 77, 79, 0.1)',
-        border: '1px solid rgba(255, 77, 79, 0.3)',
-        borderRadius: '8px',
-        color: '#ff6b6b',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px'
-      }}>
-        <span>⚠️</span>
-        {content}
-      </div>
-    );
-  };
+  useEffect(() => {
+    // Set background image on body for full bleed
+    document.body.style.background = `url('/images/hd.png') center center / cover no-repeat`;
+    document.body.style.minHeight = '100vh';
+    document.body.style.width = '100vw';
+    document.body.style.overflow = 'hidden';
 
-  // Mock API functions (replace with your actual API)
-  const mockAPI = {
-    postSignIn: async (credentials) => {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock validation
-      if (credentials.email === 'test@example.com' && credentials.password === 'password') {
-        return { status: 'ok', token: 'mock-jwt-token' };
-      } else {
-        return { status: 'error', message: 'Invalid user or password.' };
-      }
-    }
-  };
+    return () => {
+      document.body.style.background = '';
+      document.body.style.minHeight = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+    };
+  }, []);
 
-  const updateAPIToken = () => {
-    // Mock function - implement your token update logic
-    console.log('API token updated');
-  };
-
-  const fetchUserInfo = async () => {
-    // Mock function - implement your user info fetching logic
-    return { id: 1, name: 'Test User', email: 'test@example.com' };
-  };
-
-  const navigateTo = (path) => {
-    // Mock navigation - replace with your routing logic
-    console.log(`Navigating to: ${path}`);
-    window.location.href = path;
-  };
-
-  const showMessage = (type, content) => {
-    // Mock message system - replace with your notification system
-    console.log(`${type.toUpperCase()}: ${content}`);
-    alert(`${type.toUpperCase()}: ${content}`);
-  };
-
-  // Check for URL parameters and admin impersonation
   useEffect(() => {
     const checkAndHandleAdminImpersonation = async () => {
       setIsProcessing(true);
@@ -73,24 +36,20 @@ const Login = () => {
       const adminImpersonating = urlSearchParams.get('adminImpersonating');
       const impersonationToken = urlSearchParams.get('impersonationToken');
 
-      // Check if this is an admin impersonating a user
       if (userId && adminImpersonating === 'true' && impersonationToken) {
         const currentToken = sessionStorage.getItem('jwtToken');
         if (currentToken && !sessionStorage.getItem('adminToken')) {
           sessionStorage.setItem('adminToken', currentToken);
         }
-
         sessionStorage.setItem('jwtToken', impersonationToken);
         sessionStorage.setItem('isAdminImpersonating', 'true');
         sessionStorage.setItem('impersonatedUserId', userId);
-
         updateAPIToken();
         await fetchUserInfo();
-        navigateTo('/dashboard');
+        history.replace('/dashboard');
         return;
       }
 
-      // Check for return from user impersonation
       if (urlSearchParams.get('returnToAdmin') === 'true') {
         const adminToken = sessionStorage.getItem('adminToken');
         if (adminToken) {
@@ -99,103 +58,87 @@ const Login = () => {
           sessionStorage.removeItem('impersonatedUserId');
           updateAPIToken();
           await fetchUserInfo();
-          navigateTo('/admin/dashboard');
+          history.replace('/admin/dashboard');
           return;
         }
       }
 
-      // Handle normal login parameters
       const tokenParam = urlSearchParams.get('token');
       if (tokenParam) {
         sessionStorage.setItem('jwtToken', tokenParam);
         updateAPIToken();
         await fetchUserInfo();
         const redirect = urlSearchParams.get('redirect') || '/dashboard';
-        navigateTo(redirect);
+        history.replace(redirect);
         return;
       }
 
-      // Check for existing token
       const existingToken = sessionStorage.getItem('jwtToken');
       if (existingToken) {
         updateAPIToken();
         try {
           await fetchUserInfo();
           const redirect = urlSearchParams.get('redirect') || '/dashboard';
-          navigateTo(redirect);
+          history.replace(redirect);
           return;
         } catch (error) {
-          console.error('Token verification failed:', error);
           sessionStorage.removeItem('jwtToken');
           updateAPIToken();
         }
       }
-
       setIsProcessing(false);
     };
 
     checkAndHandleAdminImpersonation();
   }, []);
 
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.email) {
-      newErrors.email = 'Please input your email address!';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address!';
+  const fetchUserInfo = async () => {
+    const userInfo = await initialState?.fetchUserInfo?.();
+    if (userInfo) {
+      flushSync(() => {
+        setInitialState((s) => ({
+          ...s,
+          currentUser: userInfo,
+        }));
+      });
+      return userInfo;
     }
-    
-    if (!formData.password) {
-      newErrors.password = 'Please input your password!';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    throw new Error('Failed to fetch user info');
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-
+  const handleSubmit = async (values) => {
     setIsProcessing(true);
     try {
-      const msg = await mockAPI.postSignIn({
-        email: formData.email,
-        password: formData.password,
+      const msg = await api.app.postSignIn({
+        email: values.email,
+        password: values.password,
       });
 
       if (msg.status === 'ok') {
         sessionStorage.setItem('jwtToken', msg.token);
         updateAPIToken();
-
-        showMessage('success', 'Login successful');
+        message.success({
+          content: 'Login successful',
+          icon: <span className="orange-success-icon"> ✓ </span>,
+          className: 'orange-success-notification',
+          duration: 3,
+        });
         await fetchUserInfo();
-        
         const urlParams = new URL(window.location.href).searchParams;
-        navigateTo(urlParams.get('redirect') || '/dashboard');
+        history.push(urlParams.get('redirect') || '/dashboard');
         return;
       } else {
         if (msg.message && msg.message.includes('User is disabled by admin')) {
-          showMessage('error', 'User is disabled by admin.');
+          message.error('User is disabled by admin.');
         } else if (msg.message && msg.message.includes('Invalid user or password.')) {
-          showMessage('error', 'Invalid user or password.');
+          message.error('Invalid user or password.');
         } else if (msg.message && msg.message.includes('Email not registered. Please sign up.')) {
-          showMessage('error', 'Email not registered. Please sign up.');
+          message.error('Email not registered. Please sign up.');
         } else {
-          showMessage('error', 'Login failed. Please try again.');
+          message.error('Login failed. Please try again.');
         }
       }
     } catch (error) {
-      console.error('Login error:', error);
       setUserLoginState({
         type: 'signin',
         currentAuthority: 'guest',
@@ -206,537 +149,375 @@ const Login = () => {
     }
   };
 
-  // Show loading state while processing admin impersonation
+  const LoginMessage = ({ content }) => (
+    <Alert
+      style={{
+        marginBottom: 24,
+      }}
+      message={content}
+      type="error"
+      showIcon
+    />
+  );
+
   if (isProcessing) {
     return (
       <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection: 'column',
-        color: 'white'
+        minHeight: '100vh',
+        color: 'white',
+        position: 'relative'
       }}>
+        {/* Overlay */}
         <div style={{
-          width: '50px',
-          height: '50px',
-          border: '3px solid #9BF8F4',
-          borderTop: '3px solid transparent',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }}></div>
-        <p style={{ marginTop: '20px', fontSize: '18px' }}>Loading...</p>
-        <style>
-          {`
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-          `}
-        </style>
+          position: 'fixed',
+          top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'linear-gradient(120deg, rgba(10,29,62,0.10) 60%, rgba(14,62,138,0.06) 100%)',
+          zIndex: 2,
+          pointerEvents: 'none'
+        }} />
+        {/* Loader */}
+        <div style={{ textAlign: 'center', zIndex: 3, position: 'relative' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '4px solid rgba(255,255,255,0.3)',
+            borderTop: '4px solid #ff6ec7',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p>Loading...</p>
+        </div>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+          }
+        `}</style>
       </div>
     );
   }
 
   return (
     <div style={{
-      position: 'relative',
+      minHeight: '100vh',
       width: '100vw',
-      height: '100vh',
       overflow: 'hidden',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      position: 'relative',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     }}>
-      
-      {/* Trading Chart Background */}
+      {/* Overlay for better contrast */}
+      <div style={{
+        position: 'fixed',
+        top: 0, left: 0, width: '100vw', height: '100vh',
+        background: 'linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(240,248,255,0.08) 100%)',
+        zIndex: 1,
+        pointerEvents: 'none'
+      }} />
+
+      {/* Login Card - Left of center, floating */}
       <div style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        opacity: 0.15,
-        backgroundImage: `
-          linear-gradient(90deg, transparent 24%, rgba(155, 248, 244, 0.1) 25%, rgba(155, 248, 244, 0.1) 26%, transparent 27%, transparent 74%, rgba(155, 248, 244, 0.1) 75%, rgba(155, 248, 244, 0.1) 76%, transparent 77%, transparent),
-          linear-gradient(transparent 24%, rgba(155, 248, 244, 0.05) 25%, rgba(155, 248, 244, 0.05) 26%, transparent 27%, transparent 74%, rgba(155, 248, 244, 0.05) 75%, rgba(155, 248, 244, 0.05) 76%, transparent 77%, transparent)
-        `,
-        backgroundSize: '50px 50px',
-        animation: 'grid-move 20s linear infinite'
-      }}></div>
-
-      {/* Animated Trading Lines */}
-      <svg style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        opacity: 0.3,
-        zIndex: 1
-      }}>
-        <defs>
-          <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(155, 248, 244, 0)" />
-            <stop offset="50%" stopColor="rgba(155, 248, 244, 0.8)" />
-            <stop offset="100%" stopColor="rgba(155, 248, 244, 0)" />
-          </linearGradient>
-          <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(103, 232, 249, 0)" />
-            <stop offset="50%" stopColor="rgba(103, 232, 249, 0.8)" />
-            <stop offset="100%" stopColor="rgba(103, 232, 249, 0)" />
-          </linearGradient>
-        </defs>
-        
-        {/* Cyan upward trend line */}
-        <path
-          d="M0,400 Q200,350 400,320 T800,280 T1200,240 T1600,200"
-          stroke="url(#cyanGradient)"
-          strokeWidth="3"
-          fill="none"
-          style={{ animation: 'draw-line 8s ease-in-out infinite' }}
-        />
-        
-        {/* Blue downward trend line */}
-        <path
-          d="M0,300 Q200,380 400,420 T800,480 T1200,520 T1600,580"
-          stroke="url(#blueGradient)"
-          strokeWidth="3"
-          fill="none"
-          style={{ animation: 'draw-line 10s ease-in-out infinite reverse' }}
-        />
-        
-        {/* Additional trend lines for depth */}
-        <path
-          d="M0,600 Q300,550 600,520 T1200,480 T1800,450"
-          stroke="rgba(155, 248, 244, 0.4)"
-          strokeWidth="2"
-          fill="none"
-          style={{ animation: 'draw-line 12s ease-in-out infinite' }}
-        />
-      </svg>
-
-     
-      {/* Top Navigation */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '20px 40px',
-        background: 'rgba(0, 0, 0, 0.2)',
+        top: '50%',
+        left: '30%',
+        transform: 'translate(-45%, -48%)',
+        width: '90%',
+        maxWidth: '350px',
+        background: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: '24px',
+        padding: '0',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.08)',
+        overflow: 'hidden',
         backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(0, 255, 136, 0.2)',
-        zIndex: 10
+        zIndex: 3,
+        border: '1px solid rgba(255, 255, 255, 0.3)'
       }}>
+        {/* Header Section with Gradient */}
         <div style={{
-          fontSize: '28px',
-          fontWeight: 'bold',
-          color: '#9BF8F4',
-          textShadow: '0 0 20px rgba(155, 248, 244, 0.5)',
-          animation: 'glow 2s ease-in-out infinite alternate'
-        }}>
-          Xyleum
-        </div>
-        <div style={{ display: 'flex', gap: '15px' }}>
-          <button 
-            onClick={() => navigateTo('/user/login')}
-            style={{
-              border: '1px solid #9BF8F4',
-              color: '#9BF8F4',
-              background: 'rgba(155, 248, 244, 0.1)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '25px',
-              padding: '12px 25px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '14px'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = 'rgba(155, 248, 244, 0.2)';
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 8px 25px rgba(155, 248, 244, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = 'rgba(155, 248, 244, 0.1)';
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = 'none';
-            }}
-          >
-            Log In
-          </button>
-          <button 
-            onClick={() => navigateTo('/User/Login/Signup')}
-            style={{
-              background: 'linear-gradient(45deg, #9BF8F4, #67e8f9)',
-              border: 'none',
-              color: '#1a1a1a',
-              borderRadius: '25px',
-              padding: '12px 25px',
-              fontWeight: '600',
-              boxShadow: '0 8px 25px rgba(155, 248, 244, 0.3)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontSize: '14px'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 12px 35px rgba(155, 248, 244, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = '0 8px 25px rgba(155, 248, 244, 0.3)';
-            }}
-          >
-            Sign Up
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content - Moved Down */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        padding: '0 20px',
-        paddingTop: '120px' // Added padding to move form down
-      }}>
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '25px',
-          padding: '50px 40px',
-          width: '100%',
-          maxWidth: '450px',
-          border: '1px solid rgba(155, 248, 244, 0.3)',
-          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(155, 248, 244, 0.1)',
-          animation: 'slideUp 0.8s ease-out',
           position: 'relative',
-          overflow: 'hidden',
-          zIndex: 5
+          height: '140px',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderRadius: '24px 24px 0 0',
+          overflow: 'hidden'
         }}>
-          {/* Glassmorphism Effect Overlay */}
+          {/* Logo */}
           <div style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 3
+          }}>
+            <img
+              src="/images/Mevora_Capital.png"
+              alt="Mevora Capital"
+              style={{
+                height: '150px',
+                width: 'auto',
+                maxWidth: '180px',
+                objectFit: 'contain',
+                filter: 'brightness(1.1) drop-shadow(0 2px 8px rgba(0,0,0,0.2))',
+                animation: 'fadeInScale 0.8s ease-out'
+              }}
+            />
+          </div>
+          
+          {/* Back Arrow */}
+          <div style={{
+            padding: '16px 20px',
             position: 'absolute',
             top: 0,
             left: 0,
-            right: 0,
-            height: '2px',
-            background: 'linear-gradient(90deg, transparent, #9BF8F4, transparent)',
-            animation: 'shimmer 2s ease-in-out infinite'
-          }}></div>
-
-          {/* Corner accents */}
-          <div style={{
-            position: 'absolute',
-            top: '15px',
-            right: '15px',
-            width: '30px',
-            height: '30px',
-            border: '2px solid rgba(155, 248, 244, 0.5)',
-            borderLeft: 'none',
-            borderBottom: 'none',
-            borderRadius: '0 8px 0 0'
-          }}></div>
-          
-          <div style={{
-            position: 'absolute',
-            bottom: '15px',
-            left: '15px',
-            width: '30px',
-            height: '30px',
-            border: '2px solid rgba(155, 248, 244, 0.5)',
-            borderRight: 'none',
-            borderTop: 'none',
-            borderRadius: '0 0 0 8px'
-          }}></div>
-
-          <div style={{
-            textAlign: 'center',
-            marginBottom: '40px'
+            zIndex: 4
           }}>
-            <h2 style={{
-              color: 'white',
-              fontSize: '32px',
-              fontWeight: '700',
-              margin: '0 0 10px 0',
-              textShadow: '0 0 20px rgba(155, 248, 244, 0.3)'
-            }}>
-              Welcome to Xyleum
-            </h2>
-            <p style={{
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '16px',
-              margin: 0
-            }}>
-              Your gateway to smart trading
-            </p>
+            <ArrowLeftOutlined style={{
+              color: '#fff',
+              fontSize: '18px',
+              cursor: 'pointer',
+              opacity: 0.9
+            }} onClick={() => window.history.back()} />
           </div>
 
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-            <div style={{ marginBottom: '25px' }}>
-              <label style={{ 
-                color: 'white', 
-                fontWeight: '500', 
-                marginBottom: '8px', 
-                display: 'block' 
-              }}>
-                Email Address
-              </label>
+          {/* Decorative Elements */}
+          <div style={{
+            position: 'absolute',
+            top: '-(-50px)',
+            right: '-50px',
+            width: '100px',
+            height: '100px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '50%'
+          }}></div>
+          <div style={{
+            position: 'absolute',
+            bottom: '-30px',
+            left: '-30px',
+            width: '60px',
+            height: '60px',
+            background: 'rgba(255, 255, 255, 0.08)',
+            borderRadius: '50%'
+          }}></div>
+        </div>
+
+        {/* Form Container */}
+        <div style={{
+          padding: '30px 24px 24px',
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <Form
+            name="auth_form"
+            onFinish={handleSubmit}
+            layout="vertical"
+            style={{ width: '100%' }}
+          >
+            {/* Email Input */}
+            <Form.Item
+              name="email"
+              rules={[{ required: true, message: 'Please input your email address!' }]}
+              style={{ marginBottom: '20px' }}
+            >
               <div style={{ position: 'relative' }}>
-                <span style={{
-                  position: 'absolute',
-                  left: '16px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#9BF8F4',
-                  zIndex: 1
+                <label style={{
+                  color: '#4a5568',
+                  fontSize: '14px',
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontWeight: '600'
                 }}>
-                  ✉️
-                </span>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  Email Address
+                </label>
+                <Input
+                  prefix={<MailOutlined style={{ color: '#667eea' }} />}
                   placeholder="Enter your email"
+                  size="large"
                   style={{
-                    width: '100%',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: `1px solid ${errors.email ? '#ff6b6b' : 'rgba(155, 248, 244, 0.3)'}`,
-                    borderRadius: '15px',
-                    color: 'white',
-                    fontSize: '16px',
-                    padding: '12px 16px 12px 50px',
-                    backdropFilter: 'blur(10px)',
-                    transition: 'all 0.3s ease',
-                    boxSizing: 'border-box'
+                    backgroundColor: '#f8fafc',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '12px',
+                    color: '#2d3748',
+                    fontSize: '15px',
+                    padding: '12px 16px',
+                    height: 'auto',
+                    transition: 'all 0.3s ease'
                   }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#9BF8F4';
-                    e.target.style.boxShadow = '0 0 20px rgba(155, 248, 244, 0.3)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.email ? '#ff6b6b' : 'rgba(155, 248, 244, 0.3)';
-                    e.target.style.boxShadow = 'none';
-                  }}
+                  className="custom-light-input"
                 />
               </div>
-              {errors.email && (
-                <div style={{ color: '#ff6b6b', fontSize: '14px', marginTop: '5px' }}>
-                  {errors.email}
-                </div>
-              )}
-            </div>
+            </Form.Item>
 
-            <div style={{ marginBottom: '15px' }}>
-              <label style={{ 
-                color: 'white', 
-                fontWeight: '500', 
-                marginBottom: '8px', 
-                display: 'block' 
-              }}>
-                Password
-              </label>
+            {/* Password Input */}
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: 'Please input your password!' }]}
+              style={{ marginBottom: '16px' }}
+            >
               <div style={{ position: 'relative' }}>
-                <span style={{
-                  position: 'absolute',
-                  left: '16px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#00ff88',
-                  zIndex: 1
+                <label style={{
+                  color: '#4a5568',
+                  fontSize: '14px',
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontWeight: '600'
                 }}>
-                  🔒
-                </span>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  Password
+                </label>
+                <Input.Password
+                  prefix={<LockOutlined style={{ color: '#667eea' }} />}
                   placeholder="Enter your password"
+                  size="large"
                   style={{
-                    width: '100%',
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    border: `1px solid ${errors.password ? '#ff4757' : 'rgba(0, 255, 136, 0.3)'}`,
-                    borderRadius: '15px',
-                    color: 'white',
-                    fontSize: '16px',
-                    padding: '12px 16px 12px 50px',
-                    backdropFilter: 'blur(10px)',
-                    transition: 'all 0.3s ease',
-                    boxSizing: 'border-box'
+                    backgroundColor: '#f8fafc',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '12px',
+                    color: '#2d3748',
+                    fontSize: '15px',
+                    padding: '12px 16px',
+                    height: 'auto',
+                    transition: 'all 0.3s ease'
                   }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#00ff88';
-                    e.target.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.3)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = errors.password ? '#ff4757' : 'rgba(0, 255, 136, 0.3)';
-                    e.target.style.boxShadow = 'none';
-                  }}
+                  className="custom-light-input"
                 />
               </div>
-              {errors.password && (
-                <div style={{ color: '#ff4757', fontSize: '14px', marginTop: '5px' }}>
-                  {errors.password}
-                </div>
-              )}
-            </div>
+            </Form.Item>
 
-            <div style={{ marginBottom: '30px', textAlign: 'right' }}>
+            {/* Forgot Password Link */}
+            <div style={{
+              textAlign: 'right',
+              marginBottom: '24px'
+            }}>
               <a 
                 href="/user/login/ForgotPassword"
                 style={{
-                  color: '#00ff88',
+                  color: '#667eea',
+                  fontSize: '13px',
                   textDecoration: 'none',
-                  fontSize: '14px',
-                  transition: 'all 0.3s ease'
+                  fontWeight: '500',
+                  transition: 'color 0.3s ease'
                 }}
-                onMouseEnter={(e) => {
-                  e.target.style.textShadow = '0 0 10px rgba(0, 255, 136, 0.5)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.textShadow = 'none';
-                }}
+                className="forgot-link"
               >
                 Forgot Password?
               </a>
             </div>
 
+            {/* Error Message */}
             {userLoginState.status === 'error' && (
-              <LoginMessage content="Failed to sign in. Please try again." />
+              <div style={{ marginBottom: '16px' }}>
+                <LoginMessage content="Failed to sign in. Please try again." />
+              </div>
             )}
 
-            <div style={{ marginBottom: '25px' }}>
-              <button
-                type="submit"
-                disabled={isProcessing}
+            {/* Login Button */}
+            <Form.Item style={{ marginBottom: '20px' }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isProcessing}
                 style={{
                   width: '100%',
-                  height: '50px',
-                  background: 'linear-gradient(45deg, #00ff88, #00d4aa)',
+                  height: '48px',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   border: 'none',
-                  borderRadius: '15px',
-                  fontSize: '18px',
+                  borderRadius: '12px',
+                  fontSize: '16px',
                   fontWeight: '600',
-                  color: '#0f0f23',
-                  boxShadow: '0 15px 35px rgba(0, 255, 136, 0.3)',
-                  transition: 'all 0.3s ease',
-                  cursor: isProcessing ? 'not-allowed' : 'pointer',
-                  opacity: isProcessing ? 0.7 : 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '10px'
+                  color: '#fff',
+                  boxShadow: '0 8px 25px rgba(102, 126, 234, 0.25)',
+                  transition: 'all 0.3s ease'
                 }}
-                onMouseEnter={(e) => {
-                  if (!isProcessing) {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 20px 45px rgba(0, 255, 136, 0.4)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isProcessing) {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 15px 35px rgba(0, 255, 136, 0.3)';
-                  }
-                }}
+                className="light-login-button"
               >
-                {isProcessing && (
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    border: '2px solid #0f0f23',
-                    borderTop: '2px solid transparent',
-                    borderRadius: '50%',
-                    animation: 'spin 1s linear infinite'
-                  }}></div>
-                )}
                 Sign In
-              </button>
-            </div>
+              </Button>
+            </Form.Item>
 
+            {/* Sign Up Link */}
             <div style={{
               textAlign: 'center',
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '15px'
+              color: '#718096',
+              fontSize: '14px'
             }}>
               Don't have an account?{' '}
               <a 
-                onClick={() => navigateTo('/User/Login/Signup')}
+                onClick={() => history.push('/User/Login/Signup')}
                 style={{
-                  color: '#00ff88',
-                  cursor: 'pointer',
+                  color: '#667eea',
                   textDecoration: 'none',
                   fontWeight: '600',
-                  transition: 'all 0.3s ease'
+                  cursor: 'pointer',
+                  transition: 'color 0.3s ease'
                 }}
-                onMouseEnter={(e) => {
-                  e.target.style.textShadow = '0 0 10px rgba(0, 255, 136, 0.5)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.textShadow = 'none';
-                }}
+                className="signup-link"
               >
-                Sign up
-              </a>{' '}
-              now
+                Sign Up
+              </a>
             </div>
-          </form>
+          </Form>
         </div>
       </div>
 
-      {/* CSS Animations */}
-      <style>
-        {`
-          @keyframes grid-move {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
+      <style jsx>{`
+        @keyframes fadeInScale {
+          0% { 
+            opacity: 0; 
+            transform: translate(-50%, -50%) scale(0.8);
           }
-          
-          @keyframes draw-line {
-            0% { stroke-dasharray: 0 1000; }
-            50% { stroke-dasharray: 500 500; }
-            100% { stroke-dasharray: 1000 0; }
+          100% { 
+            opacity: 1; 
+            transform: translate(-50%, -50%) scale(1);
           }
-          
-          @keyframes float-data {
-            0%, 100% { transform: translateY(0px); opacity: 0.7; }
-            50% { transform: translateY(-10px); opacity: 1; }
-          }
-          
-          @keyframes glow {
-            0% { text-shadow: 0 0 20px rgba(0, 255, 136, 0.5); }
-            100% { text-shadow: 0 0 30px rgba(0, 255, 136, 0.8), 0 0 40px rgba(0, 255, 136, 0.3); }
-          }
-          
-          @keyframes slideUp {
-            0% { transform: translateY(50px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-          }
-          
-          @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-          }
-
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-          
-          input::placeholder {
-            color: rgba(255, 255, 255, 0.5) !important;
-          }
-        `}
-      </style>
+        }
+        
+        .custom-light-input input {
+          background: transparent !important;
+          color: #2d3748 !important;
+          border: none !important;
+        }
+        
+        .custom-light-input input::placeholder {
+          color: #a0aec0 !important;
+        }
+        
+        .custom-light-input .ant-input-prefix {
+          margin-right: 12px;
+        }
+        
+        .custom-light-input:hover {
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        }
+        
+        .custom-light-input:focus-within {
+          border-color: #667eea !important;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+        }
+        
+        .light-login-button:hover {
+          background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+          transform: translateY(-2px);
+          box-shadow: 0 12px 35px rgba(102, 126, 234, 0.35) !important;
+        }
+        
+        .light-login-button:active {
+          transform: translateY(0px);
+        }
+        
+        .forgot-link:hover {
+          color: #5a67d8 !important;
+        }
+        
+        .signup-link:hover {
+          color: #5a67d8 !important;
+        }
+      `}</style>
     </div>
   );
 };
