@@ -57,7 +57,7 @@ const Deposit: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showDepositFlow, setShowDepositFlow] = useState(false);
   const [showWithdrawFlow, setShowWithdrawFlow] = useState(false);
-  const [showWalletSteps, setShowWalletSteps] = useState(false); // New state to control step visibility
+  const [showWalletSteps, setShowWalletSteps] = useState(false);
 
   // States for DepositCard functionality
   const [currentStep, setCurrentStep] = useState(1);
@@ -73,6 +73,7 @@ const Deposit: React.FC = () => {
   const [amount, setAmount] = useState<any>(0);
   const [amountForm] = Form.useForm();
   const [selectedAccount, setSelectedAccount] = useState('Wallet Account');
+  const [isCheckingProof, setIsCheckingProof] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,16 +146,33 @@ const Deposit: React.FC = () => {
     }
   }
 
-  async function proofSettings() {
-    try {
-      const response = await api.proof.getProofSetting();
-      response.forEach((field) => {
-        field && field.status === 'Approved' ? setProofData('Approved') : setProofData('Requested');
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsCheckingProof(true); // Start checking
+
+        const response = await api.proof.getProofSetting();
+        const allApproved = response.every((field) => field && field.status === 'Approved');
+
+        if (allApproved && response.length > 0) {
+          setProofData('Approved');
+          await init();
+        } else {
+          setProofData('Requested');
+        }
+
+        setIsCheckingProof(false); // Done checking
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setProofData('Requested');
+        setIsCheckingProof(false);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const getBankWire = async () => {
     try {
@@ -585,7 +603,7 @@ const Deposit: React.FC = () => {
             onClick={handleContinue}
             disabled={!selectedCurrency}
             className="continue-button"
-            style={{ backgroundColor: '#9BF8F4', borderColor: '9BF8F4' ,color: '#000'}}
+            style={{ backgroundColor: '#9BF8F4', borderColor: '9BF8F4', color: '#000' }}
           >
             Continue
           </Button>
@@ -756,7 +774,7 @@ const Deposit: React.FC = () => {
               htmlType="submit"
               loading={loading}
               className="submit-button"
-              style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4' , color: '#000'}}
+              style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4', color: '#000' }}
             >
               Deposit Funds
             </Button>
@@ -947,7 +965,9 @@ const Deposit: React.FC = () => {
 
   return (
     <>
-      {proofData !== '' && proofData === 'Approved' ? (
+      {isCheckingProof || loading ? (
+        <CustomLoader />
+      ) : proofData === 'Approved' ? (
         <ConfigProvider>
           {loading ? (
             <CustomLoader />

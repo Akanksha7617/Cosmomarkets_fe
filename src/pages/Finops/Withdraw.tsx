@@ -1,15 +1,10 @@
+// code 1
+
 import { api } from '@/components/common/api';
 import { Type } from '@/generated';
 import { Transfer } from '@/pages/Finops/common/Transfer';
 import { useModel } from '@@/exports';
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  BankOutlined,
-  CalculatorOutlined,
-  DollarOutlined,
-  WalletOutlined,
-} from '@ant-design/icons';
+import { ArrowLeftOutlined, BankOutlined, WalletOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { history } from '@umijs/max';
 import {
@@ -21,13 +16,12 @@ import {
   Input,
   InputNumber,
   message,
-  Radio,
   Select,
   Typography,
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-import './../../common.css';
 import CustomLoader from '../CustomLoader';
+import './../../common.css';
 import StatusPage from './common/StatusPage';
 
 const { Title, Text } = Typography;
@@ -50,23 +44,24 @@ const Withdraw: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showWithdrawFlow, setShowWithdrawFlow] = useState(false);
   const [showWalletSteps, setShowWalletSteps] = useState(false);
-  
+
   // States for Withdraw functionality
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedCurrency, setSelectedCurrency] = useState<string | undefined>(undefined);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(undefined);
   const [balance, setBalance] = useState<number>(0);
   const [selectedAccount, setSelectedAccount] = useState('Wallet Account');
-  
+  const [isCheckingProof, setIsCheckingProof] = useState(true);
+
   // Forms
   const [form] = Form.useForm();
-  
+
   // Step refs for scrolling
   const step1Ref = useRef<HTMLDivElement>(null);
   const step2Ref = useRef<HTMLDivElement>(null);
   const step3Ref = useRef<HTMLDivElement>(null);
   const step3UsdtRef = useRef<HTMLDivElement>(null);
-  
+
   // Get user information
   const { initialState } = useModel('@@initialState');
   const wallet = initialState?.currentUser?.wallet;
@@ -79,7 +74,7 @@ const Withdraw: React.FC = () => {
       icon: <BankOutlined className="payment-icon" />,
       details: 'Bank Wire Withdrawal (1-24 hours)',
       processingTime: '1-24 hours',
-      cost: 0
+      cost: 0,
     },
     {
       key: 'usdt',
@@ -87,8 +82,8 @@ const Withdraw: React.FC = () => {
       icon: <WalletOutlined className="payment-icon" />,
       details: 'USDT Instant Withdrawal (24/7)',
       processingTime: 'Instant',
-      cost: 0
-    }
+      cost: 0,
+    },
     // You can easily add more payment methods here if needed
   ];
 
@@ -123,7 +118,7 @@ const Withdraw: React.FC = () => {
         }
       }
     };
-    
+
     // Small delay to ensure DOM is updated
     setTimeout(scrollToCurrentStep, 100);
   }, [currentStep, selectedPaymentMethod]);
@@ -138,24 +133,41 @@ const Withdraw: React.FC = () => {
   async function init() {
     setBalance(initialState?.currentUser?.wallet?.balance || 0);
   }
-  
-  async function proofSettings() {
-    try {
-      const response = await api.proof.getProofSetting();
-      response.forEach((field) => {
-        field && field.status === 'Approved' ? setProofData('Approved') : setProofData('Requested');
-      });
-    } catch (error) {
-      console.log('Withdraw page error', error);
-    }
-  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsCheckingProof(true); // Start checking
+
+        const response = await api.proof.getProofSetting();
+        const allApproved = response.every((field) => field && field.status === 'Approved');
+
+        if (allApproved && response.length > 0) {
+          setProofData('Approved');
+          await init();
+        } else {
+          setProofData('Requested');
+        }
+
+        setIsCheckingProof(false); // Done checking
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setProofData('Requested');
+        setIsCheckingProof(false);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Fetch bank details for the form
   const fetchBankDetails = async () => {
     try {
       const bankDetails = await api.transaction.getBankAccount();
       console.log('Bank details fetched:', bankDetails);
-      
+
       if (bankDetails) {
         form.setFieldsValue({
           beneficiary: bankDetails.beneficiary,
@@ -234,9 +246,9 @@ const Withdraw: React.FC = () => {
   const handleBankWithdrawal = async (values: any) => {
     try {
       setLoading(true);
-      
+
       const { amount } = values;
-  
+
       if (wallet?.balance === 0) {
         message.error({
           content: 'Insufficient Balance',
@@ -246,7 +258,7 @@ const Withdraw: React.FC = () => {
         });
         return;
       }
-  
+
       if (amount > wallet?.balance) {
         message.error({
           content: 'Amount cannot exceed the wallet balance',
@@ -256,19 +268,22 @@ const Withdraw: React.FC = () => {
         });
         return;
       }
-  
+
       const formData = {
         type: Type.WALLET_TO_EXT,
         amount: values.amount,
         currency: 'USD',
         comment: values.comment,
         bank: { ...values },
-        PaymentMethod: selectedPaymentMethod
+        PaymentMethod: selectedPaymentMethod,
       };
-      
+
       const response = await api.transaction.withdraw(formData);
-      
-      if (response.message && response.message.includes('User does not have enough wallet balance!')) {
+
+      if (
+        response.message &&
+        response.message.includes('User does not have enough wallet balance!')
+      ) {
         message.error({
           content: response.message,
           icon: <span className="orange-error-icon"> ✘ </span>,
@@ -301,9 +316,9 @@ const Withdraw: React.FC = () => {
   const handleCryptoWithdrawal = async (values: any) => {
     try {
       setLoading(true);
-      
+
       const { amount } = values;
-  
+
       if (wallet?.balance === 0) {
         message.error({
           content: 'Insufficient Balance',
@@ -313,7 +328,7 @@ const Withdraw: React.FC = () => {
         });
         return;
       }
-  
+
       if (amount > wallet?.balance) {
         message.error({
           content: 'Amount cannot exceed the wallet balance',
@@ -323,19 +338,22 @@ const Withdraw: React.FC = () => {
         });
         return;
       }
-  
+
       const formData = {
         type: Type.WALLET_TO_EXT,
         amount: values.amount,
         currency: 'USD',
         comment: values.comment,
         cryptoWallet: { ...values },
-        PaymentMethod: selectedPaymentMethod
+        PaymentMethod: selectedPaymentMethod,
       };
-      
+
       const response = await api.transaction.Cryptowithdraw(formData);
-      
-      if (response.message && response.message.includes('User does not have enough wallet balance!')) {
+
+      if (
+        response.message &&
+        response.message.includes('User does not have enough wallet balance!')
+      ) {
         message.error({
           content: response.message,
           icon: <span className="orange-error-icon"> ✘ </span>,
@@ -494,25 +512,23 @@ const Withdraw: React.FC = () => {
   const renderStep3BankWire = () => (
     <Card className="step-card">
       <div ref={step3Ref} className="account-headerr">
-      <div className="account-title-container">
-      <div className="account-title">
-          <h2>Bank Wire Withdrawal</h2>
-          <div className="account-subtitle">
-            <span className="verification-tag">Step 3</span>
+        <div className="account-title-container">
+          <div className="account-title">
+            <h2>Bank Wire Withdrawal</h2>
+            <div className="account-subtitle">
+              <span className="verification-tag">Step 3</span>
+            </div>
           </div>
-        </div>
-        <Button className="change-button chang" onClick={() => setCurrentStep(2)} type="link">
+          <Button className="change-button chang" onClick={() => setCurrentStep(2)} type="link">
             Change
           </Button>
+        </div>
       </div>
-
-      </div>
-        
 
       <div className="step-content">
         <Text>Minimum withdrawal amount for bank wire should be 50 USD</Text>
         <Text>Available for withdrawal: {balance.toFixed(2)} USD</Text>
-        
+
         <Form
           form={form}
           layout="vertical"
@@ -526,24 +542,24 @@ const Withdraw: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          
+
           <Form.Item
             name="amount"
             label="Withdrawal Amount*"
             rules={[
               { required: true, message: 'Please enter an amount' },
               { type: 'number', message: 'Please enter a valid number' },
-              { 
-                validator: (_, value) => 
-                  value >= 50 
-                    ? Promise.resolve() 
-                    : Promise.reject('Amount must be at least 50 USD')
-              }
+              {
+                validator: (_, value) =>
+                  value >= 50
+                    ? Promise.resolve()
+                    : Promise.reject('Amount must be at least 50 USD'),
+              },
             ]}
           >
             <InputNumber style={{ width: '100%' }} />
           </Form.Item>
-          
+
           <Form.Item
             name="name"
             label="Bank Name"
@@ -551,7 +567,7 @@ const Withdraw: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          
+
           <Form.Item
             name="address"
             label="Bank Address"
@@ -559,7 +575,7 @@ const Withdraw: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          
+
           <Form.Item
             name="account"
             label="Bank Account Number"
@@ -567,7 +583,7 @@ const Withdraw: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          
+
           <Form.Item
             name="ifscIban"
             label="IFSC/IBAN"
@@ -575,7 +591,7 @@ const Withdraw: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          
+
           <Form.Item
             name="comment"
             label="Additional Comment"
@@ -583,25 +599,28 @@ const Withdraw: React.FC = () => {
           >
             <Input.TextArea />
           </Form.Item>
-          
+
           <Form.Item>
-            <Checkbox>I have read all instructions and agree with terms and conditions of payments operations</Checkbox>
+            <Checkbox>
+              I have read all instructions and agree with terms and conditions of payments
+              operations
+            </Checkbox>
           </Form.Item>
-          
+
           <Form.Item>
             <Checkbox>Save Bank Details</Checkbox>
           </Form.Item>
-          
+
           <div className="action-buttons">
             {/* <Button onClick={handleBack} className="back-button">
               Back
             </Button> */}
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               htmlType="submit"
               loading={loading}
               className="submit-button"
-              style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4' , color: "#000" }}
+              style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4', color: '#000' }}
             >
               Submit
             </Button>
@@ -615,25 +634,22 @@ const Withdraw: React.FC = () => {
   const renderStep3USDT = () => (
     <Card className="step-card">
       <div ref={step3UsdtRef} className="account-headerr">
-      <div className="account-title-container">
-      <div className="account-title">
-          <h2>USDT Withdrawal</h2>
-          <div className="account-subtitle">
-            <span className="verification-tag">Step 3</span>
+        <div className="account-title-container">
+          <div className="account-title">
+            <h2>USDT Withdrawal</h2>
+            <div className="account-subtitle">
+              <span className="verification-tag">Step 3</span>
+            </div>
           </div>
-        </div><Button className="change-button chang" onClick={() => setCurrentStep(2)} type="link">
-                    Change
-        </Button>
-
-
+          <Button className="change-button chang" onClick={() => setCurrentStep(2)} type="link">
+            Change
+          </Button>
+        </div>
       </div>
-
-      </div>
-       
 
       <div className="step-content">
         <Text>Available for withdrawal: {balance.toFixed(2)} USD</Text>
-        
+
         <Form
           form={form}
           layout="vertical"
@@ -646,17 +662,17 @@ const Withdraw: React.FC = () => {
             rules={[
               { required: true, message: 'Please enter an amount' },
               { type: 'number', message: 'Please enter a valid number' },
-              { 
-                validator: (_, value) => 
-                  value >= 50 
-                    ? Promise.resolve() 
-                    : Promise.reject('Amount must be at least 50 USD')
-              }
+              {
+                validator: (_, value) =>
+                  value >= 50
+                    ? Promise.resolve()
+                    : Promise.reject('Amount must be at least 50 USD'),
+              },
             ]}
           >
             <InputNumber style={{ width: '100%' }} />
           </Form.Item>
-          
+
           <Form.Item
             name="cyrptoWalletAddress"
             label="USDT Wallet Address"
@@ -664,7 +680,7 @@ const Withdraw: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          
+
           <Form.Item
             name="comment"
             label="Additional Comment"
@@ -672,13 +688,13 @@ const Withdraw: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          
+
           <div className="action-buttons">
             {/* <Button onClick={handleBack} className="back-button">
               Back
             </Button> */}
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               htmlType="submit"
               loading={loading}
               className="submit-button"
@@ -704,7 +720,7 @@ const Withdraw: React.FC = () => {
               </div>
             </div>
           </div>
-  
+
           <div className="withdraw-content">
             <div className="withdraw-options">
               <Card hoverable className="withdraw-option-card" onClick={handleWithdrawClick}>
@@ -722,12 +738,12 @@ const Withdraw: React.FC = () => {
             </div>
           </div>
         </Card>
-  
+
         {/* Account selection dropdown */}
         <div className="account-dropdown-container" style={{ marginTop: '16px' }}>
           {renderAccountDropdown()}
         </div>
-  
+
         {/* Withdraw steps for wallet account */}
         {!isMt5 && (
           <div className="wallet-steps-container" style={{ marginTop: '16px' }}>
@@ -744,17 +760,19 @@ const Withdraw: React.FC = () => {
       </div>
     );
   };
-  
+
   return (
     <>
-      {proofData !== '' && proofData === 'Approved' ? (
+      {isCheckingProof || loading ? (
+        <CustomLoader />
+      ) : proofData === 'Approved' ? (
         <ConfigProvider>
           {loading ? (
             <CustomLoader />
           ) : (
             <PageContainer>
               {renderMainContent()}
-  
+
               {/* Conditional Render for MT5 */}
               {isMt5 && (
                 <Transfer

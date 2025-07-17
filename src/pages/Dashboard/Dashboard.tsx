@@ -79,7 +79,6 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
               <div className="live-account-container">
                 {/* Header Row */}
                 <div className="live-account-header">
-                 
                   <button className="arrow-button" onClick={() => setModalVisible(true)}>
                     +MT5 Sub Account
                   </button>
@@ -97,8 +96,18 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
 
                     {/* Quick Action Buttons */}
                     <div className="quick-actions">
-                      <button  onClick={() => history.push('/finops/withdraw')} className="action-btn withdraw-btn">Withdraw</button>
-                      <button   onClick={() => history.push('/finops/deposit')} className="action-btn deposit-btn">Deposit</button>
+                      <button
+                        onClick={() => history.push('/finops/deposit')}
+                        className="action-btn deposit-btn"
+                      >
+                        Deposit
+                      </button>
+                      <button
+                        onClick={() => history.push('/finops/withdraw')}
+                        className="action-btn withdraw-btn"
+                      >
+                        Withdraw
+                      </button>
                     </div>
                   </div>
 
@@ -130,7 +139,6 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
                           <div className="label">Agent Code</div>
                           <div className="value">{appUser.Promo || '--'}</div>
                         </div>
-                        
                       </div>
                     </div>
                   </div>
@@ -464,7 +472,7 @@ const Dashboard: React.FC = () => {
   const liveAccountTabs: TabsProps['items'] = [
     {
       key: '1',
-      label: <span className="live-account-tab">Live Accounts</span>,
+      label: <span className="live-account-tab"> MT5 Live Accounts </span>,
       children: <LiveAccount appUser={userData} getUser={getUser} />,
     },
   ];
@@ -678,7 +686,7 @@ const Dashboard: React.FC = () => {
     },
     {
       key: 'liveaccount',
-      label: <span className="main-tab">Live Account</span>,
+      label: <span className="main-tab"> MT5 Live Account</span>,
       children: (
         <div className="dashboard-main-layout">
           {/* Right Section - Live Accounts */}

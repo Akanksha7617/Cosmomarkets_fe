@@ -13,7 +13,7 @@ import {
   StarOutlined,
   TeamOutlined,
   UserOutlined,
-  WhatsAppOutlined,
+  
 } from '@ant-design/icons';
 import { Button, message, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -247,69 +247,6 @@ const DashboardContent = () => {
           )}
         </div>
 
-        {ibRequest.ibCode && (
-          <div className="ib-share-buttons-container">
-            <Button
-              className="ib-share-button"
-              icon={<MailOutlined />}
-              onClick={() => {
-                const link = `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`;
-                navigator.clipboard.writeText(link);
-                message.success({
-                  content: 'Link copied to clipboard',
-                  icon: <CheckCircleOutlined style={{ color: '#34a853' }} />,
-                  duration: 2,
-                });
-                window.open(
-                  `mailto:?subject=Trading Platform Invitation&body=Join our trading platform using my referral link: ${link}`,
-                  '_blank',
-                );
-              }}
-            >
-              Email
-            </Button>
-
-            <Button
-              className="ib-share-button"
-              icon={<WhatsAppOutlined />}
-              onClick={() => {
-                const link = `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`;
-                navigator.clipboard.writeText(link);
-                message.success({
-                  content: 'Link copied to clipboard',
-                  icon: <CheckCircleOutlined style={{ color: '#34a853' }} />,
-                  duration: 2,
-                });
-                window.open(
-                  `https://api.whatsapp.com/send?text=Join our trading platform using my referral link: ${link}`,
-                  '_blank',
-                );
-              }}
-            >
-              WhatsApp
-            </Button>
-
-            <Button
-              className="ib-share-button"
-              icon={<SendOutlined />}
-              onClick={() => {
-                const link = `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`;
-                navigator.clipboard.writeText(link);
-                message.success({
-                  content: 'Link copied to clipboard',
-                  icon: <CheckCircleOutlined style={{ color: '#34a853' }} />,
-                  duration: 2,
-                });
-                window.open(
-                  `https://t.me/share/url?url=${link}&text=Join our trading platform via my referral link`,
-                  '_blank',
-                );
-              }}
-            >
-              Telegram
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );
