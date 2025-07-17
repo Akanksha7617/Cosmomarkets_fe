@@ -10,7 +10,7 @@ import {
   WalletOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { history } from '@umijs/max';
+import { history, useLocation } from '@umijs/max';
 import {
   Button,
   Card,
@@ -49,9 +49,20 @@ interface PaymentSetting {
   isActive: boolean;
 }
 
+const getInitialAccount = () => {
+  const params = new URLSearchParams(location.search);
+  const accountParam = params.get('account');
+  return accountParam === 'mt5' ? 'MT5 Trading Account' : 'Wallet Account';
+};
+
+const getInitialIsMt5 = () => {
+  const params = new URLSearchParams(location.search);
+  const accountParam = params.get('account');
+  return accountParam === 'mt5';
+};
+
 const Deposit: React.FC = () => {
   const { token } = theme.useToken();
-  const [isMt5, setIsMt5] = useState(false);
   const { initialState } = useModel('@@initialState');
   const [proofData, setProofData] = useState('');
   const [loading, setLoading] = useState(true);
@@ -72,8 +83,11 @@ const Deposit: React.FC = () => {
   const [paymentLinks, setPaymentLinks] = useState<PaymentSetting[]>([]);
   const [amount, setAmount] = useState<any>(0);
   const [amountForm] = Form.useForm();
-  const [selectedAccount, setSelectedAccount] = useState('Wallet Account');
+  const [selectedAccount, setSelectedAccount] = useState(getInitialAccount());
+  const [isMt5, setIsMt5] = useState(getInitialIsMt5());
   const [isCheckingProof, setIsCheckingProof] = useState(true);
+
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -208,11 +222,10 @@ const Deposit: React.FC = () => {
     setSelectedAccount(value);
     if (value === 'Wallet Account') {
       setIsMt5(false);
-      setShowWalletSteps(true); // Show wallet steps when wallet account is selected
+      setShowWalletSteps(true);
     } else if (value === 'MT5 Trading Account') {
       setIsMt5(true);
-      setShowWalletSteps(false); // Hide wallet steps when MT5 is selected
-      // Instead of redirecting, we'll render MT5 deposit form directly
+      setShowWalletSteps(false);
     }
   }
 
@@ -554,7 +567,7 @@ const Deposit: React.FC = () => {
       </div>
       <div className="step-content">
         <Select
-          defaultValue="Wallet Account"
+          defaultValue={selectedAccount}
           style={{ width: '100%', marginBottom: '20px' }}
           onChange={handleAccountSelection}
           value={selectedAccount}

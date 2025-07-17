@@ -37,18 +37,17 @@ interface PaymentMethod {
   cost: number;
 }
 
+const getInitialAccount = () => {
+  const params = new URLSearchParams(location.search);
+  const accountParam = params.get('account');
+  return accountParam === 'mt5' ? 'MT5 Trading Account' : 'Wallet Account';
+};
 
-  const getInitialAccount = () => {
-    const params = new URLSearchParams(location.search);
-    const accountParam = params.get('account');
-    return accountParam === 'mt5' ? 'MT5 Trading Account' : 'Wallet Account';
-  };
-
-  const getInitialIsMt5 = () => {
-    const params = new URLSearchParams(location.search);
-    const accountParam = params.get('account');
-    return accountParam === 'mt5';
-  };
+const getInitialIsMt5 = () => {
+  const params = new URLSearchParams(location.search);
+  const accountParam = params.get('account');
+  return accountParam === 'mt5';
+};
 
 const Withdraw: React.FC = () => {
   // State management
@@ -70,7 +69,6 @@ const Withdraw: React.FC = () => {
   // Forms
   const [form] = Form.useForm();
   const location = useLocation();
-  
 
   // Step refs for scrolling
   const step1Ref = useRef<HTMLDivElement>(null);
@@ -81,8 +79,6 @@ const Withdraw: React.FC = () => {
   // Get user information
   const { initialState } = useModel('@@initialState');
   const wallet = initialState?.currentUser?.wallet;
-
-
 
   // Define payment methods array
   const paymentMethods: PaymentMethod[] = [
