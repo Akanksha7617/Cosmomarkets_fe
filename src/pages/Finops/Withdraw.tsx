@@ -36,7 +36,7 @@ interface PaymentMethod {
   processingTime: string;
   cost: number;
 }
-const location = useLocation();
+
 
   const getInitialAccount = () => {
     const params = new URLSearchParams(location.search);
@@ -69,6 +69,7 @@ const Withdraw: React.FC = () => {
 
   // Forms
   const [form] = Form.useForm();
+  const location = useLocation();
   
 
   // Step refs for scrolling
