@@ -6,7 +6,7 @@ import { Transfer } from '@/pages/Finops/common/Transfer';
 import { useModel } from '@@/exports';
 import { ArrowLeftOutlined, BankOutlined, WalletOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { history } from '@umijs/max';
+import { history, useLocation } from '@umijs/max';
 import {
   Button,
   Card,
@@ -36,10 +36,23 @@ interface PaymentMethod {
   processingTime: string;
   cost: number;
 }
+const location = useLocation();
+
+  const getInitialAccount = () => {
+    const params = new URLSearchParams(location.search);
+    const accountParam = params.get('account');
+    return accountParam === 'mt5' ? 'MT5 Trading Account' : 'Wallet Account';
+  };
+
+  const getInitialIsMt5 = () => {
+    const params = new URLSearchParams(location.search);
+    const accountParam = params.get('account');
+    return accountParam === 'mt5';
+  };
 
 const Withdraw: React.FC = () => {
   // State management
-  const [isMt5, setIsMt5] = useState(false);
+
   const [proofData, setProofData] = useState('');
   const [loading, setLoading] = useState(true);
   const [showWithdrawFlow, setShowWithdrawFlow] = useState(false);
@@ -50,11 +63,13 @@ const Withdraw: React.FC = () => {
   const [selectedCurrency, setSelectedCurrency] = useState<string | undefined>(undefined);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(undefined);
   const [balance, setBalance] = useState<number>(0);
-  const [selectedAccount, setSelectedAccount] = useState('Wallet Account');
+  const [selectedAccount, setSelectedAccount] = useState(getInitialAccount());
+  const [isMt5, setIsMt5] = useState(getInitialIsMt5());
   const [isCheckingProof, setIsCheckingProof] = useState(true);
 
   // Forms
   const [form] = Form.useForm();
+  
 
   // Step refs for scrolling
   const step1Ref = useRef<HTMLDivElement>(null);
@@ -65,6 +80,8 @@ const Withdraw: React.FC = () => {
   // Get user information
   const { initialState } = useModel('@@initialState');
   const wallet = initialState?.currentUser?.wallet;
+
+
 
   // Define payment methods array
   const paymentMethods: PaymentMethod[] = [
@@ -392,7 +409,7 @@ const Withdraw: React.FC = () => {
       </div>
       <div className="step-content">
         <Select
-          defaultValue="Wallet Account"
+          defaultValue={selectedAccount}
           style={{ width: '100%', marginBottom: '20px' }}
           onChange={handleAccountSelection}
           value={selectedAccount}

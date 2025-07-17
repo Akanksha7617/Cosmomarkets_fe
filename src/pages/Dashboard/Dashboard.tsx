@@ -97,13 +97,13 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
                     {/* Quick Action Buttons */}
                     <div className="quick-actions">
                       <button
-                        onClick={() => history.push('/finops/deposit')}
+                       onClick={() => history.push('/finops/withdraw?account=mt5')}
                         className="action-btn deposit-btn"
                       >
                         Deposit
                       </button>
                       <button
-                        onClick={() => history.push('/finops/withdraw')}
+                        onClick={() => history.push('/finops/withdraw?account=mt5')}
                         className="action-btn withdraw-btn"
                       >
                         Withdraw
