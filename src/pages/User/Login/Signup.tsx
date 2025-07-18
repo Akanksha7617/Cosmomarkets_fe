@@ -1,7 +1,7 @@
 // code 1
 
 import { api, updateAPIToken } from '@/components/common/api';
-import { LockOutlined, MailOutlined, UserOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { LockOutlined, MailOutlined, UserOutlined,  } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Alert, Button, Checkbox, Form, Input, message, Select } from 'antd';
 import { useEffect, useState } from 'react';
@@ -276,21 +276,7 @@ const SignUp = () => {
               }}
             />
           </div>
-          {/* Back Arrow - added from login page */}
-          <div style={{
-            padding: '16px 20px',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            zIndex: 4
-          }}>
-            <ArrowLeftOutlined style={{
-              color: '#fff',
-              fontSize: '18px',
-              cursor: 'pointer',
-              opacity: 0.9
-            }} onClick={() => history.push('/user/login')} /> {/* Link back to login */}
-          </div>
+         
           {/* Decorative Elements (from login page) */}
           <div style={{
             position: 'absolute',
@@ -572,7 +558,7 @@ const SignUp = () => {
                 <span style={{ color: '#4a5568', fontSize: '14px' }}>
                   I declare and confirm that I accept all{' '}
                   <a
-                    href="https://xyleum.com/terms-and-conditions/"
+                    href="https://mevoracapital.com/term-and-conditions"
                     target="blank"
                     style={{ color: '#667eea', textDecoration: 'underline', fontWeight: 500 }} // Login link color
                   >

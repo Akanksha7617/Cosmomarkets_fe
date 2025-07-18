@@ -1,5 +1,5 @@
 import { api, updateAPIToken } from '@/components/common/api';
-import { LockOutlined, MailOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { LockOutlined, MailOutlined,  } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Alert, Button, Form, Input, message } from 'antd';
 import { useEffect, useState } from 'react';
@@ -271,21 +271,7 @@ const Login = () => {
             />
           </div>
 
-          {/* Back Arrow */}
-          <div style={{
-            padding: '14px 18px',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            zIndex: 4
-          }}>
-            <ArrowLeftOutlined style={{
-              color: '#fff',
-              fontSize: '18px',
-              cursor: 'pointer',
-              opacity: 0.9
-            }} onClick={() => window.history.back()} />
-          </div>
+         
         </div>
 
         {/* Form Container */}
