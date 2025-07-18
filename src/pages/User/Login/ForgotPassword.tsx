@@ -7,8 +7,10 @@ import Navbar from './NavBar';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (email: string) => {
+    setLoading(true);
     try {
       const response = await api.app.forgotPassword(email);
       console.log(response);
@@ -19,6 +21,9 @@ const ForgotPassword: React.FC = () => {
       }
     } catch (error) {
       console.error('Error sending password reset request:', error);
+      message.error('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,7 +39,6 @@ const ForgotPassword: React.FC = () => {
           <div className="forgot-password-form-container">
             <Form className="forgot-password-form">
               <img src="/images/logo.png" alt="logo" style={{ height: '56px', width: '197px' }} />
-          
 
               <h2 className="forgot-password-title">Forgot Password</h2>
               <div>
@@ -63,8 +67,9 @@ const ForgotPassword: React.FC = () => {
                 </Form.Item>
               </div>
               <Button
-                type="Button"
+                type="primary"
                 onClick={() => handleSubmit(email)}
+                loading={loading}
                 className="forgot-password-button"
               >
                 Submit

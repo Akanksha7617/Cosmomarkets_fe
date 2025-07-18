@@ -264,7 +264,7 @@ const MyDetails: React.FC = () => {
                 <Col span={12}>
                   <Form.Item
                     name="password"
-                    label="Portal Password"
+                    label="Sign-In Password"
                     className="form-item"
                     rules={[
                       { required: true, message: 'Please enter your password.' },
