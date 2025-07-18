@@ -1,7 +1,13 @@
 import { api, rawApi, ShowError, updateAPIToken } from '@/components/common/api';
 import { AccountType, AppUserDto, AppUserModel, SignUpRequest } from '@/generated';
 import Proofs from '@/pages/Admin/Proofs';
-import { EditOutlined, FileExcelOutlined, PlusOutlined, RedoOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  FileExcelOutlined,
+  PlusOutlined,
+  RedoOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import { ActionType } from '@ant-design/pro-components';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,11 +24,10 @@ import enUS from 'antd/lib/locale/en_US';
 import moment from 'moment';
 import DataTable from 'react-data-table-component';
 import '../../common.css';
-import CustomLoader from '../CustomLoader';
-import './Settings.css';
-import CRMModal from './CRMModal';
 import '../../crm-components.css';
-import { find } from 'lodash';
+import CustomLoader from '../CustomLoader';
+import CRMModal from './CRMModal';
+import './Settings.css';
 
 const Leads: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({ appUser, getUser }) => {
   const actionRef = useRef<ActionType>();
@@ -75,12 +80,13 @@ const Leads: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({ appUser
   type DataIndex = keyof Data;
 
   const handleOpenCRM = (row: any) => {
-    const mtLogin = row.userDto?.login ||
+    const mtLogin =
+      row.userDto?.login ||
       (row.mtUsers && row.mtUsers.length > 0 ? row.mtUsers[0].login : null) ||
       '';
     setSelectedUserForCRM({
       ...row,
-      login: mtLogin  // Make sure the login is directly accessible in the userData object
+      login: mtLogin, // Make sure the login is directly accessible in the userData object
     });
     setCrmModalVisible(true);
   };
@@ -297,7 +303,6 @@ const Leads: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({ appUser
 
   const handleSendEmail = async () => {
     try {
-
       setLoading(true);
       const values = form.getFieldsValue();
       console.log('🚀 Form Values:', values);
@@ -316,10 +321,8 @@ const Leads: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({ appUser
       const response = await api.app.postSendCredentialMail(requestBody);
       if (response) {
         message.success(' email sent successfully');
-
       } else {
         message.error(response?.message || 'Failed to send  email');
-
       }
 
       // Try parsing response correctly
@@ -353,7 +356,7 @@ const Leads: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({ appUser
     } catch (error) {
       console.error('❌ Error sending email:', error);
       message.error('An error occurred while sending the email.');
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
