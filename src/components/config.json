@@ -1,7 +1,7 @@
 {
-  "baseUrl": "https://backoffice.xyleum.com",
+  "baseUrl": "https://crm.mevoracapital.com",
   "local":"http://localhost",
-  "port": "9090",
+  "port": "9092",
   "localPort":"4000",
   "prod": "no"
 }
