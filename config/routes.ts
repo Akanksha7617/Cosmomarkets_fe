@@ -1,8 +1,8 @@
 ﻿export default [
   {
     path: '/dashboard',
-    name: 'dashboard',
-    icon: 'LineChart',
+    name: 'Overview',
+      icon: 'DashboardOutlined',
     component: './Dashboard/Dashboard',
     //  access: 'canClient',
   },
@@ -129,8 +129,8 @@
   },
   {
     path: '/ProfileSettings',
-    icon: 'profile',
-    name: 'Account Customization',
+      icon: 'SettingOutlined',
+    name: ' Personalize Account',
     component: './Profile/ProfileSettings',
     access: 'canClient',
   },
@@ -138,7 +138,7 @@
   {
     path: '/finops',
     name: 'Finance',
-    icon: 'dollar',
+     icon: 'BankOutlined',
     access: 'canClient',
     routes: [
       {
@@ -227,23 +227,23 @@
   },
   {
     path: '/ib',
-    name: 'ib',
-    icon: 'user',
+    name: 'IB Hub',
+   icon: 'IdcardOutlined',
     component: './IB/Dashboard',
     access: 'canClient',
   },
 
   {
     path: '/admin/helpDeskUser',
-    name: 'Help Desk',
-    icon: 'team',
+    name: 'Assistance',
+    icon: 'MessageOutlined',
     component: './Admin/HelpDeskUser',
     access: 'canClient',
   },
   {
     path: '/signout',
-    name: 'Sign Out',
-    icon: 'LogoutOutlined',
+    name: 'Logout',
+    icon: 'PoweroffOutlined',
     component: './SignOut',
   },
 

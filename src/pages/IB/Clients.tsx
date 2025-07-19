@@ -1,7 +1,7 @@
 import { api, rawApi } from '@/components/common/api';
 import { useModel } from '@@/exports';
-import { SearchOutlined, FileExcelOutlined } from '@ant-design/icons';
-import { Button, Card, Input, Table, Tag, Typography } from 'antd';
+import { FileExcelOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Input, Table, Tag, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import CustomLoader from '../CustomLoader';
 
@@ -24,7 +24,7 @@ const Clients: React.FC = () => {
     const timer = setTimeout(() => {
       getData(pagination.current, pagination.pageSize, searchText);
     }, 500);
-    
+
     return () => clearTimeout(timer);
   }, [searchText, pagination.current, pagination.pageSize]);
 
@@ -33,7 +33,7 @@ const Clients: React.FC = () => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -57,14 +57,14 @@ const Clients: React.FC = () => {
       const response = await rawApi.get(`/api/app/ib/ib_clients_export/xlsx`, {
         responseType: 'blob',
       });
-      
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'ib_clients_export.xlsx');
       document.body.appendChild(link);
       link.click();
-      
+
       // Clean up
       window.URL.revokeObjectURL(url);
       link.remove();
@@ -86,7 +86,7 @@ const Clients: React.FC = () => {
 
   // Generate account ID for demo purposes
   const generateAccountId = () => `MT5-${Math.floor(10000000 + Math.random() * 90000000)}`;
-  
+
   // Generate registration date for demo purposes
   const generateDate = () => {
     const date = new Date();
@@ -117,9 +117,7 @@ const Clients: React.FC = () => {
       key: 'walletBalance',
       render: (_, record) => (
         <div>
-          <div style={{ fontWeight: 500 }}>
-            {`$${(record.wallet?.balance || 0).toFixed(2)}`}
-          </div>
+          <div style={{ fontWeight: 500 }}>{`$${(record.wallet?.balance || 0).toFixed(2)}`}</div>
         </div>
       ),
     },
@@ -137,11 +135,7 @@ const Clients: React.FC = () => {
       key: 'totalDeposit',
       render: (_, record) => {
         const amount = record.totalDeposit || 0;
-        return (
-          <div style={{ fontWeight: 500 }}>
-            {`$${amount.toFixed(2)}`}
-          </div>
-        );
+        return <div style={{ fontWeight: 500 }}>{`$${amount.toFixed(2)}`}</div>;
       },
     },
     {
@@ -149,11 +143,7 @@ const Clients: React.FC = () => {
       key: 'totalMt5Deposit',
       render: (_, record) => {
         const amount = record.totalMt5Deposit || 0;
-        return (
-          <div style={{ fontWeight: 500 }}>
-            {`$${amount.toFixed(2)}`}
-          </div>
-        );
+        return <div style={{ fontWeight: 500 }}>{`$${amount.toFixed(2)}`}</div>;
       },
     },
     {
@@ -161,18 +151,14 @@ const Clients: React.FC = () => {
       key: 'totalMt5Withdraw',
       render: (_, record) => {
         const amount = record.totalMt5Withdraw || 0;
-        return (
-          <div style={{ fontWeight: 500 }}>
-            {`$${amount.toFixed(2)}`}
-          </div>
-        );
+        return <div style={{ fontWeight: 500 }}>{`$${amount.toFixed(2)}`}</div>;
       },
     },
     {
       title: 'Status',
       key: 'status',
       render: (_, record) => (
-        <Tag 
+        <Tag
           color="#faad14"
           style={{
             backgroundColor: '#fff7e6',
@@ -181,7 +167,7 @@ const Clients: React.FC = () => {
             borderRadius: '6px',
             fontSize: '12px',
             fontWeight: 500,
-            padding: '2px 8px'
+            padding: '2px 8px',
           }}
         >
           Active
@@ -192,52 +178,53 @@ const Clients: React.FC = () => {
 
   return (
     <div>
-      <Title level={3} style={{ marginBottom: '24px' }}>IB Clients</Title>
-      
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '24px',
-        flexWrap: 'wrap',
-        gap: '16px'
-      }}>
+      <Title level={3} style={{ marginBottom: '24px' }}>
+        IB Clients
+      </Title>
+
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '24px',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <Input
           placeholder="Search clients..."
           prefix={<SearchOutlined />}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           onPressEnter={handleSearch}
-          style={{ 
-            width: '100%', 
-            maxWidth: '500px'
+          style={{
+            width: '100%',
+            maxWidth: '500px',
           }}
         />
-        
+
         <div>
-          <Button 
+          <Button
             type="primary"
             onClick={handleSearch}
-            style={{ 
+            style={{
               marginRight: '8px',
               backgroundColor: '#FAAD14',
-              borderColor: '#FAAD14' 
+              borderColor: '#FAAD14',
             }}
           >
             Search
           </Button>
-          
-          <Button 
-            icon={<FileExcelOutlined />}
-            onClick={exportExcel}
-          >
+
+          <Button icon={<FileExcelOutlined />} onClick={exportExcel}>
             Export
           </Button>
         </div>
       </div>
-      
+
       {loading && <CustomLoader />}
-      
+
       <Table
         columns={columns}
         dataSource={data.length > 0 ? data : []}
@@ -250,49 +237,48 @@ const Clients: React.FC = () => {
           showSizeChanger: true,
         }}
         loading={loading}
-        rowClassName={(record, index) => 
-          index % 2 === 1 ? 'table-row-dark' : 'table-row-light'
-        }
+        scroll={{ x: 'max-content' }} // ✅ This enables horizontal scroll
+        rowClassName={(record, index) => (index % 2 === 1 ? 'table-row-dark' : 'table-row-light')}
         style={{
           backgroundColor: '#fff',
           borderRadius: '8px',
-          overflow: 'hidden',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+          overflow: 'auto',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
         }}
         className="custom-clients-table"
       />
-      
+
       <style jsx>{`
         .custom-clients-table .ant-table-thead > tr > th {
-          background-color: #f5f5f5;
+          padding: 16px;
           color: #595959;
           font-weight: 600;
+          background-color: #f5f5f5;
           border-bottom: 1px solid #e8e8e8;
-          padding: 16px;
         }
-        
+
         .custom-clients-table .ant-table-tbody > tr.table-row-light {
           background-color: #ffffff;
         }
-        
+
         .custom-clients-table .ant-table-tbody > tr.table-row-dark {
           background-color: #fafafa;
         }
-        
+
         .custom-clients-table .ant-table-tbody > tr:hover {
           background-color: #e6f7ff !important;
         }
-        
+
         .custom-clients-table .ant-table-tbody > tr > td {
           padding: 16px;
           border-bottom: 1px solid #f0f0f0;
         }
-        
+
         .custom-clients-table .ant-table {
-          border-radius: 8px;
           overflow: hidden;
+          border-radius: 8px;
         }
-        
+
         .custom-clients-table .ant-table-container {
           border-radius: 8px;
         }

@@ -3,11 +3,11 @@ import { Type } from '@/generated';
 import { useModel } from '@@/exports';
 import {
   ArrowRightOutlined,
-  BankOutlined,
-  CreditCardOutlined,
-  DollarOutlined,
+  TransactionOutlined ,
+ 
+  MoneyCollectOutlined ,
   UploadOutlined,
-  WalletOutlined,
+  CreditCardOutlined ,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { history, useLocation } from '@umijs/max';
@@ -109,7 +109,7 @@ const Deposit: React.FC = () => {
     {
       key: 'bank-transfer',
       label: 'Bank Transfer',
-      icon: <BankOutlined className="payment-icon" />,
+      icon: <TransactionOutlined  className="payment-icon" />,
       details: 'Bank Wire Deposit (1-24 hours)',
       processingTime: '1-24 hours',
       cost: 0,
@@ -117,7 +117,7 @@ const Deposit: React.FC = () => {
     {
       key: 'tether-usdt',
       label: 'Card payment',
-      icon: <WalletOutlined className="payment-icon" />,
+      icon: <CreditCardOutlined  className="payment-icon" />,
       details: 'Card payment Instant deposit 24/7',
       processingTime: '24/7 Instant',
       cost: 0,
@@ -125,7 +125,7 @@ const Deposit: React.FC = () => {
     {
       key: 'other-payment',
       label: 'Cash Deposit 24/7',
-      icon: <DollarOutlined className="payment-icon" />,
+      icon: <MoneyCollectOutlined  className="payment-icon" />,
       details: 'Cash options available',
       processingTime: 'Varies',
       cost: 0,
@@ -724,13 +724,13 @@ const Deposit: React.FC = () => {
             <div className="payment-method-icon">
               {/* Find the correct icon based on the selected payment method key */}
               {selectedPaymentMethod === 'bank-transfer' && (
-                <BankOutlined className="payment-method-icon-inner" />
+                <TransactionOutlined  className="payment-method-icon-inner" />
               )}
               {selectedPaymentMethod === 'tether-usdt' && (
                 <CreditCardOutlined className="payment-method-icon-inner" />
               )}
               {selectedPaymentMethod === 'other-payment' && (
-                <DollarOutlined className="payment-method-icon-inner" />
+                <MoneyCollectOutlined  className="payment-method-icon-inner" />
               )}
             </div>
             <div className="payment-method-details">

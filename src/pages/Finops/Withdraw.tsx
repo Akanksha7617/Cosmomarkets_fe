@@ -4,7 +4,7 @@ import { api } from '@/components/common/api';
 import { Type } from '@/generated';
 import { Transfer } from '@/pages/Finops/common/Transfer';
 import { useModel } from '@@/exports';
-import { ArrowLeftOutlined, BankOutlined, WalletOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, SwapOutlined , PayCircleOutlined  } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { history, useLocation } from '@umijs/max';
 import {
@@ -85,7 +85,7 @@ const Withdraw: React.FC = () => {
     {
       key: 'bank-wire',
       label: 'Bank Wire',
-      icon: <BankOutlined className="payment-icon" />,
+      icon: <SwapOutlined  className="payment-icon" />,
       details: 'Bank Wire Withdrawal (1-24 hours)',
       processingTime: '1-24 hours',
       cost: 0,
@@ -93,7 +93,7 @@ const Withdraw: React.FC = () => {
     {
       key: 'usdt',
       label: 'USDT',
-      icon: <WalletOutlined className="payment-icon" />,
+      icon: <PayCircleOutlined  className="payment-icon" />,
       details: 'USDT Instant Withdrawal (24/7)',
       processingTime: 'Instant',
       cost: 0,
