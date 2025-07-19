@@ -879,7 +879,7 @@
     background-color: #08087f;
 } */
 .ant-pro-global-header {
-background: linear-gradient(135deg, #8fbdef 0%, #8694a2 35%, #15457a 65%, #1e60a2 100%);
+  background: linear-gradient(135deg, #8fbdef 0%, #8694a2 35%, #15457a 65%, #1e60a2 100%);
 
   /* background-color: darkgray; */
   margin-inline: 0px !important;
@@ -7443,6 +7443,7 @@ margin-left: -100px;
     width: 95%;
     max-width: 320px;
     transform: translate(-50%, -50%);
+    margin: 0 10px;
   }
 
   .logo-image {
@@ -7452,6 +7453,17 @@ margin-left: -100px;
 
   .login-header {
     height: 110px;
+  }
+
+  /* Extend SVG gradient to full card width */
+  .header-svg {
+    width: 100%;
+    height: 110px;
+    transform: scaleX(1.2);
+  }
+  
+  .logo-container {
+    top: 35%;
   }
 
   .form-container {
@@ -7486,6 +7498,7 @@ margin-left: -100px;
     width: 98%;
     max-width: 300px;
     border-radius: 20px;
+    margin: 0 5px;
   }
 
   .logo-image {
@@ -7495,6 +7508,16 @@ margin-left: -100px;
 
   .login-header {
     height: 100px;
+  }
+
+  /* Adjust SVG for smaller screens */
+  .header-svg {
+    height: 100px;
+    transform: scaleX(1.2);
+  }
+  
+  .logo-container {
+    top: 32%;
   }
 
   .form-container {
@@ -7520,6 +7543,7 @@ margin-left: -100px;
     width: 100%;
     max-width: 280px;
     border-radius: 16px;
+    margin: 0 2px;
   }
 
   .logo-image {
@@ -7529,6 +7553,16 @@ margin-left: -100px;
 
   .login-header {
     height: 90px;
+  }
+
+  /* Maintain curved design even on very small screens */
+  .header-svg {
+    height: 90px;
+    transform: scaleX(1.2);
+  }
+  
+  .logo-container {
+    top: 30%;
   }
 
   .form-container {
@@ -7558,6 +7592,7 @@ margin-left: -100px;
     font-size: 12px;
   }
 }
+
 /* sign in  pages end */
 
 /*Status page start ak */
