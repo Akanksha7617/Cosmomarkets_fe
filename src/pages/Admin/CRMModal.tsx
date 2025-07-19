@@ -48,7 +48,12 @@ const CRMModal: React.FC<CRMModalProps> = ({
       antMessage.error(msg);
     }
   };
-
+ const handleApprovalSuccess = () => {
+    setActiveTab('2');
+  };
+  const handleApprovalGroup = () => {
+    setActiveTab('3');
+  };
   // Handle modal closure
   const handleClose = () => {
     setActiveTab('1');
@@ -165,7 +170,7 @@ const CRMModal: React.FC<CRMModalProps> = ({
       ),
       children: (
         <CRMProcess
-          onOperationComplete={handleOperationComplete}
+          onOperationComplete={handleApprovalSuccess}
           userData={userData}
           onRefresh={handleRefresh}
         />
@@ -183,7 +188,7 @@ const CRMModal: React.FC<CRMModalProps> = ({
           isConnected={true}
           serverConfig={serverConfig}
           serverName={serverName}
-          onOperationComplete={handleOperationComplete}
+          onOperationComplete={handleApprovalGroup}
           userData={userData}
         />
       ),
