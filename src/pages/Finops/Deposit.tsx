@@ -858,7 +858,7 @@ const Deposit: React.FC = () => {
               ))}
             </div>
 
-            <div className="action-buttons" style={{ marginTop: '24px' }}>
+            {/* <div className="action-buttons" style={{ marginTop: '24px' }}>
               <Button
                 type="primary"
                 onClick={() => setCurrentStep(4)}
@@ -867,7 +867,7 @@ const Deposit: React.FC = () => {
               >
                 Continue to Next Step
               </Button>
-            </div>
+            </div> */}
           </div>
         )}
       </div>
