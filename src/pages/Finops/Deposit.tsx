@@ -451,7 +451,7 @@ const Deposit: React.FC = () => {
     }
   };
 
-  const handleredirect = (url: string) => {
+   const handleRedirect = (url: string) => {
     window.open(url, '_blank', 'noreferrer');
     history.push('/finops/transaction_history');
   };
