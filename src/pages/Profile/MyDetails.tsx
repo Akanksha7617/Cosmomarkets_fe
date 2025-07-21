@@ -56,7 +56,7 @@ const MyDetails: React.FC = () => {
 
     setLoading(true);
     try {
-      const excludedFields = ['masterPassword', 'investorPassword', 'password'];
+      const excludedFields = ['masterPassword', 'investorPassword'];
       const fieldNamesToValidate = Object.keys(form.getFieldsValue()).filter(
         (fieldName) => !excludedFields.includes(fieldName),
       );
@@ -67,6 +67,7 @@ const MyDetails: React.FC = () => {
       const payload = {
         ...values,
         isEnabled: currentRecord.isEnabled,
+        passcode: values.password ? btoa(values.password) : currentRecord.passcode,
       };
 
       const response = await api.app.putMe(payload);
@@ -277,7 +278,7 @@ const MyDetails: React.FC = () => {
                   >
                     <Input.Password
                       placeholder="••••••••"
-                      readOnly={true}
+                      readOnly={!isEditing}
                       className="form-input"
                       style={{ backgroundColor: '#f5f5f5' }}
                     />
@@ -305,7 +306,7 @@ const MyDetails: React.FC = () => {
                     className="form-item"
                     rules={[{ required: true, message: 'Master Password is required.' }]}
                   >
-                    <Input.Password 
+                    <Input.Password
                       className="form-input"
                       readOnly={true}
                       style={{ backgroundColor: '#f5f5f5' }}
@@ -321,7 +322,7 @@ const MyDetails: React.FC = () => {
                     className="form-item"
                     rules={[{ required: true, message: 'Investor Password is required.' }]}
                   >
-                    <Input.Password 
+                    <Input.Password
                       className="form-input"
                       readOnly={true}
                       style={{ backgroundColor: '#f5f5f5' }}
