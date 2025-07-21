@@ -770,7 +770,7 @@ const Deposit: React.FC = () => {
             <Input placeholder="Enter amount" prefix="$" />
           </Form.Item>
 
-          <div className="info-box">
+          {/* <div className="info-box">
             <div className="info-item">
               <p className="info-label">Minimum Amount</p>
               <p className="info-value">$50.00</p>
@@ -779,7 +779,7 @@ const Deposit: React.FC = () => {
               <p className="info-label">Processing Time</p>
               <p className="info-value">24/7 Instant</p>
             </div>
-          </div>
+          </div> */}
 
           <div className="action-buttons">
             <Button
