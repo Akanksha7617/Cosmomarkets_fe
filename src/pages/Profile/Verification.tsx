@@ -16,10 +16,11 @@ const getBase64 = (file: RcFile): Promise<string> =>
   });
 
 const beforeUpload = (file: RcFile) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-  if (!isJpgOrPng) {
+  const isValidFormat =
+    file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'application/pdf';
+  if (!isValidFormat) {
     message.error({
-      content: 'You can only upload JPG/PNG file!',
+      content: 'You can only upload JPG/PNG/PDF file!',
       icon: <span className="orange-error-icon"> ✘ </span>,
       className: 'orange-error-notification',
       duration: 3,
@@ -28,13 +29,13 @@ const beforeUpload = (file: RcFile) => {
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
     message.error({
-      content: 'Image must be smaller than 2MB!',
+      content: 'File must be smaller than 2MB!',
       icon: <span className="orange-error-icon"> ✘ </span>,
       className: 'orange-error-notification',
       duration: 3,
     });
   }
-  return isJpgOrPng && isLt2M;
+  return isValidFormat && isLt2M;
 };
 
 const Verification: React.FC = () => {
@@ -296,11 +297,17 @@ const Verification: React.FC = () => {
 
   const props: UploadProps = {
     beforeUpload: (file) => {
-      const acceptedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp'];
+      const acceptedFormats = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/bmp',
+        'application/pdf',
+      ];
 
       if (!acceptedFormats.includes(file.type)) {
         message.error({
-          content: 'This file type is not supported. Please upload a valid image format.',
+          content: 'This file type is not supported. Please upload a valid image or PDF format.',
           icon: <span className="orange-error-icon"> ✘ </span>,
           className: 'orange-error-notification',
           duration: 3,
@@ -336,8 +343,13 @@ const Verification: React.FC = () => {
 
     // Generate preview immediately if file exists
     if (fileList.length > 0 && fileList[0].originFileObj) {
-      const previewUrl = await getBase64(fileList[0].originFileObj);
-      setIdPreviewImage(previewUrl);
+      const file = fileList[0].originFileObj;
+      if (file.type === 'application/pdf') {
+        setIdPreviewImage(''); // Don't show preview for PDFs
+      } else {
+        const previewUrl = await getBase64(file);
+        setIdPreviewImage(previewUrl);
+      }
     } else {
       setIdPreviewImage('');
     }
@@ -527,9 +539,7 @@ const Verification: React.FC = () => {
     });
 
     return (
-      
       <div key={index} className="verification-document-item">
-          
         <div className="verification-document-details">
           {/* Document Thumbnail */}
           {doc.previewImage ? (
@@ -630,7 +640,7 @@ const Verification: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Verification Container (Using similar styles as the original) */}
         <div className="verification-container">
           <Form form={form} onFinish={handleSubmit} layout="vertical">
@@ -716,6 +726,5 @@ const Verification: React.FC = () => {
     </>
   );
 };
-
 
 export default Verification;
