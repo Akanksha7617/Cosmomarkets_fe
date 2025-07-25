@@ -2847,13 +2847,14 @@ margin-left: -100px;
 
 .wallet-pill-text {
   display: inline-block;
-  min-width: 48px;
-  max-width: 52px;
+  min-width: 80px;
+  max-width: 100px;
   margin-top: 5px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
 
 #password_help .ant-form-item-explain-error {
   max-width: 468px;
