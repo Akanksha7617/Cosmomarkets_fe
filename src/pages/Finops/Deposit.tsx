@@ -327,7 +327,7 @@ const Deposit: React.FC = () => {
         duration: 6,
       });
     } else if (selectedPaymentMethod === 'tether-usdt') {
-      setLoading(true);
+      // setLoading(true);
 
       try {
         // ✅ Step 1: Submit the deposit request
@@ -341,13 +341,13 @@ const Deposit: React.FC = () => {
 
         await api.transaction.deposit(formData);
 
-        message.success({
-          content:
-            'Your deposit request has been successfully submitted and will appear in your transaction history.',
-          icon: <span className="green-success-icon"> ✓ </span>,
-          className: 'green-success-notification',
-          duration: 3,
-        });
+        // message.success({
+        //   content:
+        //     'Your deposit request has been successfully submitted and will appear in your transaction history.',
+        //   icon: <span className="green-success-icon"> ✓ </span>,
+        //   className: 'green-success-notification',
+        //   duration: 3,
+        // });
 
         // ✅ Step 2: Load Payment Settings and Links
         const paymentSettings = await api.setting.getPaymentSettings();
@@ -377,8 +377,8 @@ const Deposit: React.FC = () => {
         }
 
         // ✅ Reset form fields (stay on same step)
-        amountForm.resetFields();
-        setAmount('');
+        // amountForm.resetFields();
+        // setAmount('');
       } catch (error) {
         console.error('Error:', error);
 
@@ -406,6 +406,81 @@ const Deposit: React.FC = () => {
       setCurrentStep(4);
     }
   };
+
+  //this new change code for that
+// const handleAmountSubmit = async (values: any) => {
+//   const amountValue = values.amount;
+//   setAmount(amountValue);
+//   setLoading(true);
+
+//   try {
+//     if (selectedPaymentMethod === 'tether-usdt') {
+//       // ✅ Create deposit request immediately (same as bank wire)
+//       const formData: any = {
+//         Type: Type.EXT_TO_WALLET,
+//         Amount: amountValue,
+//         Currency: 'USD',
+//         Comment: `Deposit ${amountValue}`,
+//         PaymentMethod: selectedPaymentMethod,
+//       };
+//       await api.transaction.deposit(formData);
+
+//       // ✅ Fetch payment links to show Pay Now buttons
+//       const links = await fetchPaymentLinks();
+
+//       if (links && links.length > 0) {
+//         setShowPaymentLinks(true);
+//         setShowBankDetails(false); // hide bank details
+//         message.success({
+//           content: 'Payment options loaded successfully.',
+//           className: 'green-success-notification',
+//         });
+//       } else {
+//         setShowPaymentLinks(false);
+//         message.warning({
+//           content: 'No payment options found. Please try another method.',
+//           className: 'yellow-warning-notification',
+//         });
+//       }
+
+//       amountForm.resetFields();
+
+//     } else if (selectedPaymentMethod === 'bank-transfer') {
+//       // 🏦 keep original flow for bank wire: create deposit and show bank details
+//       setShowBankDetails(true);
+//       setShowPaymentLinks(false);
+
+//       message.success({
+//         content: 'Amount submitted. Bank details shown below.',
+//         className: 'green-success-notification',
+//       });
+
+//     } else {
+//       // Other payment methods - keep original flow
+//       setShowBankDetails(false);
+//       setShowPaymentLinks(false);
+
+//       message.success({
+//         content: 'Amount submitted.',
+//         className: 'green-success-notification',
+//       });
+
+//       setCurrentStep(4);
+//     }
+
+//   } catch (error) {
+//     console.error('Error:', error);
+//     message.error({
+//       content: 'Something went wrong. Please try again later.',
+//       className: 'orange-error-notification',
+//     });
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
+
 
   const handleFinalSubmit = async () => {
     try {
@@ -451,10 +526,56 @@ const Deposit: React.FC = () => {
     }
   };
 
-   const handleRedirect = (url: string) => {
-    window.open(url, '_blank', 'noreferrer');
-    history.push('/finops/transaction_history');
-  };
+  const handleRedirect = (url: string) => {
+  window.open(url, '_blank', 'noreferrer');
+  history.push('/finops/transaction_history');
+};
+
+  //  const handleRedirect = (url: string) => {
+  //   window.open(url, '_blank', 'noreferrer');
+  //   history.push('/finops/transaction_history');
+  // };
+
+  //this is new changing code
+
+//   const handleRedirect = async (url: string) => {
+//   try {
+//     setLoading(true);
+
+//     if (selectedPaymentMethod === 'tether-usdt') {
+//       // ✅ Only create deposit request when user clicks Pay Now
+//       const formData: any = {
+//         Type: Type.EXT_TO_WALLET,
+//         Amount: amount,
+//         Currency: 'USD',
+//         Comment: `Deposit ${amount}`,
+//         PaymentMethod: selectedPaymentMethod,
+//       };
+
+//       await api.transaction.deposit(formData);
+
+//       message.success({
+//         content: 'Deposit request created. Redirecting you to payment...',
+//         className: 'green-success-notification',
+//       });
+//     }
+
+//     // open payment gateway in new tab
+//     window.open(url, '_blank', 'noreferrer');
+
+//     // redirect user in current app to transaction history
+//     history.push('/finops/transaction_history');
+//   } catch (error) {
+//     console.error(error);
+//     message.error({
+//       content: 'Failed to create deposit request. Please try again.',
+//       className: 'orange-error-notification',
+//     });
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
 
   const uploadProps = {
     beforeUpload: (file: any) => {
