@@ -47,6 +47,8 @@ const HelpDeskUser: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [totalQueries, setTotalQueries] = useState<number>(0);
 
+  //add loader
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // --- Filter states ---
   const [searchText, setSearchText] = useState<string>('');
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
@@ -197,6 +199,7 @@ const HelpDeskUser: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true); //start load
     try {
       const resp = await api.app.createTicket({ queryType, message });
       const msg = (resp || '').toString().toLowerCase();
@@ -228,6 +231,9 @@ const HelpDeskUser: React.FC = () => {
         duration: 3,
       });
     }
+    finally {
+    setIsSubmitting(false);  // stop loader
+  }
   };
 
   const handleView = async (queryId: number) => {
@@ -417,7 +423,7 @@ const HelpDeskUser: React.FC = () => {
               className="modern-textarea"
             />
           </div>
-          <button type="submit" className="submit-btn">
+          {/* <button type="submit" className="submit-btn">
             <span>Submit Query</span>
             <svg
               className="btn-icon"
@@ -434,7 +440,31 @@ const HelpDeskUser: React.FC = () => {
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>
-          </button>
+          </button> */}
+          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+  {isSubmitting ? (
+    <span className="submit-query-loader"></span>
+  ) : (
+    <>
+      <span>Submit Query</span>
+      <svg
+        className="btn-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <polyline points="12 5 19 12 12 19" />
+      </svg>
+    </>
+  )}
+</button>
         </form>
 
         {/* ====== Queries Table ====== */}
@@ -676,5 +706,6 @@ const HelpDeskUser: React.FC = () => {
     </div>
   );
 };
+
 
 export default HelpDeskUser;
