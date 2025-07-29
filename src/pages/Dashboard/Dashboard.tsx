@@ -875,7 +875,7 @@ const Dashboard: React.FC = () => {
                 <DataTable
                   title={
                     <div className="recent-transactions-header">
-                      <h3 className="recent-transactions-title">Last Five Wallet Transactions</h3>
+                      <h3 className="recent-transactions-title">Recent Wallet Transactions</h3>
                       <Link to="/finops/transaction_history" className="view-all-btn">
                         <ClockCircleOutlined className="view-all-icon" />
                         View All
