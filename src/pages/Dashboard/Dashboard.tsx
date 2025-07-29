@@ -472,7 +472,9 @@ const Dashboard: React.FC = () => {
   const liveAccountTabs: TabsProps['items'] = [
     {
       key: '1',
-      label: <span className="live-account-tab"> MT5 Live Accounts </span>,
+      label: <span className="live-account-tab"> </span>,
+
+      // label: <span className="live-account-tab"> MT5 Live Accounts </span>,
       children: <LiveAccount appUser={userData} getUser={getUser} />,
     },
   ];

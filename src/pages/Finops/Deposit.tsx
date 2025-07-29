@@ -115,7 +115,8 @@ const Deposit: React.FC = () => {
       cost: 0,
     },
     {
-      key: 'tether-usdt',
+      key: 'card-payment',
+      // key: 'tether-usdt',
       label: 'Card payment',
       icon: <CreditCardOutlined  className="payment-icon" />,
       details: 'Card payment Instant deposit 24/7',
@@ -326,7 +327,8 @@ const Deposit: React.FC = () => {
         className: 'green-success-notification',
         duration: 6,
       });
-    } else if (selectedPaymentMethod === 'tether-usdt') {
+    // } else if (selectedPaymentMethod === 'tether-usdt') {
+    }else if (selectedPaymentMethod === 'card-payment') {
       // setLoading(true);
 
       try {
@@ -847,7 +849,8 @@ const Deposit: React.FC = () => {
               {selectedPaymentMethod === 'bank-transfer' && (
                 <TransactionOutlined  className="payment-method-icon-inner" />
               )}
-              {selectedPaymentMethod === 'tether-usdt' && (
+              {/* {selectedPaymentMethod === 'tether-usdt' && ( */}
+              {selectedPaymentMethod === 'card-payment' && (
                 <CreditCardOutlined className="payment-method-icon-inner" />
               )}
               {selectedPaymentMethod === 'other-payment' && (
