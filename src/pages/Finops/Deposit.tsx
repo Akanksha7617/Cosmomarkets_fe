@@ -370,6 +370,7 @@ const cryptoDetails = {
       setShowPaymentLinks(true);
       setShowBankDetails(false);
       setShowCryptoDetails(false);
+       setCurrentStep(4);
     }
   } else if (['erc-deposit', 'btc-deposit', 'usdtc-deposit'].includes(selectedPaymentMethod)) {
     // NEW: Show crypto QR code and wallet details for crypto payments
@@ -1097,6 +1098,30 @@ const cryptoDetails = {
             </div>
           </Upload>
         </div>
+
+        {showPaymentLinks && paymentLinks.length > 0 && (
+        <div className="payment-links-container" style={{ marginTop: '24px' }}>
+          <Title level={4}>Payment Options</Title>
+          <Text type="secondary" style={{ marginBottom: '16px', display: 'block' }}>
+            Please select one of the following payment options for amount: ${amount}
+          </Text>
+          
+          <div className="payment-buttons">
+            {paymentLinks.map((link, index) => (
+              <Button
+                key={index}
+                type="primary"
+                onClick={() => handleRedirect(link.url)}
+                style={{ marginRight: '8px', marginBottom: '8px' }}
+              >
+                {link.name || `Pay Now ${index + 1}`}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
+        
 
         <div className="action-buttons">
           {/* <Button onClick={handleBack} className="back-button">
