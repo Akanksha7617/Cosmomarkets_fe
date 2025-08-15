@@ -1011,15 +1011,42 @@ const cryptoDetails = {
       )}
 
         {/* Crypto Details - THIS IS THE MAIN FIX */}
-     {showCryptoDetails && selectedPaymentMethod && cryptoDetails[selectedPaymentMethod] && (
+    {showCryptoDetails && selectedPaymentMethod && cryptoDetails[selectedPaymentMethod] && (
           <div className="crypto-details-container" style={{ marginTop: '24px' }}>
-            {/* Only QR Code Image - No text */}
+            {/* QR Code Image */}
             <div className="qr-code-container" style={{ textAlign: 'center', marginBottom: '20px' }}>
               <img 
                 src={cryptoDetails[selectedPaymentMethod].qrCode}
                 alt="QR Code"
                 style={{ width: '200px', height: '200px', border: '1px solid #d9d9d9' }}
               />
+            </div>
+
+            {/* Wallet Address */}
+            <div className="wallet-address-container" style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <div style={{ 
+                padding: '12px', 
+                backgroundColor: '#fff', 
+                border: '1px solid #d9d9d9', 
+                borderRadius: '4px',
+                wordBreak: 'break-all',
+                fontFamily: 'monospace',
+                fontSize: '14px',
+                maxWidth: '400px',
+                margin: '0 auto'
+              }}>
+                {cryptoDetails[selectedPaymentMethod].walletAddress}
+              </div>
+              <Button 
+                type="link" 
+                onClick={() => {
+                  navigator.clipboard.writeText(cryptoDetails[selectedPaymentMethod].walletAddress);
+                  message.success('Wallet address copied to clipboard!');
+                }}
+                style={{ marginTop: '8px' }}
+              >
+                Copy Address
+              </Button>
             </div>
 
             {/* Continue Button */}
