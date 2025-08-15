@@ -1,3 +1,4 @@
+// code 2
 import { api } from '@/components/common/api';
 import { Type } from '@/generated';
 import { useModel } from '@@/exports';
@@ -1131,6 +1132,45 @@ const cryptoDetails = {
           </div>
         )}
       </div>
+
+       {/* ADD PAYMENT LINKS SECTION HERE */}
+        {showPaymentLinks && paymentLinks && paymentLinks.length > 0 && (
+          <div className="payment-links-container">
+            <Title level={4} style={{ marginTop: '24px', marginBottom: '16px' }}>
+              Backup Payment Options
+            </Title>
+            <Text type="secondary" style={{ marginBottom: '16px', display: 'block' }}>
+              Please select one of the following payment options for amount: ${amount}
+            </Text>
+
+            <div className="payment-links-grid">
+              {paymentLinks.map((link) => (
+                <Card key={link.id} className="payment-link-card" hoverable>
+                  <div className="payment-link-content">
+                    <Text strong>{link.name}</Text>
+                    {link.description && (
+                      <Text type="secondary" style={{ marginTop: '8px', display: 'block' }}>
+                        {link.description}
+                      </Text>
+                    )}
+                    <Button
+                      type="primary"
+                      onClick={() => handleRedirect(link.url)}
+                      style={{
+                        marginTop: '16px',
+                        backgroundColor: '#9BF8F4',
+                        borderColor: '#9BF8F4',
+                        color: '#000'
+                      }}
+                    >
+                      Pay Now
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
     </Card>
   );
 
