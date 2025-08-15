@@ -3,11 +3,13 @@ import { Type } from '@/generated';
 import { useModel } from '@@/exports';
 import {
   ArrowRightOutlined,
-  TransactionOutlined ,
- 
-  MoneyCollectOutlined ,
+  TransactionOutlined,
+  MoneyCollectOutlined,
   UploadOutlined,
-  CreditCardOutlined ,
+  CreditCardOutlined,
+  DollarCircleOutlined,
+  RocketOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { history, useLocation } from '@umijs/max';
@@ -69,6 +71,7 @@ const Deposit: React.FC = () => {
   const [showDepositFlow, setShowDepositFlow] = useState(false);
   const [showWithdrawFlow, setShowWithdrawFlow] = useState(false);
   const [showWalletSteps, setShowWalletSteps] = useState(false);
+const [showCryptoDetails, setShowCryptoDetails] = useState(false);
 
   // States for DepositCard functionality
   const [currentStep, setCurrentStep] = useState(1);
@@ -88,6 +91,22 @@ const Deposit: React.FC = () => {
   const [isCheckingProof, setIsCheckingProof] = useState(true);
 
   const location = useLocation();
+
+  // Add hardcoded QR codes and wallet addresses
+const cryptoDetails = {
+  'erc-deposit': {
+    qrCode: '/images/ERC.png', // Replace with actual QR code
+    walletAddress: '0x8eA5A04E8be48928E03d060A126184CF704eaE64'
+  },
+  'btc-deposit': {
+    qrCode: '/images/BTC.png', // Replace with actual QR code
+    walletAddress: 'bc1q8c43czf4gjzwtat8zh3vhr8h2rs5av2kvxrx0f'
+  },
+  'usdtc-deposit': {
+    qrCode: '/images/USDTC.png', // Replace with actual QR code
+    walletAddress: 'THnzBRE63NfkALRhHLtb8ZHJL2upkR2mCr'
+  }
+};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,26 +128,41 @@ const Deposit: React.FC = () => {
     {
       key: 'bank-transfer',
       label: 'Bank Transfer',
-      icon: <TransactionOutlined  className="payment-icon" />,
+      icon: <TransactionOutlined className="payment-icon" />,
       details: 'Bank Wire Deposit (1-24 hours)',
       processingTime: '1-24 hours',
       cost: 0,
     },
     {
       key: 'card-payment',
-      // key: 'tether-usdt',
       label: 'Card payment',
-      icon: <CreditCardOutlined  className="payment-icon" />,
+      icon: <CreditCardOutlined className="payment-icon" />,
       details: 'Card payment Instant deposit 24/7',
       processingTime: '24/7 Instant',
       cost: 0,
     },
     {
-      key: 'other-payment',
-      label: 'Cash Deposit 24/7',
-      icon: <MoneyCollectOutlined  className="payment-icon" />,
-      details: 'Cash options available',
-      processingTime: 'Varies',
+      key: 'erc-deposit',
+      label: 'ERC',
+      icon: <ThunderboltOutlined className="payment-icon" />,
+      details: 'ERC cryptocurrency deposit 24/7',
+      processingTime: '24/7 Instant',
+      cost: 0,
+    },
+    {
+      key: 'btc-deposit',
+      label: 'BTC',
+      icon: <DollarCircleOutlined className="payment-icon" />,
+      details: 'BTC cryptocurrency deposit 24/7',
+      processingTime: '24/7 Instant',
+      cost: 0,
+    },
+    {
+      key: 'usdtc-deposit',
+      label: 'USDTC',
+      icon: <RocketOutlined className="payment-icon" />,
+      details: 'USDTC cryptocurrency deposit 24/7',
+      processingTime: '24/7 Instant',
       cost: 0,
     },
   ];
@@ -246,32 +280,33 @@ const Deposit: React.FC = () => {
     </div>
   );
 
-  // Reset to main deposit options
-  function resetToMainDeposit() {
-    setShowDepositFlow(false);
-    setShowWithdrawFlow(false);
-    setShowWalletSteps(false);
-    setCurrentStep(1);
-    setSelectedCurrency(undefined);
-    setSelectedPaymentMethod(undefined);
-    setShowBankDetails(false);
-    setShowPaymentLinks(false);
-    amountForm.resetFields();
-    setFileList([]);
-  }
+ function resetToMainDeposit() {
+  setShowDepositFlow(false);
+  setShowWithdrawFlow(false);
+  setShowWalletSteps(false);
+  setCurrentStep(1);
+  setSelectedCurrency(undefined);
+  setSelectedPaymentMethod(undefined);
+  setShowBankDetails(false);
+  setShowPaymentLinks(false);
+  setShowCryptoDetails(false); // ADD THIS LINE
+  amountForm.resetFields();
+  setFileList([]);
+}
 
   // DepositCard functionality
   const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-      if (currentStep === 4 && (showBankDetails || showPaymentLinks)) {
-        setShowBankDetails(false);
-        setShowPaymentLinks(false);
-      }
-    } else {
-      resetToMainDeposit();
+  if (currentStep > 1) {
+    setCurrentStep(currentStep - 1);
+    if (currentStep === 4 && (showBankDetails || showPaymentLinks || showCryptoDetails)) { // UPDATE THIS LINE
+      setShowBankDetails(false);
+      setShowPaymentLinks(false);
+      setShowCryptoDetails(false); // ADD THIS LINE
     }
-  };
+  } else {
+    resetToMainDeposit();
+  }
+};
 
   const handleContinue = () => {
     if (currentStep === 2 && !selectedPaymentMethod) {
@@ -313,173 +348,197 @@ const Deposit: React.FC = () => {
     }
   };
 
-  const handleAmountSubmit = async (values: any) => {
-    const amountValue = values.amount;
-    setAmount(amountValue);
+ const handleAmountSubmit = async (values: any) => {
+  const amountValue = values.amount;
+  setAmount(amountValue);
 
-    if (selectedPaymentMethod === 'bank-transfer') {
-      setShowBankDetails(true);
-      setShowPaymentLinks(false);
+  if (selectedPaymentMethod === 'bank-transfer') {
+    setShowBankDetails(true);
+    setShowPaymentLinks(false);
+    setShowCryptoDetails(false);
 
-      message.success({
-        content: 'Amount has been successfully submitted.',
-        icon: <span className="green-success-icon"> ✓ </span>,
-        className: 'green-success-notification',
-        duration: 6,
-      });
-    // } else if (selectedPaymentMethod === 'tether-usdt') {
-    }else if (selectedPaymentMethod === 'card-payment') {
-      // setLoading(true);
-
-      try {
-        // ✅ Step 1: Submit the deposit request
-        const formData: any = {
-          Type: Type.EXT_TO_WALLET,
-          Amount: amountValue,
-          Currency: 'USD',
-          Comment: `Deposit ${amountValue}`,
-          PaymentMethod: selectedPaymentMethod,
-        };
-
-        await api.transaction.deposit(formData);
-
-        // message.success({
-        //   content:
-        //     'Your deposit request has been successfully submitted and will appear in your transaction history.',
-        //   icon: <span className="green-success-icon"> ✓ </span>,
-        //   className: 'green-success-notification',
-        //   duration: 3,
-        // });
-
-        // ✅ Step 2: Load Payment Settings and Links
-        const paymentSettings = await api.setting.getPaymentSettings();
-        setPaymentData(paymentSettings);
-
-        const links = await fetchPaymentLinks();
-
-        if (links && links.length > 0) {
-          setShowBankDetails(false);
-          setShowPaymentLinks(true);
-
-          message.success({
-            content: 'Payment options have been successfully loaded.',
-            icon: <span className="green-success-icon"> ✓ </span>,
-            className: 'green-success-notification',
-            duration: 3,
-          });
-        } else {
-          setShowPaymentLinks(false);
-
-          message.warning({
-            content: 'No available payment options. Please try another method.',
-            icon: <span className="yellow-warning-icon"> ⚠ </span>,
-            className: 'yellow-warning-notification',
-            duration: 3,
-          });
-        }
-
-        // ✅ Reset form fields (stay on same step)
-        // amountForm.resetFields();
-        // setAmount('');
-      } catch (error) {
-        console.error('Error:', error);
-
-        message.error({
-          content:
-            'We encountered an issue submitting your deposit request. Please try again later.',
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
-      } finally {
-        setLoading(false);
-      }
-    } else {
+    message.success({
+      content: 'Amount has been successfully submitted.',
+      icon: <span className="green-success-icon"> ✓ </span>,
+      className: 'green-success-notification',
+      duration: 6,
+    });
+  } else if (selectedPaymentMethod === 'card-payment') {
+    // Fetch payment links for card payment
+    const links = await fetchPaymentLinks();
+    if (links && links.length > 0) {
+      setShowPaymentLinks(true);
       setShowBankDetails(false);
-      setShowPaymentLinks(false);
-
-      message.success({
-        content: 'Amount has been successfully submitted.',
-        icon: <span className="green-success-icon"> ✓ </span>,
-        className: 'green-success-notification',
-        duration: 3,
-      });
-
-      setCurrentStep(4);
+      setShowCryptoDetails(false);
     }
-  };
+  } else if (['erc-deposit', 'btc-deposit', 'usdtc-deposit'].includes(selectedPaymentMethod)) {
+    // NEW: Show crypto QR code and wallet details for crypto payments
+    setShowBankDetails(false);
+    setShowPaymentLinks(false);
+    setShowCryptoDetails(true);
+
+    message.success({
+      content: 'Amount submitted. Please scan QR code or use wallet address below.',
+      icon: <span className="green-success-icon"> ✓ </span>,
+      className: 'green-success-notification',
+      duration: 6,
+    });
+  } else {
+    setShowBankDetails(false);
+    setShowPaymentLinks(false);
+    setShowCryptoDetails(false);
+
+    message.success({
+      content: 'Amount has been successfully submitted.',
+      icon: <span className="green-success-icon"> ✓ </span>,
+      className: 'green-success-notification',
+      duration: 3,
+    });
+
+    setCurrentStep(4);
+  }
+};
+
+{showCryptoDetails && selectedPaymentMethod && cryptoDetails[selectedPaymentMethod] && (
+          <div className="crypto-details-container">
+            <Title level={4} style={{ marginTop: '24px', marginBottom: '16px' }}>
+              {selectedPaymentMethod === 'erc-deposit' && 'ERC Deposit Details'}
+              {selectedPaymentMethod === 'btc-deposit' && 'BTC Deposit Details'}
+              {selectedPaymentMethod === 'usdtc-deposit' && 'USDTC Deposit Details'}
+            </Title>
+            <Text type="secondary" style={{ marginBottom: '16px', display: 'block' }}>
+              Please scan the QR code or use the wallet address below to send your deposit of ${amount}
+            </Text>
+
+            <div className="crypto-details-content" style={{ 
+              textAlign: 'center', 
+              padding: '20px', 
+              border: '1px solid #d9d9d9', 
+              borderRadius: '8px', 
+              backgroundColor: '#fafafa' 
+            }}>
+              {/* QR Code */}
+              <div className="qr-code-container" style={{ marginBottom: '20px' }}>
+                <img 
+                  src={cryptoDetails[selectedPaymentMethod].qrCode}
+                  alt="QR Code"
+                  style={{ width: '200px', height: '200px', border: '1px solid #d9d9d9' }}
+                />
+              </div>
+
+              {/* Wallet Address */}
+              <div className="wallet-address-container">
+                <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                  Wallet Address:
+                </Text>
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#fff', 
+                  border: '1px solid #d9d9d9', 
+                  borderRadius: '4px',
+                  wordBreak: 'break-all',
+                  fontFamily: 'monospace',
+                  fontSize: '14px'
+                }}>
+                  {cryptoDetails[selectedPaymentMethod].walletAddress}
+                </div>
+                <Button 
+                  type="link" 
+                  onClick={() => {
+                    navigator.clipboard.writeText(cryptoDetails[selectedPaymentMethod].walletAddress);
+                    message.success('Wallet address copied to clipboard!');
+                  }}
+                  style={{ marginTop: '8px' }}
+                >
+                  Copy Address
+                </Button>
+              </div>
+            </div>
+
+     <div className="action-buttons" style={{ marginTop: '24px' }}>
+              <Button
+                type="primary"
+                onClick={() => setCurrentStep(4)}
+                className="continue-button"
+                style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4', color: '#000' }}
+              >
+                Continue to Next Step
+              </Button>
+            </div>
+          </div>
+        )}
 
   //this new change code for that
-// const handleAmountSubmit = async (values: any) => {
-//   const amountValue = values.amount;
-//   setAmount(amountValue);
-//   setLoading(true);
+  // const handleAmountSubmit = async (values: any) => {
+  //   const amountValue = values.amount;
+  //   setAmount(amountValue);
+  //   setLoading(true);
 
-//   try {
-//     if (selectedPaymentMethod === 'tether-usdt') {
-//       // ✅ Create deposit request immediately (same as bank wire)
-//       const formData: any = {
-//         Type: Type.EXT_TO_WALLET,
-//         Amount: amountValue,
-//         Currency: 'USD',
-//         Comment: `Deposit ${amountValue}`,
-//         PaymentMethod: selectedPaymentMethod,
-//       };
-//       await api.transaction.deposit(formData);
+  //   try {
+  //     if (selectedPaymentMethod === 'tether-usdt') {
+  //       // ✅ Create deposit request immediately (same as bank wire)
+  //       const formData: any = {
+  //         Type: Type.EXT_TO_WALLET,
+  //         Amount: amountValue,
+  //         Currency: 'USD',
+  //         Comment: `Deposit ${amountValue}`,
+  //         PaymentMethod: selectedPaymentMethod,
+  //       };
+  //       await api.transaction.deposit(formData);
 
-//       // ✅ Fetch payment links to show Pay Now buttons
-//       const links = await fetchPaymentLinks();
+  //       // ✅ Fetch payment links to show Pay Now buttons
+  //       const links = await fetchPaymentLinks();
 
-//       if (links && links.length > 0) {
-//         setShowPaymentLinks(true);
-//         setShowBankDetails(false); // hide bank details
-//         message.success({
-//           content: 'Payment options loaded successfully.',
-//           className: 'green-success-notification',
-//         });
-//       } else {
-//         setShowPaymentLinks(false);
-//         message.warning({
-//           content: 'No payment options found. Please try another method.',
-//           className: 'yellow-warning-notification',
-//         });
-//       }
+  //       if (links && links.length > 0) {
+  //         setShowPaymentLinks(true);
+  //         setShowBankDetails(false); // hide bank details
+  //         message.success({
+  //           content: 'Payment options loaded successfully.',
+  //           className: 'green-success-notification',
+  //         });
+  //       } else {
+  //         setShowPaymentLinks(false);
+  //         message.warning({
+  //           content: 'No payment options found. Please try another method.',
+  //           className: 'yellow-warning-notification',
+  //         });
+  //       }
 
-//       amountForm.resetFields();
+  //       amountForm.resetFields();
 
-//     } else if (selectedPaymentMethod === 'bank-transfer') {
-//       // 🏦 keep original flow for bank wire: create deposit and show bank details
-//       setShowBankDetails(true);
-//       setShowPaymentLinks(false);
+  //     } else if (selectedPaymentMethod === 'bank-transfer') {
+  //       // 🏦 keep original flow for bank wire: create deposit and show bank details
+  //       setShowBankDetails(true);
+  //       setShowPaymentLinks(false);
 
-//       message.success({
-//         content: 'Amount submitted. Bank details shown below.',
-//         className: 'green-success-notification',
-//       });
+  //       message.success({
+  //         content: 'Amount submitted. Bank details shown below.',
+  //         className: 'green-success-notification',
+  //       });
 
-//     } else {
-//       // Other payment methods - keep original flow
-//       setShowBankDetails(false);
-//       setShowPaymentLinks(false);
+  //     } else {
+  //       // Other payment methods - keep original flow
+  //       setShowBankDetails(false);
+  //       setShowPaymentLinks(false);
 
-//       message.success({
-//         content: 'Amount submitted.',
-//         className: 'green-success-notification',
-//       });
+  //       message.success({
+  //         content: 'Amount submitted.',
+  //         className: 'green-success-notification',
+  //       });
 
-//       setCurrentStep(4);
-//     }
+  //       setCurrentStep(4);
+  //     }
 
-//   } catch (error) {
-//     console.error('Error:', error);
-//     message.error({
-//       content: 'Something went wrong. Please try again later.',
-//       className: 'orange-error-notification',
-//     });
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     message.error({
+  //       content: 'Something went wrong. Please try again later.',
+  //       className: 'orange-error-notification',
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
 
 
@@ -529,9 +588,9 @@ const Deposit: React.FC = () => {
   };
 
   const handleRedirect = (url: string) => {
-  window.open(url, '_blank', 'noreferrer');
-  history.push('/finops/transaction_history');
-};
+    window.open(url, '_blank', 'noreferrer');
+    history.push('/finops/transaction_history');
+  };
 
   //  const handleRedirect = (url: string) => {
   //   window.open(url, '_blank', 'noreferrer');
@@ -540,43 +599,43 @@ const Deposit: React.FC = () => {
 
   //this is new changing code
 
-//   const handleRedirect = async (url: string) => {
-//   try {
-//     setLoading(true);
+  //   const handleRedirect = async (url: string) => {
+  //   try {
+  //     setLoading(true);
 
-//     if (selectedPaymentMethod === 'tether-usdt') {
-//       // ✅ Only create deposit request when user clicks Pay Now
-//       const formData: any = {
-//         Type: Type.EXT_TO_WALLET,
-//         Amount: amount,
-//         Currency: 'USD',
-//         Comment: `Deposit ${amount}`,
-//         PaymentMethod: selectedPaymentMethod,
-//       };
+  //     if (selectedPaymentMethod === 'tether-usdt') {
+  //       // ✅ Only create deposit request when user clicks Pay Now
+  //       const formData: any = {
+  //         Type: Type.EXT_TO_WALLET,
+  //         Amount: amount,
+  //         Currency: 'USD',
+  //         Comment: `Deposit ${amount}`,
+  //         PaymentMethod: selectedPaymentMethod,
+  //       };
 
-//       await api.transaction.deposit(formData);
+  //       await api.transaction.deposit(formData);
 
-//       message.success({
-//         content: 'Deposit request created. Redirecting you to payment...',
-//         className: 'green-success-notification',
-//       });
-//     }
+  //       message.success({
+  //         content: 'Deposit request created. Redirecting you to payment...',
+  //         className: 'green-success-notification',
+  //       });
+  //     }
 
-//     // open payment gateway in new tab
-//     window.open(url, '_blank', 'noreferrer');
+  //     // open payment gateway in new tab
+  //     window.open(url, '_blank', 'noreferrer');
 
-//     // redirect user in current app to transaction history
-//     history.push('/finops/transaction_history');
-//   } catch (error) {
-//     console.error(error);
-//     message.error({
-//       content: 'Failed to create deposit request. Please try again.',
-//       className: 'orange-error-notification',
-//     });
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+  //     // redirect user in current app to transaction history
+  //     history.push('/finops/transaction_history');
+  //   } catch (error) {
+  //     console.error(error);
+  //     message.error({
+  //       content: 'Failed to create deposit request. Please try again.',
+  //       className: 'orange-error-notification',
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
 
   const uploadProps = {
@@ -614,57 +673,57 @@ const Deposit: React.FC = () => {
   // Generate table data for bank wire details
   const dataSource = bankWireDetails
     ? [
-        {
-          key: '1',
-          name: 'Account Holder',
-          address: bankWireDetails.accountHolder,
-        },
-        {
-          key: '2',
-          name: 'Account Number',
-          address: bankWireDetails.accountNumber,
-        },
-        {
-          key: '3',
-          name: 'IBAN',
-          address: bankWireDetails.iban,
-        },
-        {
-          key: '4',
-          name: 'SWIFT/BIC',
-          address: bankWireDetails.swifT_BIC,
-        },
-        {
-          key: '5',
-          name: 'BANK NAME',
-          address: bankWireDetails.bank,
-        },
-        {
-          key: '6',
-          name: 'BRANCH',
-          address: bankWireDetails.branch,
-        },
-        ...(bankWireDetails.ifsc
-          ? [
-              {
-                key: '7',
-                name: 'IFSC',
-                address: bankWireDetails.ifsc,
-              },
-            ]
-          : []),
-        ...(bankWireDetails.mmid
-          ? [
-              {
-                key: '8',
-                name: 'MMID',
-                address: bankWireDetails.mmid,
-              },
-            ]
-          : []),
-      ]
-        // Filter out rows where `address` is null, undefined, or empty
-        .filter((row) => row.address != null && row.address !== '')
+      {
+        key: '1',
+        name: 'Account Holder',
+        address: bankWireDetails.accountHolder,
+      },
+      {
+        key: '2',
+        name: 'Account Number',
+        address: bankWireDetails.accountNumber,
+      },
+      {
+        key: '3',
+        name: 'IBAN',
+        address: bankWireDetails.iban,
+      },
+      {
+        key: '4',
+        name: 'SWIFT/BIC',
+        address: bankWireDetails.swifT_BIC,
+      },
+      {
+        key: '5',
+        name: 'BANK NAME',
+        address: bankWireDetails.bank,
+      },
+      {
+        key: '6',
+        name: 'BRANCH',
+        address: bankWireDetails.branch,
+      },
+      ...(bankWireDetails.ifsc
+        ? [
+          {
+            key: '7',
+            name: 'IFSC',
+            address: bankWireDetails.ifsc,
+          },
+        ]
+        : []),
+      ...(bankWireDetails.mmid
+        ? [
+          {
+            key: '8',
+            name: 'MMID',
+            address: bankWireDetails.mmid,
+          },
+        ]
+        : []),
+    ]
+      // Filter out rows where `address` is null, undefined, or empty
+      .filter((row) => row.address != null && row.address !== '')
     : [];
 
   const columns = [
@@ -794,9 +853,8 @@ const Deposit: React.FC = () => {
                   <td>{method.cost}</td>
                   <td>
                     <button
-                      className={`select-button ${
-                        selectedPaymentMethod === method.key ? 'selected' : ''
-                      }`}
+                      className={`select-button ${selectedPaymentMethod === method.key ? 'selected' : ''
+                        }`}
                       onClick={() => {
                         handlePaymentMethodChange({ target: { value: method.key } });
                         setCurrentStep(3); // Go to Step 3 immediately
@@ -830,69 +888,73 @@ const Deposit: React.FC = () => {
 
   // Render step 3 - Choose Amount
   const renderStep3 = () => (
-    <Card className="step-card">
-      <div className="account-headerr">
-        <div className="account-title">
-          <h2>Choose Amount</h2>
-          <div className="account-subtitle">
-            <span className="verification-tag">Step 3</span>
-          </div>
+  <Card className="step-card">
+    <div className="account-headerr">
+      <div className="account-title">
+        <h2>Choose Amount</h2>
+        <div className="account-subtitle">
+          <span className="verification-tag">Step 3</span>
         </div>
       </div>
+    </div>
 
-      <div className="step-content">
-        {/* Selected Payment Method Display */}
-        <div className="selected-payment-method">
-          <div className="payment-method-info">
-            <div className="payment-method-icon">
-              {/* Find the correct icon based on the selected payment method key */}
-              {selectedPaymentMethod === 'bank-transfer' && (
-                <TransactionOutlined  className="payment-method-icon-inner" />
-              )}
-              {/* {selectedPaymentMethod === 'tether-usdt' && ( */}
-              {selectedPaymentMethod === 'card-payment' && (
-                <CreditCardOutlined className="payment-method-icon-inner" />
-              )}
-              {selectedPaymentMethod === 'other-payment' && (
-                <MoneyCollectOutlined  className="payment-method-icon-inner" />
-              )}
-            </div>
-            <div className="payment-method-details">
-              <h4>
-                {paymentMethods.find((method) => method.key === selectedPaymentMethod)?.label}
-              </h4>
-              <p>
-                {paymentMethods.find((method) => method.key === selectedPaymentMethod)?.details}
-              </p>
-            </div>
+    <div className="step-content">
+      {/* Selected Payment Method Display */}
+      <div className="selected-payment-method">
+        <div className="payment-method-info">
+          <div className="payment-method-icon">
+            {selectedPaymentMethod === 'bank-transfer' && (
+              <TransactionOutlined className="payment-method-icon-inner" />
+            )}
+            {selectedPaymentMethod === 'card-payment' && (
+              <CreditCardOutlined className="payment-method-icon-inner" />
+            )}
+            {selectedPaymentMethod === 'erc-deposit' && (
+              <ThunderboltOutlined className="payment-method-icon-inner" />
+            )}
+            {selectedPaymentMethod === 'btc-deposit' && (
+              <DollarCircleOutlined className="payment-method-icon-inner" />
+            )}
+            {selectedPaymentMethod === 'usdtc-deposit' && (
+              <RocketOutlined className="payment-method-icon-inner" />
+            )}
           </div>
-          <Button className="change-button" onClick={() => setCurrentStep(2)} type="link">
-            Change
-          </Button>
+          <div className="payment-method-details">
+            <h4>
+              {paymentMethods.find((method) => method.key === selectedPaymentMethod)?.label}
+            </h4>
+            <p>
+              {paymentMethods.find((method) => method.key === selectedPaymentMethod)?.details}
+            </p>
+          </div>
         </div>
+        <Button className="change-button" onClick={() => setCurrentStep(2)} type="link">
+          Change
+        </Button>
+      </div>
 
-        <Text>Please fill in the form below to get your deposit reference code.</Text>
+         <Text>Please fill in the form below to get your deposit reference code.</Text>
 
-        <Form
-          form={amountForm}
-          layout="vertical"
-          onFinish={handleAmountSubmit}
-          className="amount-form"
+          <Form
+        form={amountForm}
+        layout="vertical"
+        onFinish={handleAmountSubmit}
+        className="amount-form"
+      >
+        <Form.Item
+          name="amount"
+          label="Amount"
+          rules={[
+            { required: true, message: 'Please enter an amount' },
+            {
+              pattern: /^(?!0\d+)(\d+)(\.\d{1,2})?$/,
+              message: 'Please enter a valid amount',
+            },
+          ]}
+          style={{ marginTop: '16px' }}
         >
-          <Form.Item
-            name="amount"
-            label="Amount"
-            rules={[
-              { required: true, message: 'Please enter an amount' },
-              {
-                pattern: /^(?!0\d+)(\d+)(\.\d{1,2})?$/,
-                message: 'Please enter a valid amount',
-              },
-            ]}
-            style={{ marginTop: '16px' }}
-          >
-            <Input placeholder="Enter amount" prefix="$" />
-          </Form.Item>
+          <Input placeholder="Enter amount" prefix="$" />
+        </Form.Item>
 
           {/* <div className="info-box">
             <div className="info-item">
@@ -905,93 +967,72 @@ const Deposit: React.FC = () => {
             </div>
           </div> */}
 
-          <div className="action-buttons">
+         <div className="action-buttons">
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            className="submit-button"
+            style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4', color: '#000' }}
+          >
+            Deposit Funds
+          </Button>
+        </div>
+      </Form>
+
+         {/* Bank Wire Details */}
+      {showBankDetails && bankWireDetails && (
+        <div className="bank-details-container">
+          <Title level={4} style={{ marginTop: '24px', marginBottom: '16px' }}>
+            Bank Wire Details
+          </Title>
+          <Text type="secondary" style={{ marginBottom: '16px', display: 'block' }}>
+            Please use the following bank details to make your transfer:
+          </Text>
+          <Table
+            dataSource={dataSource}
+            columns={columns}
+            pagination={false}
+            bordered
+            className="bank-details-table"
+          />
+
+          <div className="action-buttons" style={{ marginTop: '24px' }}>
             <Button
               type="primary"
-              htmlType="submit"
-              loading={loading}
-              className="submit-button"
+              onClick={() => setCurrentStep(4)}
+              className="continue-button"
               style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4', color: '#000' }}
             >
-              Deposit Funds
+              Continue to Next Step
             </Button>
           </div>
-        </Form>
+        </div>
+      )}
 
-        {showBankDetails && bankWireDetails && (
-          <div className="bank-details-container">
-            <Title level={4} style={{ marginTop: '24px', marginBottom: '16px' }}>
-              Bank Wire Details
-            </Title>
-            <Text type="secondary" style={{ marginBottom: '16px', display: 'block' }}>
-              Please use the following bank details to make your transfer:
-            </Text>
-            <Table
-              dataSource={dataSource}
-              columns={columns}
-              pagination={false}
-              bordered
-              className="bank-details-table"
-            />
+        {/* Crypto Details - THIS IS THE MAIN FIX */}
+     {showCryptoDetails && selectedPaymentMethod && cryptoDetails[selectedPaymentMethod] && (
+          <div className="crypto-details-container" style={{ marginTop: '24px' }}>
+            {/* Only QR Code Image - No text */}
+            <div className="qr-code-container" style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <img 
+                src={cryptoDetails[selectedPaymentMethod].qrCode}
+                alt="QR Code"
+                style={{ width: '200px', height: '200px', border: '1px solid #d9d9d9' }}
+              />
+            </div>
 
-            <div className="action-buttons" style={{ marginTop: '24px' }}>
+            {/* Continue Button */}
+            <div className="action-buttons" style={{ textAlign: 'center' }}>
               <Button
                 type="primary"
                 onClick={() => setCurrentStep(4)}
                 className="continue-button"
-                style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4' }}
+                style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4', color: '#000' }}
               >
                 Continue to Next Step
               </Button>
             </div>
-          </div>
-        )}
-
-        {showPaymentLinks && paymentLinks && paymentLinks.length > 0 && (
-          <div className="payment-links-container">
-            <Title level={4} style={{ marginTop: '24px', marginBottom: '16px' }}>
-              Backup Payment Options
-            </Title>
-            <Text type="secondary" style={{ marginBottom: '16px', display: 'block' }}>
-              Please select one of the following payment options for amount: ${amount}
-            </Text>
-
-            <div className="payment-links-grid">
-              {paymentLinks.map((link) => (
-                <Card key={link.id} className="payment-link-card" hoverable>
-                  <div className="payment-link-content">
-                    <Text strong>{link.name}</Text>
-                    {link.description && (
-                      <Text type="secondary" style={{ marginTop: '8px', display: 'block' }}>
-                        {link.description}
-                      </Text>
-                    )}
-                    <Button
-                      type="primary"
-                      onClick={() => handleRedirect(link.url)}
-                      style={{
-                        marginTop: '16px',
-                        backgroundColor: '#9BF8F4',
-                        borderColor: '#9BF8F4',
-                      }}
-                    >
-                      Pay Now
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-
-            {/* <div className="action-buttons" style={{ marginTop: '24px' }}>
-              <Button
-                type="primary"
-                onClick={() => setCurrentStep(4)}
-                className="continue-button"
-                style={{ backgroundColor: '#FAAD14', borderColor: '#FAAD14' }}
-              >
-                Continue to Next Step
-              </Button>
-            </div> */}
           </div>
         )}
       </div>
