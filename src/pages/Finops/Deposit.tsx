@@ -125,47 +125,55 @@ const cryptoDetails = {
 
   // Define payment methods array
   const paymentMethods: PaymentMethod[] = [
-    {
-      key: 'bank-transfer',
-      label: 'Bank Transfer',
-      icon: <TransactionOutlined className="payment-icon" />,
-      details: 'Bank Wire Deposit (1-24 hours)',
-      processingTime: '1-24 hours',
-      cost: 0,
-    },
-    {
-      key: 'card-payment',
-      label: 'Card payment',
-      icon: <CreditCardOutlined className="payment-icon" />,
-      details: 'Card payment Instant deposit 24/7',
-      processingTime: '24/7 Instant',
-      cost: 0,
-    },
-    {
-      key: 'erc-deposit',
-      label: 'ERC',
-      icon: <ThunderboltOutlined className="payment-icon" />,
-      details: 'ERC cryptocurrency deposit 24/7',
-      processingTime: '24/7 Instant',
-      cost: 0,
-    },
-    {
-      key: 'btc-deposit',
-      label: 'BTC',
-      icon: <DollarCircleOutlined className="payment-icon" />,
-      details: 'BTC cryptocurrency deposit 24/7',
-      processingTime: '24/7 Instant',
-      cost: 0,
-    },
-    {
-      key: 'usdtc-deposit',
-      label: 'USDTC',
-      icon: <RocketOutlined className="payment-icon" />,
-      details: 'USDTC cryptocurrency deposit 24/7',
-      processingTime: '24/7 Instant',
-      cost: 0,
-    },
-  ];
+  {
+    key: 'bank-transfer',
+    label: 'Bank Transfer',
+    icon: <TransactionOutlined className="payment-icon" />,
+    details: 'Bank Wire Deposit (1-24 hours)',
+    processingTime: '1-24 hours',
+    cost: 0,
+  },
+  {
+    key: 'card-payment',
+    label: 'Card payment',
+    icon: <CreditCardOutlined className="payment-icon" />,
+    details: 'Card payment Instant deposit 24/7',
+    processingTime: '24/7 Instant',
+    cost: 0,
+  },
+  {
+    key: 'other-payment', // ADD THIS NEW PAYMENT METHOD
+    label: 'Cash Deposit 24/7',
+    icon: <MoneyCollectOutlined className="payment-icon" />,
+    details: 'Cash options available',
+    processingTime: 'Varies',
+    cost: 0,
+  },
+  {
+    key: 'erc-deposit',
+    label: 'ERC',
+    icon: <ThunderboltOutlined className="payment-icon" />,
+    details: 'ERC cryptocurrency deposit 24/7',
+    processingTime: '24/7 Instant',
+    cost: 0,
+  },
+  {
+    key: 'btc-deposit',
+    label: 'BTC',
+    icon: <DollarCircleOutlined className="payment-icon" />,
+    details: 'BTC cryptocurrency deposit 24/7',
+    processingTime: '24/7 Instant',
+    cost: 0,
+  },
+  {
+    key: 'usdtc-deposit',
+    label: 'USDTC',
+    icon: <RocketOutlined className="payment-icon" />,
+    details: 'USDTC cryptocurrency deposit 24/7',
+    processingTime: '24/7 Instant',
+    cost: 0,
+  },
+];
 
   async function init() {
     try {
@@ -364,16 +372,72 @@ const cryptoDetails = {
       duration: 6,
     });
   } else if (selectedPaymentMethod === 'card-payment') {
-    // Fetch payment links for card payment
-    const links = await fetchPaymentLinks();
-    if (links && links.length > 0) {
-      setShowPaymentLinks(true);
-      setShowBankDetails(false);
-      setShowCryptoDetails(false);
-       setCurrentStep(4);
+    // Card payment functionality from code 1
+    try {
+      // Step 1: Submit the deposit request
+      const formData: any = {
+        Type: Type.EXT_TO_WALLET,
+        Amount: amountValue,
+        Currency: 'USD',
+        Comment: `Deposit ${amountValue}`,
+        PaymentMethod: selectedPaymentMethod,
+      };
+
+      await api.transaction.deposit(formData);
+
+      // Step 2: Load Payment Settings and Links
+      const paymentSettings = await api.setting.getPaymentSettings();
+      setPaymentData(paymentSettings);
+
+      const links = await fetchPaymentLinks();
+
+      if (links && links.length > 0) {
+        setShowBankDetails(false);
+        setShowPaymentLinks(true);
+        setShowCryptoDetails(false);
+
+        message.success({
+          content: 'Payment options have been successfully loaded.',
+          icon: <span className="green-success-icon"> ✓ </span>,
+          className: 'green-success-notification',
+          duration: 3,
+        });
+      } else {
+        setShowPaymentLinks(false);
+        setShowCryptoDetails(false);
+
+        message.warning({
+          content: 'No available payment options. Please try another method.',
+          icon: <span className="yellow-warning-icon"> ⚠ </span>,
+          className: 'yellow-warning-notification',
+          duration: 3,
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      message.error({
+        content: 'We encountered an issue submitting your deposit request. Please try again later.',
+        icon: <span className="orange-error-icon"> ✘ </span>,
+        className: 'orange-error-notification',
+        duration: 3,
+      });
     }
+  } else if (selectedPaymentMethod === 'other-payment') {
+    // Cash Deposit functionality - same as other payment methods
+    setShowBankDetails(false);
+    setShowPaymentLinks(false);
+    setShowCryptoDetails(false);
+
+    message.success({
+      content: 'Amount has been successfully submitted.',
+      icon: <span className="green-success-icon"> ✓ </span>,
+      className: 'green-success-notification',
+      duration: 3,
+    });
+
+    setCurrentStep(4);
   } else if (['erc-deposit', 'btc-deposit', 'usdtc-deposit'].includes(selectedPaymentMethod)) {
-    // NEW: Show crypto QR code and wallet details for crypto payments
+    // Crypto payments
     setShowBankDetails(false);
     setShowPaymentLinks(false);
     setShowCryptoDetails(true);
@@ -904,22 +968,25 @@ const cryptoDetails = {
       <div className="selected-payment-method">
         <div className="payment-method-info">
           <div className="payment-method-icon">
-            {selectedPaymentMethod === 'bank-transfer' && (
-              <TransactionOutlined className="payment-method-icon-inner" />
-            )}
-            {selectedPaymentMethod === 'card-payment' && (
-              <CreditCardOutlined className="payment-method-icon-inner" />
-            )}
-            {selectedPaymentMethod === 'erc-deposit' && (
-              <ThunderboltOutlined className="payment-method-icon-inner" />
-            )}
-            {selectedPaymentMethod === 'btc-deposit' && (
-              <DollarCircleOutlined className="payment-method-icon-inner" />
-            )}
-            {selectedPaymentMethod === 'usdtc-deposit' && (
-              <RocketOutlined className="payment-method-icon-inner" />
-            )}
-          </div>
+  {selectedPaymentMethod === 'bank-transfer' && (
+    <TransactionOutlined className="payment-method-icon-inner" />
+  )}
+  {selectedPaymentMethod === 'card-payment' && (
+    <CreditCardOutlined className="payment-method-icon-inner" />
+  )}
+  {selectedPaymentMethod === 'other-payment' && (
+    <MoneyCollectOutlined className="payment-method-icon-inner" />
+  )}
+  {selectedPaymentMethod === 'erc-deposit' && (
+    <ThunderboltOutlined className="payment-method-icon-inner" />
+  )}
+  {selectedPaymentMethod === 'btc-deposit' && (
+    <DollarCircleOutlined className="payment-method-icon-inner" />
+  )}
+  {selectedPaymentMethod === 'usdtc-deposit' && (
+    <RocketOutlined className="payment-method-icon-inner" />
+  )}
+</div>
           <div className="payment-method-details">
             <h4>
               {paymentMethods.find((method) => method.key === selectedPaymentMethod)?.label}
