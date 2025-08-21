@@ -381,6 +381,40 @@ const HelpDeskAdmin: React.FC = () => {
     }
   };
 
+
+
+  const formatChatDate = (timestamp: number) => {
+    const msgDate = new Date(timestamp);
+    const today = new Date();
+
+    // Reset times to midnight for accurate comparison
+    const isToday =
+      msgDate.toDateString() === today.toDateString();
+
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    const isYesterday =
+      msgDate.toDateString() === yesterday.toDateString();
+
+    if (isToday) return "Today";
+    if (isYesterday) return "Yesterday";
+
+    return msgDate.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const groupMessagesByDate = (msgs: ChatMessage[]) => {
+    return msgs.reduce((groups: { [key: string]: ChatMessage[] }, msg) => {
+      const dateKey = formatChatDate(msg.createdAt); // 👈 use helper here
+      if (!groups[dateKey]) groups[dateKey] = [];
+      groups[dateKey].push(msg);
+      return groups;
+    }, {});
+  };
+
   return (
     <div className="page-wrapper">
       <div className="query-page-container">
@@ -552,40 +586,59 @@ const HelpDeskAdmin: React.FC = () => {
                 <div className="chat-loading">Loading messages...</div>
               ) : (
                 <div className="chat-window">
-                  {messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`chat-bubble ${msg.isMine ? 'mine' : 'theirs'}`}
-                      style={{
-                        backgroundColor:
-                          msg.senderRole === 'Admin'
-                            ? 'rgba(156, 255, 12, 0.55)'
-                            : msg.isMine
-                            ? '#dcf8c6'
-                            : 'rgb(212, 238, 238)',
-                      }}
-                    >
-                      {msg.senderRole !== 'Admin' && (
+                  {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
+                    <div key={date}>
+                      {/* Date Separator */}
+                      <div className="chat-date-separator">{date}</div>
+
+                      {/* Messages under this date */}
+                      {msgs.map((msg) => (
                         <div
+                          key={msg.id}
+                          className={`chat-bubble ${msg.isMine ? "mine" : "theirs"}`}
                           style={{
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            marginBottom: '4px',
-                            color: '#222',
+                            backgroundColor:
+                              msg.senderRole === "Admin"
+                                ? "rgba(156, 255, 12, 0.55)"
+                                : msg.isMine
+                                  ? "#dcf8c6"
+                                  : "rgb(212, 238, 238)",
                           }}
                         >
-                          User:
-                        </div>
-                      )}
+                          {/* Show sender (only if not Admin) */}
+                          {msg.senderRole !== "Admin" && (
+                            <div
+                              style={{
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                                marginBottom: "4px",
+                                color: "#222",
+                              }}
+                            >
+                              User:
+                            </div>
+                          )}
 
-                      <div className="chat-text">{msg.text || msg.message}</div>
-                      {/* <div className="chat-time">
-                        {new Date(msg.createdAt).toLocaleTimeString()}
-                      </div> */}
+                          {/* Message text */}
+                          <div className="chat-text">{msg.text || msg.message}</div>
+
+                          {/* Message time */}
+                          <div className="chat-time">
+                            {new Date(msg.createdAt).toLocaleTimeString("en-GB", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ))}
+
+                  {/* scroll to bottom */}
                   <div ref={chatEndRef} />
                 </div>
+
               )}
 
               <div className="message-send-box">

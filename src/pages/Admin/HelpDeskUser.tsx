@@ -232,8 +232,8 @@ const HelpDeskUser: React.FC = () => {
       });
     }
     finally {
-    setIsSubmitting(false);  // stop loader
-  }
+      setIsSubmitting(false);  // stop loader
+    }
   };
 
   const handleView = async (queryId: number) => {
@@ -380,6 +380,38 @@ const HelpDeskUser: React.FC = () => {
     return new Date(timestamp).toLocaleDateString();
   };
 
+  const formatChatDate = (timestamp: number) => {
+    const msgDate = new Date(timestamp);
+    const today = new Date();
+
+    // Reset times to midnight for accurate comparison
+    const isToday =
+      msgDate.toDateString() === today.toDateString();
+
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    const isYesterday =
+      msgDate.toDateString() === yesterday.toDateString();
+
+    if (isToday) return "Today";
+    if (isYesterday) return "Yesterday";
+
+    return msgDate.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const groupMessagesByDate = (msgs: ChatMessage[]) => {
+    return msgs.reduce((groups: { [key: string]: ChatMessage[] }, msg) => {
+      const dateKey = formatChatDate(msg.createdAt); // 👈 use helper here
+      if (!groups[dateKey]) groups[dateKey] = [];
+      groups[dateKey].push(msg);
+      return groups;
+    }, {});
+  };
+
   return (
     <div className="page-wrapper">
       <div className="query-page-container">
@@ -442,29 +474,29 @@ const HelpDeskUser: React.FC = () => {
             </svg>
           </button> */}
           <button type="submit" className="submit-btn" disabled={isSubmitting}>
-  {isSubmitting ? (
-    <span className="submit-query-loader"></span>
-  ) : (
-    <>
-      <span>Submit Query</span>
-      <svg
-        className="btn-icon"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <line x1="5" y1="12" x2="19" y2="12" />
-        <polyline points="12 5 19 12 12 19" />
-      </svg>
-    </>
-  )}
-</button>
+            {isSubmitting ? (
+              <span className="submit-query-loader"></span>
+            ) : (
+              <>
+                <span>Submit Query</span>
+                <svg
+                  className="btn-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </>
+            )}
+          </button>
         </form>
 
         {/* ====== Queries Table ====== */}
@@ -638,35 +670,50 @@ const HelpDeskUser: React.FC = () => {
                 <div className="chat-loading">Loading messages...</div>
               ) : (
                 <div className="chat-window">
-                  {messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`chat-bubble ${msg.isMine ? 'mine' : 'theirs'}`}
-                      style={{
-                        backgroundColor:
-                          msg.senderRole === 'Admin'
-                            ? 'rgba(156, 255, 12, 0.55)'
-                            : msg.isMine
-                            ? '#dcf8c6'
-                            : 'rgb(212, 238, 238)',
-                      }}
-                    >
-                      {msg.senderRole === 'Admin' && (
+                  {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
+                    <div key={date}>
+                      {/* Date Separator */}
+                      <div className="chat-date-separator">{date}</div>
+
+                      {msgs.map((msg) => (
                         <div
+                          key={msg.id}
+                          className={`chat-bubble ${msg.isMine ? 'mine' : 'theirs'}`}
                           style={{
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            marginBottom: '4px',
-                            color: '#3670c7',
+                            backgroundColor:
+                              msg.senderRole === 'Admin'
+                                ? 'rgba(156, 255, 12, 0.55)'
+                                : msg.isMine
+                                  ? '#dcf8c6'
+                                  : 'rgb(212, 238, 238)',
                           }}
                         >
-                          Admin:
+                          {msg.senderRole === 'Admin' && (
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: 'bold',
+                                marginBottom: '4px',
+                                color: '#3670c7',
+                              }}
+                            >
+                              Admin:
+                            </div>
+                          )}
+                          <div className="chat-text">{msg.text || msg.message}</div>
+                          <div className="chat-time">
+                            {new Date(msg.createdAt).toLocaleTimeString("en-GB", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
+                          </div>
                         </div>
-                      )}
-                      <div className="chat-text">{msg.text || msg.message}</div>
+                      ))}
                     </div>
                   ))}
                 </div>
+
               )}
 
               <div className="message-send-box">
