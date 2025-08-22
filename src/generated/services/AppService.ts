@@ -467,35 +467,35 @@ export class AppService {
   }
 
   // HelpDesk
-  // public createTicket(data: { queryType: string; message: string }): CancelablePromise<any> {
-  //   return this.httpRequest.request({
-  //     method: 'POST',
-  //     url: '/api/Support/create-ticket',
-  //     mediaType: 'application/json',
-  //     body: data,
-  //   });
-  // }
-
   public createTicket(data: { queryType: string; message: string }): CancelablePromise<any> {
-  const now = new Date();
-  const offset = -now.getTimezoneOffset();
-  const sign = offset >= 0 ? "+" : "-";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const hours = pad(Math.floor(Math.abs(offset) / 60));
-  const minutes = pad(Math.abs(offset) % 60);
+    return this.httpRequest.request({
+      method: 'POST',
+      url: '/api/Support/create-ticket',
+      mediaType: 'application/json',
+      body: data,
+    });
+  }
 
-  const localTime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${hours}:${minutes}`;
+//   public createTicket(data: { queryType: string; message: string }): CancelablePromise<any> {
+//   const now = new Date();
+//   const offset = -now.getTimezoneOffset();
+//   const sign = offset >= 0 ? "+" : "-";
+//   const pad = (n: number) => String(n).padStart(2, "0");
+//   const hours = pad(Math.floor(Math.abs(offset) / 60));
+//   const minutes = pad(Math.abs(offset) % 60);
 
-  return this.httpRequest.request({
-    method: 'POST',
-    url: '/api/Support/create-ticket',
-    mediaType: 'application/json',
-    body: {
-      ...data,
-      clientTime: localTime  // <-- now sends PC local time with offset
-    },
-  });
-}
+//   const localTime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${hours}:${minutes}`;
+
+//   return this.httpRequest.request({
+//     method: 'POST',
+//     url: '/api/Support/create-ticket',
+//     mediaType: 'application/json',
+//     body: {
+//       ...data,
+//       clientTime: localTime  // <-- now sends PC local time with offset
+//     },
+//   });
+// }
   
  
 
@@ -550,6 +550,36 @@ export class AppService {
       },
     });
   }
+//   public postReply(
+//   supportId: number,
+//   requestBody: { message: string },
+// ): CancelablePromise<any> {
+//   const now = new Date();
+//   const offset = -now.getTimezoneOffset();
+//   const sign = offset >= 0 ? "+" : "-";
+//   const pad = (n: number) => String(n).padStart(2, "0");
+//   const hours = pad(Math.floor(Math.abs(offset) / 60));
+//   const minutes = pad(Math.abs(offset) % 60);
+
+//   const localTime = `${now.getFullYear()}-${pad(
+//     now.getMonth() + 1
+//   )}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(
+//     now.getMinutes()
+//   )}:${pad(now.getSeconds())}${sign}${hours}:${minutes}`;
+
+//   return this.httpRequest.request({
+//     method: "POST",
+//     url: `/api/Support/${supportId}/reply`,
+//     body: {
+//       ...requestBody,
+//       clientTime: localTime, // <-- send admin’s local PC time
+//     },
+//     mediaType: "application/json",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+// }
 
   public resolveQuery(queryId: number): CancelablePromise<any> {
     return this.httpRequest.request({
