@@ -91,17 +91,14 @@ const Password: React.FC = () => {
   return (
     <>
      <Card  className="change-password">
-     <div className="account-headerr">
-          {/* <div className="account-avatar">
-            <div className="account-letter">V</div>
-          </div> */}
-          <div className="account-title">
-            <h2>UPDATE PASSWORD</h2>
-            <div className="account-subtitle">
-              <span className="verification-tag">Password</span>
-            </div>
+          <div className="profile-info pdinginfo" style={{ marginBottom: 30 }}>
+          <div className="avatar-container">
           </div>
-       </div>
+          <div className="user-info">
+            <h2 className="user-name">Password</h2>
+          </div>
+        </div>
+      
       <div className="btn-at-end">
         {/* <Button type="button" onClick={() => history.push('/dashboard')} className="back-btn">Back</Button> */}
       </div>
