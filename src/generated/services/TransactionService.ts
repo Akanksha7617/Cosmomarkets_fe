@@ -213,7 +213,7 @@ export class TransactionService {
     Amount?: number;
     Currency?: string;
     Comment?: string;
-    paymentMethod?: string;
+    PaymentMethod?: string;
   }): CancelablePromise<any> {
     return this.httpRequest.request({
       method: 'PUT',

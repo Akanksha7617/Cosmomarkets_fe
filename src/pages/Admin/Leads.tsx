@@ -168,23 +168,23 @@ const Leads: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({ appUser
       setPagination((prev) => ({ ...prev, current: page, total: response.totalUsers }));
       setDataSource(response.usersDtos);
 
-      if (response.usersDtos.length > 0) {
-        const userDto = response.usersDtos[0]; // Get first user
-        const mtUser = userDto.mtUsers.length > 0 ? userDto.mtUsers[0] : null; // Get first mtUser
+      // if (response.usersDtos.length > 0) {
+      //   const userDto = response.usersDtos[0]; // Get first user
+      //   const mtUser = userDto.mtUsers.length > 0 ? userDto.mtUsers[0] : null; // Get first mtUser
 
-        if (mtUser) {
-          setMtUser(mtUser.login);
-          // setUserId(mtUser.userId);
-          // setserver(mtUser.server);
+      //   if (mtUser) {
+      //     setMtUser(mtUser.login);
+      //     // setUserId(mtUser.userId);
+      //     // setserver(mtUser.server);
 
-          // ✅ Set form values
-          form.setFieldsValue({
-            login: mtUser.login, // Update login in the form
-            // userId: mtUser.userId,
-            // server: mtUser.server,
-          });
-        }
-      }
+      //     // ✅ Set form values
+      //     form.setFieldsValue({
+      //       login: mtUser.login, // Update login in the form
+      //       // userId: mtUser.userId,
+      //       // server: mtUser.server,
+      //     });
+      //   }
+      // }
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -422,14 +422,14 @@ const Leads: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({ appUser
         </Button>
       ),
     },
-    {
-      name: 'CRM',
-      cell: (row) => (
-        <Button type="link" onClick={() => handleOpenCRM(row)}>
-          <PlusOutlined />
-        </Button>
-      ),
-    },
+    // {
+    //   name: 'CRM',
+    //   cell: (row) => (
+    //     <Button type="link" onClick={() => handleOpenCRM(row)}>
+    //       <PlusOutlined />
+    //     </Button>
+    //   ),
+    // },
     {
       name: 'Name',
       selector: (row: any) => `${row.firstName} ${row.lastName}`,
@@ -563,6 +563,8 @@ const Leads: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({ appUser
       ...record,
       masterPassword: mtClient?.password || '',
       investorPassword: mtClient?.investorPassword || '',
+
+      login: mtClient?.login || '',
     };
 
     setSelected(record);
