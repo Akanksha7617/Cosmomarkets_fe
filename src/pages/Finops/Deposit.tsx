@@ -704,37 +704,81 @@ const cryptoDetails = {
   // };
 
 
+  // const uploadProps = {
+  //   beforeUpload: (file: any) => {
+  //     const acceptedFormats = ['image/jpeg', 'image/png', 'application/pdf'];
+  //     if (!acceptedFormats.includes(file.type)) {
+  //       message.error({
+  //         content: 'Only JPEG, PNG, and PDF files are allowed.',
+  //         icon: <span className="orange-error-icon"> ✘ </span>,
+  //         className: 'orange-error-notification',
+  //         duration: 3,
+  //       });
+  //       return Upload.LIST_IGNORE;
+  //     }
+
+  //     if (file.size > 2 * 1024 * 1024) {
+  //       message.error({
+  //         content: 'File size should not exceed 2MB.',
+  //         icon: <span className="orange-error-icon"> ✘ </span>,
+  //         className: 'orange-error-notification',
+  //         duration: 3,
+  //       });
+  //       return Upload.LIST_IGNORE;
+  //     }
+
+  //     setFileList([file]);
+  //     return false; // Prevent auto upload
+  //   },
+  //   fileList,
+  //   onRemove: () => {
+  //     setFileList([]);
+  //   },
+  // };
+
   const uploadProps = {
-    beforeUpload: (file: any) => {
-      const acceptedFormats = ['image/jpeg', 'image/png', 'application/pdf'];
-      if (!acceptedFormats.includes(file.type)) {
-        message.error({
-          content: 'Only JPEG, PNG, and PDF files are allowed.',
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
-        return Upload.LIST_IGNORE;
-      }
+  beforeUpload: (file: any) => {
+    const acceptedFormats = ['image/jpeg', 'image/png', 'application/pdf'];
+    if (!acceptedFormats.includes(file.type)) {
+      message.error({
+        content: 'Only JPEG, PNG, and PDF files are allowed.',
+        icon: <span className="orange-error-icon"> ✘ </span>,
+        className: 'orange-error-notification',
+        duration: 3,
+      });
+      return Upload.LIST_IGNORE;
+    }
 
-      if (file.size > 2 * 1024 * 1024) {
-        message.error({
-          content: 'File size should not exceed 2MB.',
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
-        return Upload.LIST_IGNORE;
-      }
+    if (file.size > 2 * 1024 * 1024) {
+      message.error({
+        content: 'File size should not exceed 2MB.',
+        icon: <span className="orange-error-icon"> ✘ </span>,
+        className: 'orange-error-notification',
+        duration: 3,
+      });
+      return Upload.LIST_IGNORE;
+    }
 
-      setFileList([file]);
-      return false; // Prevent auto upload
-    },
-    fileList,
-    onRemove: () => {
-      setFileList([]);
-    },
-  };
+    // Create proper file object structure
+    const fileObj = {
+      uid: file.uid || Date.now().toString(),
+      name: file.name,
+      status: 'done',
+      originFileObj: file, // This is the actual File object
+      url: URL.createObjectURL(file), // For preview
+    };
+
+    setFileList([fileObj]);
+    return false; // Prevent auto upload
+  },
+  fileList,
+  onRemove: () => {
+    setFileList([]);
+  },
+  // Add these properties for better handling
+  maxCount: 1,
+  listType: 'text',
+};
 
   // Generate table data for bank wire details
   const dataSource = bankWireDetails

@@ -288,13 +288,13 @@ export default () => {
   const handleSubmit1 = async (values: Record<string, any>) => {
     const urlParams = new URL(window.location.href).searchParams;
     let urlWithToken = null;
-  
+
     try {
       const msg = await api.app.postSignIn({
         email: values.Email,
         password: values.Password,
       });
-  
+
       if (msg.status === 'ok') {
         //store token to local storage
         const token = msg.token;
@@ -329,7 +329,7 @@ export default () => {
       });
     }
   };
-  
+
 
   const handleMenuClick = (key, record) => {
     if (key === 'approved') {
@@ -490,7 +490,7 @@ export default () => {
       cell: (record: any) => (
         <Space size={0}>
           {record.Status === Status.REQUESTED &&
-          record.ManagerId === initialState?.currentUser?.Id ? (
+            record.ManagerId === initialState?.currentUser?.Id ? (
             <></>
           ) : null}
           <Dropdown
@@ -537,26 +537,26 @@ export default () => {
     let response = await rawApi.get(`/api/app/transaction/exportNew/xlsx`, {
       responseType: 'blob',
     });
-  
+
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', 'transactions.xlsx');
     document.body.appendChild(link);
     link.click();
-  
+
     message.success({
       content: 'Downloading File',
       icon: <span className="orange-success-icon"> ✔ </span>,
       className: 'orange-success-notification',
       duration: 3,
     });
-  
+
     // Clean up by revoking the temporary URL and removing the anchor element
     window.URL.revokeObjectURL(url);
     link.remove();
   }
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -864,6 +864,12 @@ export default () => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {showImage && showImage && (
             <>
+              {(() => {
+                console.log("showImage:", showImage);
+                console.log("typeof showImage.Bytes:", typeof showImage.Bytes);
+                console.log("showImage.Bytes (sample):", showImage.Bytes?.slice?.(0, 100));
+                return null;
+              })()}
               <h3 style={{ textAlign: 'center', color: '#FA8E21' }}>
                 {' '}
                 <b> Payment Proof</b>
