@@ -522,14 +522,14 @@ const Verification: React.FC = () => {
 
   // Render document item with correct UI states based on status
   const renderDocumentItem = (doc, index) => {
-    // Make sure we're consistently working with uppercase strings for comparison
-    const statusText =
-      typeof doc.status.text === 'string' ? doc.status.text.toUpperCase() : doc.status.text;
+  // Make sure we're consistently working with uppercase strings for comparison
+  const statusText =
+    typeof doc.status.text === 'string' ? doc.status.text.toUpperCase() : doc.status.text;
 
-    const isStatusRequested = statusText === 'REQUESTED';
-    const isStatusApproved = statusText === 'APPROVED';
-    const isStatusRejected = statusText === 'REJECTED';
-    const isStatusNotRequested = !isStatusRequested && !isStatusApproved && !isStatusRejected;
+  const isStatusRequested = statusText === 'REQUESTED';
+  const isStatusApproved = statusText === 'APPROVED';
+  const isStatusRejected = statusText === 'REJECTED';
+  const isStatusNotRequested = !isStatusRequested && !isStatusApproved && !isStatusRejected;
 
     console.log(`Document ${doc.title} status: ${statusText}`, {
       isRequested: isStatusRequested,
@@ -539,91 +539,99 @@ const Verification: React.FC = () => {
     });
 
     return (
-      <div key={index} className="verification-document-item">
-        <div className="verification-document-details">
-          {/* Document Thumbnail */}
-          {doc.previewImage ? (
-            <div className="document-thumbnail" onClick={() => handleImageClick(doc.previewImage)}>
-              <img src={doc.previewImage} alt={doc.imageAlt} />
-            </div>
-          ) : (
-            <div className="document-thumbnail placeholder">
-              <FileOutlined />
-            </div>
-          )}
-
-          {/* Document Info */}
-          <div className="verification-document-info">
-            <div className="verification-document-title">{doc.title}</div>
-            <div className="verification-document-subtitle">{doc.subtitle}</div>
+    <div key={index} className="verification-document-item">
+      <div className="verification-document-details">
+        {/* Document Thumbnail with 3D Cloud Design */}
+        {doc.previewImage ? (
+          <div className="document-thumbnail" onClick={() => handleImageClick(doc.previewImage)}>
+            <img src={doc.previewImage} alt={doc.imageAlt} />
           </div>
-        </div>
+        ) : (
+          <div className="document-thumbnail placeholder">
+            <div className="cloud-bubble-1"></div>
+            <div className="cloud-bubble-2"></div>
+            <div className="cloud-bubble-3"></div>
+            <div className="cloud-arrow">↑</div>
+          </div>
+        )}
+        
+        {/* Add DRAG & DROP text for non-uploaded documents */}
+        {!doc.previewImage && (isStatusNotRequested || isStatusRejected) && (
+          <div className="drag-drop-text">DRAG & DROP</div>
+        )}
 
-        <div className="verification-document-status">
-          {/* Always display the current status badge */}
-          {getStatusBadge(doc.status)}
-
-          {/* Show upload button only if not requested or approved */}
-          {isStatusNotRequested && (
-            <Form.Item
-              className="verification-upload-form-item"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}
-              name={doc.name}
-            >
-              <Upload
-                {...props}
-                name="document"
-                fileList={doc.fileList}
-                onChange={doc.handleChange}
-                showUploadList={false}
-              >
-                <Button className="verification-upload-button" icon={<UploadOutlined />}>
-                  Upload
-                </Button>
-              </Upload>
-            </Form.Item>
-          )}
-
-          {/* Show Upload Again button for rejected documents */}
-          {isStatusRejected && (
-            <Form.Item
-              className="verification-upload-form-item"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}
-              name={doc.name}
-            >
-              <Upload
-                {...props}
-                name="document"
-                fileList={doc.fileList}
-                onChange={doc.handleChange}
-                showUploadList={false}
-              >
-                <Button type="primary" className="verification-upload-again">
-                  Upload Again
-                </Button>
-              </Upload>
-            </Form.Item>
-          )}
-
-          {/* Show Verified button for approved documents */}
-          {isStatusApproved && (
-            <Button disabled type="default" className="verification-verified-button">
-              Verified
-            </Button>
-          )}
-
-          {/* Show Pending button for requested documents */}
-          {isStatusRequested && (
-            <Button disabled type="default" className="verification-pending-button">
-              Pending
-            </Button>
-          )}
+        {/* Document Info */}
+        <div className="verification-document-info">
+          <div className="verification-document-title">{doc.title}</div>
+          <div className="verification-document-subtitle">{doc.subtitle}</div>
         </div>
       </div>
-    );
-  };
+
+      <div className="verification-document-status">
+        {/* Always display the current status badge */}
+        {getStatusBadge(doc.status)}
+
+        {/* Show browse button only if not requested or approved */}
+        {isStatusNotRequested && (
+          <Form.Item
+            className="verification-upload-form-item"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+            name={doc.name}
+          >
+            <Upload
+              {...props}
+              name="document"
+              fileList={doc.fileList}
+              onChange={doc.handleChange}
+              showUploadList={false}
+            >
+              <Button className="verification-upload-button">
+                BROWSE
+              </Button>
+            </Upload>
+          </Form.Item>
+        )}
+
+        {/* Show Browse Again button for rejected documents */}
+        {isStatusRejected && (
+          <Form.Item
+            className="verification-upload-form-item"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+            name={doc.name}
+          >
+            <Upload
+              {...props}
+              name="document"
+              fileList={doc.fileList}
+              onChange={doc.handleChange}
+              showUploadList={false}
+            >
+              <Button type="primary" className="verification-upload-again">
+                BROWSE AGAIN
+              </Button>
+            </Upload>
+          </Form.Item>
+        )}
+
+        {/* Show Verified button for approved documents */}
+        {isStatusApproved && (
+          <Button disabled type="default" className="verification-verified-button">
+            Verified
+          </Button>
+        )}
+
+        {/* Show Pending button for requested documents */}
+        {isStatusRequested && (
+          <Button disabled type="default" className="verification-pending-button">
+            Pending
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
 
   return (
     <>

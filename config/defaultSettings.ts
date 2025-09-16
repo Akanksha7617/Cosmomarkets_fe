@@ -21,7 +21,7 @@ const Settings: ProLayoutProps & {
 
   title: ' ',
   pwa: true,
-  logo: `${publicUrl}/images/logo.png`,
+  logo: `${publicUrl}/images/Cosmomarkets.png`,
   // height: '40px',
   // width: '150px',
   iconfontUrl: '',

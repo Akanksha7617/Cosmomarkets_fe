@@ -490,70 +490,46 @@ const Dashboard: React.FC = () => {
           <div className="dashboard-left-section">
             <div className="unified-card-container">
               <div className="unified-card">
-                {/* Left side content - Wallet info and buttons */}
+                {/* Wallet info and buttons */}
                 <div className="wallet-left-content">
-                  {/* Two Box Layout for Wallet Balance and ID */}
+                  {/* Two Box Layout for Wallet Balance and Wallet ID */}
                   <div className="wallet-top-section">
-                    <div className="wallet-id-box">
-                      <div className="wallet-box-header">
-                        <svg
-                          className="wallet-icon"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                        >
-                          <rect
-                            x="1"
-                            y="4"
-                            width="22"
-                            height="16"
-                            rx="2"
-                            ry="2"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            fill="none"
-                          />
-                          <line
-                            x1="1"
-                            y1="10"
-                            x2="23"
-                            y2="10"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                        </svg>
-                        <span className="wallet-label">Wallet ID</span>
-                      </div>
-                      <div className="wallet-id-value">#{userData.Wallet?.Id ?? '00000'}</div>
-                      <div className="wallet-currency">USD</div>
-                    </div>
+                    {/* Enhanced Wallet Balance Card - Blue Design */}
                     <div className="wallet-balance-box">
                       <div className="wallet-box-header">
-                        <svg
-                          className="wallet-icon"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                        >
-                          <path
-                            d="M19 7h-1V6a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V10a3 3 0 0 0-3-3zM5 4h10a1 1 0 0 1 1 1v1H5a1 1 0 0 1 0-2zm15 14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8.83A3 3 0 0 0 5 9h14a1 1 0 0 1 1 1z"
-                            fill="currentColor"
-                          />
-                          <circle cx="15" cy="13" r="2" fill="currentColor" />
-                        </svg>
                         <span className="wallet-label">Wallet Balance</span>
                       </div>
                       <div className="wallet-amount">${userData.Wallet?.Balance ?? '0.00'}</div>
                       <div className="wallet-trend">
                         <svg
                           className="trend-icon positive"
-                          width="16"
-                          height="16"
+                          width="14"
+                          height="14"
                           viewBox="0 0 24 24"
                           fill="none"
-                        ></svg>
+                        >
+                        </svg>
+                        
+                      </div>
+                    
+                    </div>
+
+                    {/* Enhanced Wallet ID Card - White Design */}
+                    <div className="wallet-id-box">
+                      <div className="wallet-box-header">
+                        <span className="wallet-label">Wallet ID</span>
+                      </div>
+                      <div className="wallet-id-value">#{userData.Wallet?.Id ?? '00000'}</div>
+                      <div className="wallet-trend">
+                        <svg
+                          className="trend-icon positive-green"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          
+                        </svg>
                       </div>
                     </div>
                   </div>
@@ -564,36 +540,20 @@ const Dashboard: React.FC = () => {
                       onClick={() => history.push('/finops/deposit')}
                       className="action-btn deposit-btn"
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path
-                          d="m7 17 5-5 5 5M12 12v9"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                      
                       Deposit
                     </button>
                     <button
                       onClick={() => history.push('/finops/withdraw')}
                       className="action-btn withdraw-btn"
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path
-                          d="m7 7 5 5 5-5M12 3v9"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                      
                       Withdraw
                     </button>
                   </div>
                 </div>
 
-                {/* Right side content - History Section */}
+                {/* History Section */}
                 <div className="wallet-right-content">
                   <div className="history-section">
                     <div className="history-header">
@@ -604,15 +564,7 @@ const Dashboard: React.FC = () => {
                     <div className="history-list">
                       <div className="history-item deposit">
                         <div className="history-icon">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path
-                              d="m7 17 5-5 5 5M12 12v9"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                          
                         </div>
                         <div className="history-details">
                           <div className="history-title">Total Deposit</div>
@@ -623,15 +575,7 @@ const Dashboard: React.FC = () => {
 
                       <div className="history-item withdraw">
                         <div className="history-icon">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path
-                              d="m7 7 5 5 5-5M12 3v9"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                          
                         </div>
                         <div className="history-details">
                           <div className="history-title">Total Withdrawal</div>
@@ -642,15 +586,8 @@ const Dashboard: React.FC = () => {
 
                       <div className="history-item mt5_deposit">
                         <div className="history-icon">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path
-                              d="m7 14 5-5 5 5"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                         
+                            
                         </div>
                         <div className="history-details">
                           <div className="history-title">Total MT5 Deposit</div>
@@ -661,15 +598,7 @@ const Dashboard: React.FC = () => {
 
                       <div className="history-item mt5_withdraw">
                         <div className="history-icon">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path
-                              d="m7 10 5-5 5 5"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
+                          
                         </div>
                         <div className="history-details">
                           <div className="history-title">Total MT5 Withdrawal</div>
@@ -700,7 +629,7 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  const handleChange = () => {};
+  const handleChange = () => { };
   // const [loading, setLoading] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => {

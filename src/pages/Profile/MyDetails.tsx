@@ -1,16 +1,27 @@
 import { api } from '@/components/common/api';
 import { AccountType, SignUpRequest } from '@/generated';
-import { Avatar, Button, Card, Col, Divider, Form, Input, message, Row, Select, Tabs } from 'antd';
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Collapse,
+  Form,
+  Input,
+  message,
+  Row,
+  Select,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import '../../common.css';
 
+const { Panel } = Collapse;
+
 const MyDetails: React.FC = () => {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isFormChanged, setIsFormChanged] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>('1');
-  const [isNextAction, setIsNextAction] = useState(false);
   const [userInitial, setUserInitial] = useState('');
 
   useEffect(() => {
@@ -37,23 +48,10 @@ const MyDetails: React.FC = () => {
 
   const handleEditClick = () => {
     setIsEditing(!isEditing);
-    if (!isEditing) {
-      setIsFormChanged(false);
-    }
-  };
-
-  const handleNextClick = () => {
-    setIsNextAction(true);
-    const nextTab = (parseInt(activeTab) + 1).toString();
-    setActiveTab(nextTab);
+    if (!isEditing) setIsFormChanged(false);
   };
 
   const handleOk = async () => {
-    if (isNextAction) {
-      setIsNextAction(false);
-      return;
-    }
-
     setLoading(true);
     try {
       const excludedFields = ['masterPassword', 'investorPassword'];
@@ -62,7 +60,6 @@ const MyDetails: React.FC = () => {
       );
 
       const values = await form.validateFields(fieldNamesToValidate);
-
       const currentRecord = await api.app.getMe();
       const payload = {
         ...values,
@@ -73,389 +70,163 @@ const MyDetails: React.FC = () => {
       const response = await api.app.putMe(payload);
 
       if (response.message.includes('User Details Updated')) {
-        message.success({
-          content: response.message,
-          icon: <span className="success-icon"> ✓ </span>,
-          className: 'success-notification',
-          duration: 3,
-        });
+        message.success('Profile Updated Successfully');
         setIsEditing(false);
         setIsFormChanged(false);
-
         if (values.firstName) {
           setUserInitial(values.firstName.charAt(0).toUpperCase());
         }
       } else {
-        message.error({
-          content: response.message,
-          icon: <span className="error-icon"> ✘ </span>,
-          className: 'error-notification',
-          duration: 3,
-        });
+        message.error(response.message);
       }
       getDetails();
     } catch (error) {
-      message.error({
-        content: 'An error occurred during the update. Please try again later.',
-        icon: <span className="error-icon"> ✘ </span>,
-        className: 'error-notification',
-        duration: 3,
-      });
+      message.error('An error occurred. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFieldsChange = () => {
-    setIsFormChanged(true);
-  };
-
   return (
     <div className="profile-container">
-      <Card className="profile-card">
-        <div className="profile-header">
-          <div className="profile-info">
-            <div className="avatar-container">
-              <Avatar className="user-avatar" size={80}>
-                {userInitial}
-              </Avatar>
-            </div>
-            <div className="user-info">
-              <h2 className="user-name">MY ACCOUNT</h2>
-              {form.getFieldValue('logins') && (
-                <span className="account-badge">
-                  {form.getFieldValue('firstName')} {form.getFieldValue('lastName')}
-                </span>
-              )}
-            </div>
+      <Card className="profile-card" style={{ padding: '20px 30px' }}>
+        {/* HEADER */}
+        <div className="profile-info" style={{ marginBottom: 30 }}>
+          <div className="avatar-container">
+            <Avatar className="user-avatar" size={80}>
+              {userInitial}
+            </Avatar>
+          </div>
+          <div className="user-info">
+            <h2 className="user-name">My Profile</h2>
+            {/* <span className="account-badge">
+              {form.getFieldValue('firstName')} {form.getFieldValue('lastName')}
+            </span> */}
           </div>
         </div>
 
         <Form
           form={form}
           onFinish={handleOk}
-          onFieldsChange={handleFieldsChange}
+          onFieldsChange={() => setIsFormChanged(true)}
           layout="vertical"
-          className="profile-form"
         >
-          <Tabs
-            activeKey={activeTab}
-            onChange={(key) => setActiveTab(key)}
-            defaultActiveKey="1"
-            type="card"
-            className="profile-tabs"
-          >
-            <Tabs.TabPane tab="Personal Info" key="1">
+          <Collapse accordion defaultActiveKey={['1']} className="profile-collapse">
+            {/* PERSONAL INFO */}
+            <Panel header="Personal Information" key="1">
               <Row gutter={24}>
-                <Col span={12}>
+                <Col xs={24} md={12}>
                   <Form.Item
                     name="firstName"
                     label="First Name"
-                    className="form-item"
-                    rules={[
-                      { required: true, message: 'Please enter your first name.' },
-                      {
-                        validator: (_, value) => {
-                          if (!value) return Promise.resolve();
-                          const regex = /^[A-Z][a-z]*$/;
-                          return regex.test(value)
-                            ? Promise.resolve()
-                            : Promise.reject(
-                                'First letter must be uppercase, followed by lowercase letters.',
-                              );
-                        },
-                      },
-                    ]}
+                    rules={[{ required: true, message: 'Please enter your first name' }]}
                   >
-                    <Input
-                      placeholder="John"
-                      readOnly={!isEditing}
-                      className="form-input"
-                      onChange={(e) => {
-                        let value = e.target.value.replace(/[<>]/g, '');
-                        value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-                        form.setFieldValue('firstName', value);
-                      }}
-                    />
+                    <Input readOnly={!isEditing} placeholder="John" />
                   </Form.Item>
                 </Col>
-
-                <Col span={12}>
+                <Col xs={24} md={12}>
                   <Form.Item
                     name="lastName"
                     label="Last Name"
-                    className="form-item"
-                    rules={[
-                      { required: true, message: 'Please enter your last name.' },
-                      {
-                        validator: (_, value) => {
-                          if (!value) return Promise.resolve();
-                          const regex = /^[A-Z][a-z]*$/;
-                          return regex.test(value)
-                            ? Promise.resolve()
-                            : Promise.reject(
-                                'First letter must be uppercase, followed by lowercase letters.',
-                              );
-                        },
-                      },
-                    ]}
+                    rules={[{ required: true, message: 'Please enter your last name' }]}
                   >
-                    <Input
-                      placeholder="Doe"
-                      readOnly={!isEditing}
-                      className="form-input"
-                      onChange={(e) => {
-                        let value = e.target.value.replace(/[<>]/g, '');
-                        value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-                        form.setFieldValue('lastName', value);
-                      }}
-                    />
+                    <Input readOnly={!isEditing} placeholder="Doe" />
                   </Form.Item>
                 </Col>
-              </Row>
-
-              <Row gutter={24}>
-                <Col span={12}>
+                <Col xs={24} md={12}>
                   <Form.Item
                     name="email"
                     label="Email"
-                    className="form-item"
-                    rules={[
-                      { required: true, message: 'Please enter your email.' },
-                      { type: 'email', message: 'Please enter a valid email address.' },
-                    ]}
+                    rules={[{ required: true, message: 'Please enter your email' }]}
                   >
-                    <Input
-                      placeholder="example@mail.com"
-                      readOnly={!isEditing}
-                      className="form-input"
-                      prefix={<span className="input-icon">✉️</span>}
-                    />
+                    <Input readOnly={!isEditing} placeholder="example@mail.com" />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
+                <Col xs={24} md={12}>
                   <Form.Item
                     name="phone"
-                    label="Phone"
-                    className="form-item"
-                    rules={[{ required: true, message: 'Please enter your phone number.' }]}
+                    label="Phone Number"
+                    rules={[{ required: true, message: 'Please enter your phone' }]}
                   >
-                    <Input
-                      placeholder="Phone Number"
-                      readOnly={!isEditing}
-                      className="form-input"
-                      prefix={<span className="input-icon">📞</span>}
-                      onKeyPress={(e) => {
-                        if (!/^\d$/.test(e.key)) {
-                          e.preventDefault();
-                        }
-                      }}
-                      onPaste={(e) => {
-                        const pastedText = e.clipboardData.getData('Text');
-                        if (!/^\d+$/.test(pastedText) || pastedText.length > 10) {
-                          e.preventDefault();
-                        }
-                      }}
-                    />
+                    <Input readOnly={!isEditing} placeholder="1234567890" />
                   </Form.Item>
                 </Col>
-              </Row>
-
-              <Row gutter={24}>
-                <Col span={12}>
+                <Col xs={24} md={12}>
                   <Form.Item
                     name="password"
-                    label="Sign-In Password"
-                    className="form-item"
-                    rules={[
-                      { required: true, message: 'Please enter your password.' },
-                      {
-                        pattern:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-                        message: 'Password must be strong!',
-                      },
-                    ]}
+                    label="Password"
+                    rules={[{ required: true, message: 'Enter password' }]}
                   >
-                    <Input.Password
-                      placeholder="••••••••"
-                      readOnly={!isEditing}
-                      className="form-input"
-                      style={{ backgroundColor: '#f5f5f5' }}
-                    />
+                    <Input.Password readOnly={!isEditing} placeholder="••••••••" />
                   </Form.Item>
                 </Col>
               </Row>
-            </Tabs.TabPane>
+            </Panel>
 
-            <Tabs.TabPane tab="Mt5 Accounts" key="2">
+            {/* MT5 ACCOUNTS */}
+            <Panel header="MT5 Account Details" key="2">
               <Row gutter={24}>
-                <Col span={12}>
-                  <Form.Item
-                    name="logins"
-                    label="MT5 Account"
-                    className="form-item"
-                    rules={[{ required: true, message: 'MT5 Account is required.' }]}
-                  >
-                    <Input disabled className="form-input" />
+                <Col xs={24} md={12}>
+                  <Form.Item name="logins" label="MT5 Account">
+                    <Input disabled />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
-                  <Form.Item
-                    name="masterPassword"
-                    label="Master Password"
-                    className="form-item"
-                    rules={[{ required: true, message: 'Master Password is required.' }]}
-                  >
-                    <Input.Password
-                      className="form-input"
-                      readOnly={true}
-                      style={{ backgroundColor: '#f5f5f5' }}
-                    />
+                <Col xs={24} md={12}>
+                  <Form.Item name="masterPassword" label="Master Password">
+                    <Input.Password disabled />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={12}>
+                  <Form.Item name="investorPassword" label="Investor Password">
+                    <Input.Password disabled />
                   </Form.Item>
                 </Col>
               </Row>
-              <Row gutter={24}>
-                <Col span={12}>
-                  <Form.Item
-                    name="investorPassword"
-                    label="Investor Password"
-                    className="form-item"
-                    rules={[{ required: true, message: 'Investor Password is required.' }]}
-                  >
-                    <Input.Password
-                      className="form-input"
-                      readOnly={true}
-                      style={{ backgroundColor: '#f5f5f5' }}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Tabs.TabPane>
+            </Panel>
 
-            <Tabs.TabPane tab="Additional Info" key="3">
+            {/* ADDITIONAL INFO */}
+            <Panel header="Additional Information" key="3">
               <Row gutter={24}>
-                <Col span={12}>
-                  <Form.Item
-                    name="promo"
-                    label="Promo Code"
-                    className="form-item"
-                    rules={[{ required: true, message: 'Please enter your promo code.' }]}
-                  >
-                    <Input disabled className="form-input" />
+                <Col xs={24} md={12}>
+                  <Form.Item name="promo" label="Promo Code">
+                    <Input disabled />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
-                  <Form.Item
-                    name="region"
-                    label="Region"
-                    className="form-item"
-                    rules={[{ required: true, message: 'Please select your country.' }]}
-                  >
-                    <Select
-                      placeholder="Select Country"
-                      disabled={!isEditing}
-                      showSearch
-                      optionFilterProp="children"
-                      className="form-select"
-                      prefix={<span className="input-icon">🌎</span>}
-                    >
-                      {[
-                        'United Arab Emirates',
-                        'USA',
-                        'India',
-                        'United Kingdom',
-                        'Australia',
-                        'France',
-                        'Germany',
-                        'Japan',
-                        'China',
-                        'Russia',
-                      ].map((country) => (
-                        <Select.Option key={country} value={country}>
-                          {country}
-                        </Select.Option>
+                <Col xs={24} md={12}>
+                  <Form.Item name="region" label="Region">
+                    <Select disabled={!isEditing} placeholder="Select Country">
+                      {['India', 'USA', 'UK', 'Australia', 'France', 'Germany'].map((c) => (
+                        <Select.Option key={c}>{c}</Select.Option>
                       ))}
                     </Select>
                   </Form.Item>
                 </Col>
               </Row>
-            </Tabs.TabPane>
-          </Tabs>
+            </Panel>
+          </Collapse>
 
-          <Divider className="form-divider" />
-          <div
-            className="form-actions"
-            style={{
-              display: 'flex',
-              gap: '12px',
-              justifyContent: 'flex-end',
-              flexWrap: 'wrap',
-              marginTop: 16,
-            }}
-          >
-            {isEditing && (
+          {/* FIXED BUTTONS */}
+          <div className="form-actions" style={{ marginTop: 30, textAlign: 'right' }}>
+            {isEditing ? (
               <>
-                <Button
-                  type="button"
-                  onClick={handleEditClick}
-                  className="action-btn cancel-btn"
-                  style={{
-                    minWidth: 110,
-                    fontSize: 16,
-                    padding: '8px 16px',
-                  }}
-                >
+                <Button onClick={handleEditClick} style={{ marginRight: 10 }}>
                   Cancel
                 </Button>
-                {activeTab !== '3' && (
-                  <Button
-                    type="button"
-                    onClick={handleNextClick}
-                    className="action-btn next-btn"
-                    style={{
-                      minWidth: 110,
-                      fontSize: 16,
-                      padding: '8px 16px',
-                    }}
-                  >
-                    Next
-                  </Button>
-                )}
-                {isFormChanged && activeTab === '3' && (
-                  <Button
-                    type="submit"
-                    htmlType="submit"
-                    loading={loading}
-                    className="action-btn update-btn"
-                    style={{
-                      minWidth: 110,
-                      fontSize: 16,
-                      padding: '8px 16px',
-                    }}
-                  >
-                    Update
-                  </Button>
-                )}
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  disabled={!isFormChanged}
+                >
+                  Update
+                </Button>
               </>
-            )}
-            {!isEditing && (
+            ) : (
               <Button
-                type="button"
+                type="primary"
                 onClick={handleEditClick}
-                className="action-btn edit-btn"
                 style={{
-                  minWidth: 140,
-                  fontSize: 18,
-                  padding: '10px 24px',
-                  fontWeight: 600,
-                  borderRadius: 8,
-                  background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
-                  color: '#fff',
                   border: 'none',
-                  boxShadow: '0 2px 8px rgba(102,126,234,0.10)',
-                  transition: 'background 0.3s, color 0.3s',
-                  width: '100%',
-                  maxWidth: 220,
                 }}
               >
                 Edit Profile
@@ -464,31 +235,6 @@ const MyDetails: React.FC = () => {
           </div>
         </Form>
       </Card>
-      <style>
-        {`
-        @media (max-width: 600px) {
-          .profile-card {
-            padding: 0 !important;
-          }
-          .profile-header {
-            flex-direction: column;
-            align-items: center;
-          }
-          .form-actions {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            gap: 10px !important;
-            margin-top: 18px !important;
-          }
-          .action-btn, .edit-btn {
-            width: 100% !important;
-            min-width: 0 !important;
-            font-size: 16px !important;
-            padding: 10px 0 !important;
-          }
-        }
-        `}
-      </style>
     </div>
   );
 };

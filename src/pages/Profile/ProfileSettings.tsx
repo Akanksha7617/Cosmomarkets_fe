@@ -392,48 +392,53 @@ const ProfileSettings: React.FC = () => {
 
   return (
     <>
-      {loading ? (
+     {loading ? (
         <CustomLoader />
       ) : (
         <Card style={{ backgroundColor: '#f7f7f3' }} className="profile-setting-parent">
-          <h2>Profile</h2>
+          <h2>Profile Settings</h2>
 
-          <div className="vertical-tabs-wrapper" style={{ display: 'flex' }}>
-            {/* Sidebar Navigation */}
-            <div className="vertical-tabs-container" style={{ width: isMobile ? '100%' : '250px', borderRight: isMobile ? 'none' : '1px solid #e8e8e8' }}>
-              {/* <div className="vertical-tabs-header" style={{ padding: isMobile ? '10px' : '15px',  color: 'black' }}>
-                <UserOutlined className="header-icon" />
-                <span></span>
-              </div> */}
-              <div className="vertical-tab-list">
-                {tabItems.map((item) => (
+          <div className="horizontal-tabs-wrapper">
+            {/* Flowing Curved Tabs Container */}
+            <div className="horizontal-tabs-container">
+              {/* Tabs List */}
+              <div className="horizontal-tab-list">
+                {tabItems.map((item, index) => (
                   <div
                     key={item.key}
-                    className={`vertical-tab-item ${activeTab === item.key ? 'active' : ''}`}
+                    className={`horizontal-tab-item ${activeTab === item.key ? 'active' : ''}`}
                     onClick={() => handleTabChange(item.key)}
-                    style={{
-                      padding: isMobile ? '8px 12px' : '15px',
-                      borderBottom: '1px solid #e8e8e8',
-                      backgroundColor: activeTab === item.key ? '#f8f8f8' : 'transparent',
+                    role="tab"
+                    tabIndex={0}
+                    aria-selected={activeTab === item.key}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        handleTabChange(item.key);
+                      }
                     }}
                   >
-                    <div className="custom-tab-vertical" style={{ display: 'flex', alignItems: 'center' }}>
-                      {item.icon}
-                      <div className="tab-content" style={{ marginLeft: isMobile ? '0' : '10px' }}>
-                        <div className="tab-title">{item.title}</div>
-                        <div className="tab-subtext" style={{ fontSize: '12px', color: '#888', display: isMobile ? 'none' : 'block' }}>
-                          {item.subtitle}
-                        </div>
+                    {/* Number badge */}
+                    <div className="tab-number">{index + 1}</div>
+                    
+                    {/* Icon container */}
+                    <div className="tab-icon-container">
+                      <div className="tab-icon-horizontal">
+                        {item.icon}
                       </div>
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="tab-content-horizontal">
+                      <div className="tab-title-horizontal">{item.title}</div>
+                      <div className="tab-subtext-horizontal">{item.subtitle}</div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-
             {/* Content Area */}
             <div className="vertical-tabs-content" style={{ 
-              width: isMobile ? '100%' : 'calc(100% - 250px)', 
+             
               padding: isMobile ? '10px 0' : '15px' 
             }}>
               {getActiveComponent()}
