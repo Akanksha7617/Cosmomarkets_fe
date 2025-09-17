@@ -89,7 +89,7 @@ export default () => {
   const customStyles = {
     headCells: {
       style: {
-        background: '#2b2726',
+        background: '#005f73',
         color: 'white',
         fontWeight: 'bold',
         fontSize: '13px',

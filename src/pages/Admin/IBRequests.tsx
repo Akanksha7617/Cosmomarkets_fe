@@ -453,7 +453,7 @@ export default () => {
   const customStyles = {
     headCells: {
       style: {
-        background: '#2b2726', // Specify your gradient or background color here
+        background: '#005f73', // Specify your gradient or background color here
         color: 'white', // Set the font color to make it visible
         fontWeight: 'bold',
         fontSize: '15px',
