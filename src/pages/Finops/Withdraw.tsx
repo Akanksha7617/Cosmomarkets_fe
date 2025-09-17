@@ -176,7 +176,7 @@ const Withdraw: React.FC = () => {
   const fetchBankDetails = async () => {
     try {
       const bankDetails = await api.transaction.getBankAccount();
-      
+
       if (bankDetails) {
         form.setFieldsValue({
           beneficiary: bankDetails.beneficiary,
@@ -596,7 +596,7 @@ const Withdraw: React.FC = () => {
                   size="large"
                 >
                   <Title level={4}>Bank Wire Details</Title>
-                  
+
                   <Form.Item
                     name="beneficiary"
                     label="Beneficiary Name"
@@ -682,7 +682,7 @@ const Withdraw: React.FC = () => {
                   size="large"
                 >
                   <Title level={4}>USDT Withdrawal Details</Title>
-                  
+
                   <Alert
                     message="Important"
                     description="Please ensure the wallet address is correct. Cryptocurrency transactions cannot be reversed."
@@ -734,6 +734,16 @@ const Withdraw: React.FC = () => {
 
   const renderMT5Withdraw = () => (
     <div style={{ padding: '24px' }}>
+      <Button
+        type="default"
+        style={{ marginBottom: '16px' }}
+        onClick={() => {
+          setIsMt5(false);   // switch back to wallet flow
+          setCurrentStep(0); // reset to account selection
+        }}
+      >
+        ← Back
+      </Button>
       <Transfer
         title={'Withdraw from MT5'}
         type={Type.MT_TO_WALLET}
