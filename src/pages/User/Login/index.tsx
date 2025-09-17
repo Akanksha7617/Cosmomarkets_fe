@@ -1,4 +1,5 @@
- import { api, updateAPIToken } from '@/components/common/api';
+// code2
+import { api, updateAPIToken } from '@/components/common/api';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Alert, Button, Form, Input, message } from 'antd';
@@ -31,20 +32,86 @@ const Login = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { initialState, setInitialState } = useModel('@@initialState');
 
-  // Background theme
-  useEffect(() => {
-   
-    document.body.style.minHeight = "100vh";
-    document.body.style.width = "100vw";
-    document.body.style.overflow = "hidden";
+ useEffect(() => {
+  const checkAndHandleAdminImpersonation = async () => {
+    setIsProcessing(true);
 
-    return () => {
-      document.body.style.background = "";
-      document.body.style.minHeight = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
-    };
-  }, []);
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const userId = urlSearchParams.get('userId');
+    const adminImpersonating = urlSearchParams.get('adminImpersonating');
+    const impersonationToken = urlSearchParams.get('impersonationToken');
+
+    // Check if this is an admin impersonating a user
+    if (userId && adminImpersonating === 'true' && impersonationToken) {
+      // Save current admin token if not already saved
+      const currentToken = sessionStorage.getItem('jwtToken');
+      if (currentToken && !sessionStorage.getItem('adminToken')) {
+        sessionStorage.setItem('adminToken', currentToken);
+      }
+
+      // Set the impersonation token
+      sessionStorage.setItem('jwtToken', impersonationToken);
+      sessionStorage.setItem('isAdminImpersonating', 'true');
+      sessionStorage.setItem('impersonatedUserId', userId);
+
+      // Update API token and fetch user info
+      updateAPIToken();
+      await fetchUserInfo();
+
+      // Redirect to user dashboard
+      history.replace('/dashboard');
+      return;
+    }
+
+    // Check for return from user impersonation
+    if (urlSearchParams.get('returnToAdmin') === 'true') {
+      const adminToken = sessionStorage.getItem('adminToken');
+      if (adminToken) {
+        sessionStorage.setItem('jwtToken', adminToken);
+        sessionStorage.removeItem('isAdminImpersonating');
+        sessionStorage.removeItem('impersonatedUserId');
+        updateAPIToken();
+        await fetchUserInfo();
+        history.replace('/admin/dashboard');
+        return;
+      }
+    }
+
+    // Handle normal login parameters
+    const tokenParam = urlSearchParams.get('token');
+
+    if (tokenParam) {
+      sessionStorage.setItem('jwtToken', tokenParam);
+      updateAPIToken();
+      await fetchUserInfo();
+      const redirect = urlSearchParams.get('redirect') || '/dashboard';
+      history.replace(redirect);
+      return;
+    }
+
+    // Check for existing token
+    const existingToken = sessionStorage.getItem('jwtToken');
+    if (existingToken) {
+      updateAPIToken();
+      try {
+        await fetchUserInfo();
+        // If fetchUserInfo succeeds, token is valid
+        const redirect = urlSearchParams.get('redirect') || '/dashboard';
+        history.replace(redirect);
+        return;
+      } catch (error) {
+        console.error('Token verification failed:', error);
+        // Invalid token, clear it
+        sessionStorage.removeItem('jwtToken');
+        updateAPIToken();
+      }
+    }
+
+    setIsProcessing(false);
+  };
+
+  checkAndHandleAdminImpersonation();
+}, []);
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
