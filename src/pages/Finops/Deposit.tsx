@@ -763,6 +763,17 @@ const Deposit: React.FC = () => {
 
   const renderMT5Deposit = () => (
     <div style={{ padding: '24px' }}>
+
+      <Button
+      type="default"
+      style={{ marginBottom: '16px' }}
+      onClick={() => {
+        setIsMt5(false);   // switch back to wallet flow
+        // setCurrentStep(0); // reset to account selection
+      }}
+    >
+      ← Back
+    </Button>
       <DepositTransferCommon
         title="Deposit to MT5 Account"
         type={Type.WALLET_TO_MT}

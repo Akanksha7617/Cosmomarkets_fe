@@ -531,12 +531,14 @@ const HelpDeskAdmin: React.FC = () => {
                       {/* <td>{formatDate(q.updatedAt)}</td> */}
                       {/* <td>{q.status === 'Resolved' ? formatDate(q.resolvedAt) : '-'}</td> */}
                       <td>
-                        <button className="view-btn" onClick={() => handleView(q.id)}>
-                          View
-                        </button>
-                        <button className="resolve-btn" onClick={() => handleResolve(q.id)}>
-                          Resolve
-                        </button>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          <button className="view-btn" onClick={() => handleView(q.id)}>
+                            View
+                          </button>
+                          <button className="resolve-btn" onClick={() => handleResolve(q.id)}>
+                            Resolve
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
