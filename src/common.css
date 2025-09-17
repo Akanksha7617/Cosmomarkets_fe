@@ -1073,8 +1073,8 @@
 
 .ant-btn {
   color: #000 !important;
-  background-color: #F58C35 !important;
-  border-color: #F58C35 !important;
+  /* background-color: #F58C35 !important;
+  border-color: #F58C35 !important; */
 }
 
 .ant-btn:hover {
