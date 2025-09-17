@@ -33,6 +33,7 @@ type DataIndex = keyof Data;
 export default () => {
   const actionRef = useRef<ActionType>();
   const [data, setData] = useState<IbRequestModel[]>();
+  const [allData, setAllData] = useState<IbRequestModel[]>(); // Store all data for client-side pagination
   const { initialState, setInitialState } = useModel('@@initialState');
   const { token } = theme.useToken();
   const [searchText, setSearchText] = useState('');
@@ -42,7 +43,7 @@ export default () => {
   const [refreshCount, setRefreshCount] = useState(0);
   const [globalSearchText, setGlobalSearchText] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [pagination, setPagination] = useState({
     current: 1,
@@ -51,9 +52,7 @@ export default () => {
   });
 
   const handleDivRefresh = () => {
-    // Increment the refresh count to trigger a re-render of the div
-    // setRefreshCount((prevCount) => prevCount + 1);
-    getData(pagination.current, pagination.pageSize, ' ');
+    getData(pagination.current, pagination.pageSize, globalSearchText);
   };
 
   const tableRef = useRef<ProTableRef>();
@@ -67,10 +66,12 @@ export default () => {
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
   };
+
   const handleReset = (clearFilters: () => void) => {
     clearFilters();
     setSearchText('');
   };
+
   const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<dataIndex> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
@@ -141,15 +142,42 @@ export default () => {
     },
   });
 
-  const getData = async (page: any, pageSize: any, param: any) => {
+  // Updated getData function with proper pagination
+  const getData = async (page: any, pageSize: any, searchParam: any) => {
     try {
       setLoading(true);
+      
+      // Get all data from API
       const response = await api.ib.getRequests();
-      setData(response);
-      setPagination({ ...pagination, current: page, total: 10 });
-      setLoading(false);
+      setAllData(response); // Store all data
+      
+      // Filter data based on search parameter
+      let filteredData = response;
+      if (searchParam && searchParam.trim() !== '' && searchParam.trim() !== ' ') {
+        filteredData = response.filter(item => 
+          item.userName?.toLowerCase().includes(searchParam.toLowerCase()) ||
+          item.managerName?.toLowerCase().includes(searchParam.toLowerCase()) ||
+          item.userComment?.toLowerCase().includes(searchParam.toLowerCase()) ||
+          item.status?.toLowerCase().includes(searchParam.toLowerCase())
+        );
+      }
+      
+      // Client-side pagination
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const paginatedData = filteredData.slice(startIndex, endIndex);
+      
+      setData(paginatedData);
+      setPagination(prev => ({ 
+        ...prev,
+        current: page, 
+        pageSize: pageSize,
+        total: filteredData.length  // Set actual total count
+      }));
+      
     } catch (error) {
       console.log(error);
+      message.error('Failed to fetch data');
     } finally {
       setLoading(false);
     }
@@ -162,22 +190,27 @@ export default () => {
     }
 
     const timeout = setTimeout(() => {
-      getData(pagination.current, pagination.pageSize, value);
+      getData(1, pagination.pageSize, value); // Reset to first page when searching
     }, 500); // Set the debounce delay here (500ms in this example)
     setSearchTimeout(timeout);
   };
 
   useEffect(() => {
     handleSearchDebounced(globalSearchText);
-  }, [globalSearchText, pagination.current, pagination.pageSize]);
+  }, [globalSearchText]);
 
+  // Updated page change handler
   const handlePageChange = (page: any) => {
-    setPagination({ ...pagination, current: page });
+    console.log('Page changed to:', page); // Debug log
+    setPagination(prev => ({ ...prev, current: page }));
+    getData(page, pagination.pageSize, globalSearchText);
   };
 
-  // Function to handle page size changes
-  const handlePageSizeChange = (pageSize: any) => {
-    setPagination({ ...pagination, current: 1, pageSize }); // Reset to first page when page size changes
+  // Updated page size change handler - DataTable passes pageSize as first parameter
+  const handlePageSizeChange = (pageSize: any, current?: any) => {
+    console.log('Page size changed to:', pageSize); // Debug log
+    setPagination(prev => ({ ...prev, current: 1, pageSize: pageSize }));
+    getData(1, pageSize, globalSearchText); // Reset to first page when page size changes
   };
 
   const columns1 = [
@@ -187,7 +220,6 @@ export default () => {
       ellipsis: true,
       tip: 'auto wraps',
       ...getColumnSearchProps('id'),
-
       hideInSearch: true,
       formItemProps: {
         rules: [
@@ -213,7 +245,6 @@ export default () => {
     {
       title: 'User Comment',
       dataIndex: 'userComment',
-
       hideInSearch: true,
     },
     {
@@ -248,7 +279,6 @@ export default () => {
       key: 'showTime',
       dataIndex: 'requestedAt',
       valueType: 'date',
-      //sorter: true,
       sorter: (a, b) => {
         const dateA = new Date(a.requestedAt || '');
         const dateB = new Date(b.requestedAt || '');
@@ -261,7 +291,6 @@ export default () => {
       key: 'showTime',
       dataIndex: 'completedAt',
       valueType: 'date',
-      //sorter: true,
       sorter: (a, b) => {
         const dateA = new Date(a.completedAt || '');
         const dateB = new Date(b.completedAt || '');
@@ -288,12 +317,11 @@ export default () => {
 
   const managerActionColumn = {
     name: 'Action',
-    selector: 'id', // Use any unique identifier for the selector
+    selector: 'id',
     width: '150px',
     right: true,
     cell: (row) => {
       const isRejected = row.status === Status.REJECTED;
-      //const isCurrentUserManager = row.managerId === initialState?.currentUser?.id;
       const isCurrentUserManager = true;
 
       if (isCurrentUserManager) {
@@ -314,7 +342,7 @@ export default () => {
                       })
                       .then((response) => {
                         console.log(response);
-                        getData(pagination.current, pagination.pageSize, '');
+                        getData(pagination.current, pagination.pageSize, globalSearchText);
                       })
                       .catch((e) => console.log(e));
                   }}
@@ -331,7 +359,7 @@ export default () => {
                         approved: false,
                         comment: comment,
                       })
-                      .then(() => getData(pagination.current, pagination.pageSize, ''));
+                      .then(() => getData(pagination.current, pagination.pageSize, globalSearchText));
                   }}
                 >
                   <Button style={{ display: 'flex', width: '50px' }}>
@@ -353,7 +381,6 @@ export default () => {
       name: 'Id',
       selector: 'id',
       sortable: true,
-      // wrap: true,
       hide: true,
       cell: (row) => row.id,
     },
@@ -361,13 +388,11 @@ export default () => {
       name: 'User',
       selector: 'userName',
       sortable: true,
-      // wrap: true,
     },
     {
       name: 'Manager',
       selector: 'managerName',
       sortable: true,
-      // wrap: true,
     },
     {
       name: 'User Comment',
@@ -379,7 +404,6 @@ export default () => {
       name: 'Status',
       selector: 'status',
       sortable: true,
-
       cell: (row) => row.status,
       hide: true,
     },
@@ -387,7 +411,6 @@ export default () => {
       name: 'Requested at',
       selector: 'requestedAt',
       sortable: true,
-
       cell: (row) => {
         const dateA = new Date(row.requestedAt || '');
         return moment(dateA).format('YYYY-MM-DD');
@@ -398,63 +421,53 @@ export default () => {
       name: 'Completed at',
       selector: 'completedAt',
       sortable: true,
-
       cell: (row) => {
         const dateA = new Date(row.completedAt || '');
         return moment(dateA).format('YYYY-MM-DD');
       },
       width: '150px',
     },
-    // {
-    //   name: 'created In',
-    //   selector: 'requestedAt', // Assuming you want to display requestedAt in this column
-    //   // wrap: true,
-    //   hide: true,
-    //   cell: (row) =>  moment(row.requestedAt).format('YYYY-MM-DD'), // Use the appropriate field for 'createdInForm'
-    // },
     managerActionColumn,
   ];
 
   async function exportExcel() {
-    let response = await rawApi.get(`/api/app/ib/export/xlsx`, {
-      responseType: 'blob',
-    });
-  
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'ib.xlsx');
-    document.body.appendChild(link);
-    link.click();
-  
-    message.success({
-      content: 'Your file is downloading...',
-      icon: <span style={{ color: 'green', fontSize: '20px' }}>✔</span>,
-      className: 'custom-success-notification',
-      duration: 2,
-    });
-  
-   
-    window.URL.revokeObjectURL(url);
-    link.remove();
+    try {
+      let response = await rawApi.get(`/api/app/ib/export/xlsx`, {
+        responseType: 'blob',
+      });
+    
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'ib.xlsx');
+      document.body.appendChild(link);
+      link.click();
+    
+      message.success({
+        content: 'Your file is downloading...',
+        icon: <span style={{ color: 'green', fontSize: '20px' }}>✔</span>,
+        className: 'custom-success-notification',
+        duration: 2,
+      });
+    
+      window.URL.revokeObjectURL(url);
+      link.remove();
+    } catch (error) {
+      message.error('Failed to export Excel file');
+      console.error('Export error:', error);
+    }
   }
   
-  const [loading, setLoading] = useState(true);
+  // Initial load effect
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    getData(1, 10, ''); // Load first page with 10 items
   }, []);
 
   const customStyles = {
     headCells: {
       style: {
-        background: '#005f73', // Specify your gradient or background color here
-        color: 'white', // Set the font color to make it visible
+        background: '#005f73',
+        color: 'white',
         fontWeight: 'bold',
         fontSize: '15px',
         borderBottom: '2px solid #fff',
@@ -463,8 +476,8 @@ export default () => {
     rows: {
       style: {
         '&:hover': {
-          background: '#f5f5f5', // Set the highlight color here
-          transition: 'background-color 0.3s ease', // Add a smooth transition effect
+          background: '#f5f5f5',
+          transition: 'background-color 0.3s ease',
         },
       },
     },
@@ -472,17 +485,13 @@ export default () => {
 
   return (
     <div>
-      {/* {loading ? (
-                <CustomLoader />
-            ) : ( */}
-
       <>
         <h2>IB REQUEST</h2>
         <div className="my-data-table" style={{ flex: 1, overflowY: 'auto' }}>
           <DataTable
             columns={columns}
             className="my-data-table"
-            data={data}
+            data={data || []}
             customStyles={customStyles}
             keyField="id"
             highlightOnHover
@@ -490,16 +499,19 @@ export default () => {
             selectableRows={false}
             dense
             pagination
-            paginationServer
+            paginationServer={true}
             paginationTotalRows={pagination.total}
-            paginationPerPage={10}
+            paginationDefaultPage={pagination.current}
+            paginationPerPage={pagination.pageSize}
             onChangePage={handlePageChange}
             onChangeRowsPerPage={handlePageSizeChange}
-            paginationRowsPerPageOptions={[10, 20, 30]}
-            paginationComponentOptions={{ rowsPerPageText: 'Rows per page:' }}
+            paginationRowsPerPageOptions={[10, 20, 30, 40]}
+            paginationComponentOptions={{ 
+              rowsPerPageText: 'Rows per page:',
+              rangeSeparatorText: 'of',
+              noRowsPerPage: false
+            }}
             progressPending={loading}
-            loading={loading}
-            // conditionalRowStyles={conditionalRowStyles}
             progressComponent={loading ? <CustomLoader /> : null}
             actions={[
               <a key="exportExcel" onClick={exportExcel}>
@@ -512,7 +524,6 @@ export default () => {
           />
         </div>
       </>
-      {/* )} */}
     </div>
   );
 };

@@ -5857,7 +5857,7 @@ margin-left: -100px;
   width: 80px;
   height: 4px;
   margin: 0.75rem auto 0;
-  background: linear-gradient(45deg, #be8b4a, #ffb74d);
+ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
   border-radius: 2px;
   content: '';
 }
@@ -6506,6 +6506,8 @@ margin-left: -100px;
 
 /* helpDesk end */
 
+
+
 /* helpDesk Adminside */
 .save-btn {
   padding: 6px 0px;
@@ -6533,6 +6535,8 @@ margin-left: -100px;
 .resolve-btn:hover {
   background-color: #ec971f;
 }
+
+
 
 /* helpDesk Adminside End */
 
