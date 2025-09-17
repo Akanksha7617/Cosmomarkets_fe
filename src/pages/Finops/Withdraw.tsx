@@ -1,10 +1,22 @@
-// code 1
-
+// Modern Redesigned Withdraw Page
 import { api } from '@/components/common/api';
 import { Type } from '@/generated';
 import { Transfer } from '@/pages/Finops/common/Transfer';
 import { useModel } from '@@/exports';
-import { ArrowLeftOutlined, SwapOutlined , PayCircleOutlined  } from '@ant-design/icons';
+import {
+  ArrowLeftOutlined,
+  SwapOutlined,
+  PayCircleOutlined,
+  BankOutlined,
+  WalletOutlined,
+  CheckCircleOutlined,
+  DollarCircleOutlined,
+  CreditCardOutlined,
+  ThunderboltOutlined,
+  RocketOutlined,
+  ExclamationCircleOutlined,
+  SafetyOutlined,
+} from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { history, useLocation } from '@umijs/max';
 import {
@@ -18,6 +30,12 @@ import {
   message,
   Select,
   Typography,
+  Steps,
+  Row,
+  Col,
+  Space,
+  Alert,
+  Divider,
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import CustomLoader from '../CustomLoader';
@@ -26,6 +44,7 @@ import StatusPage from './common/StatusPage';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
+const { Step } = Steps;
 
 // Define payment method interface
 interface PaymentMethod {
@@ -35,6 +54,8 @@ interface PaymentMethod {
   details: string;
   processingTime: string;
   cost: number;
+  category: string;
+  minAmount: number;
 }
 
 const getInitialAccount = () => {
@@ -51,54 +72,50 @@ const getInitialIsMt5 = () => {
 
 const Withdraw: React.FC = () => {
   // State management
-
   const [proofData, setProofData] = useState('');
   const [loading, setLoading] = useState(true);
-  const [showWithdrawFlow, setShowWithdrawFlow] = useState(false);
-  const [showWalletSteps, setShowWalletSteps] = useState(false);
-
-  // States for Withdraw functionality
-  const [currentStep, setCurrentStep] = useState(1);
-  const [selectedCurrency, setSelectedCurrency] = useState<string | undefined>(undefined);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('usd');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | undefined>(undefined);
   const [balance, setBalance] = useState<number>(0);
   const [selectedAccount, setSelectedAccount] = useState(getInitialAccount());
   const [isMt5, setIsMt5] = useState(getInitialIsMt5());
   const [isCheckingProof, setIsCheckingProof] = useState(true);
+  const [withdrawProcessing, setWithdrawProcessing] = useState(false);
+  const [amount, setAmount] = useState<any>(0);
 
   // Forms
   const [form] = Form.useForm();
+  const [amountForm] = Form.useForm();
   const location = useLocation();
-
-  // Step refs for scrolling
-  const step1Ref = useRef<HTMLDivElement>(null);
-  const step2Ref = useRef<HTMLDivElement>(null);
-  const step3Ref = useRef<HTMLDivElement>(null);
-  const step3UsdtRef = useRef<HTMLDivElement>(null);
 
   // Get user information
   const { initialState } = useModel('@@initialState');
   const wallet = initialState?.currentUser?.wallet;
 
-  // Define payment methods array
+  // Define payment methods array organized by category
   const paymentMethods: PaymentMethod[] = [
     {
       key: 'bank-wire',
       label: 'Bank Wire',
-      icon: <SwapOutlined  className="payment-icon" />,
-      details: 'Bank Wire Withdrawal (1-24 hours)',
+      icon: <BankOutlined />,
+      details: 'Secure bank wire transfer',
       processingTime: '1-24 hours',
       cost: 0,
+      category: 'traditional',
+      minAmount: 50,
     },
     {
       key: 'usdt',
-      label: 'USDT',
-      icon: <PayCircleOutlined  className="payment-icon" />,
-      details: 'USDT Instant Withdrawal (24/7)',
+      label: 'USDT (TRC-20)',
+      icon: <RocketOutlined />,
+      details: 'USDT cryptocurrency withdrawal',
       processingTime: 'Instant',
       cost: 0,
+      category: 'crypto',
+      minAmount: 10,
     },
-    // You can easily add more payment methods here if needed
+    // Add more payment methods as needed
   ];
 
   // Initialize balance and fetch bank details when component mounts
@@ -117,26 +134,6 @@ const Withdraw: React.FC = () => {
     fetchData();
   }, []);
 
-  // Scroll to active step when step changes
-  useEffect(() => {
-    const scrollToCurrentStep = () => {
-      if (currentStep === 1 && step1Ref.current) {
-        step1Ref.current.scrollIntoView({ behavior: 'smooth' });
-      } else if (currentStep === 2 && step2Ref.current) {
-        step2Ref.current.scrollIntoView({ behavior: 'smooth' });
-      } else if (currentStep === 3) {
-        if (selectedPaymentMethod === 'usdt' && step3UsdtRef.current) {
-          step3UsdtRef.current.scrollIntoView({ behavior: 'smooth' });
-        } else if (step3Ref.current) {
-          step3Ref.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    };
-
-    // Small delay to ensure DOM is updated
-    setTimeout(scrollToCurrentStep, 100);
-  }, [currentStep, selectedPaymentMethod]);
-
   // Fetch bank details if needed
   useEffect(() => {
     if (currentStep === 3 && selectedPaymentMethod === 'bank-wire') {
@@ -151,7 +148,7 @@ const Withdraw: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsCheckingProof(true); // Start checking
+        setIsCheckingProof(true);
 
         const response = await api.proof.getProofSetting();
         const allApproved = response.every((field) => field && field.status === 'Approved');
@@ -163,7 +160,7 @@ const Withdraw: React.FC = () => {
           setProofData('Requested');
         }
 
-        setIsCheckingProof(false); // Done checking
+        setIsCheckingProof(false);
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -176,16 +173,13 @@ const Withdraw: React.FC = () => {
     fetchData();
   }, []);
 
-  // Fetch bank details for the form
   const fetchBankDetails = async () => {
     try {
       const bankDetails = await api.transaction.getBankAccount();
-      console.log('Bank details fetched:', bankDetails);
-
+      
       if (bankDetails) {
         form.setFieldsValue({
           beneficiary: bankDetails.beneficiary,
-          amount: bankDetails.withdrawal,
           name: bankDetails.name,
           address: bankDetails.address,
           account: bankDetails.account,
@@ -198,94 +192,66 @@ const Withdraw: React.FC = () => {
     }
   };
 
-  // Handle Withdraw option click
-  function handleWithdrawClick() {
-    setShowWithdrawFlow(true);
-    setShowWalletSteps(false);
-    setCurrentStep(1);
-  }
-
-  // Handle account selection in dropdown
-  function handleAccountSelection(value) {
+  const handleAccountChange = (value) => {
     setSelectedAccount(value);
+    setIsMt5(value === 'MT5 Trading Account');
     if (value === 'Wallet Account') {
-      setIsMt5(false);
-      setShowWalletSteps(true);
-    } else if (value === 'MT5 Trading Account') {
-      setIsMt5(true);
-      setShowWalletSteps(false);
-    }
-  }
-
-  // Reset to main withdraw options
-  function resetToMainWithdraw() {
-    setShowWithdrawFlow(false);
-    setShowWalletSteps(false);
-    setCurrentStep(1);
-    setSelectedCurrency(undefined);
-    setSelectedPaymentMethod(undefined);
-    form.resetFields();
-  }
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    } else {
-      resetToMainWithdraw();
+      setCurrentStep(1);
     }
   };
 
-  const handleContinue = () => {
-    if (currentStep === 2 && !selectedPaymentMethod) {
-      message.error({
-        content: 'Please select a payment method',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
-        duration: 3,
-      });
-      return;
-    }
+  const handleNextStep = () => {
     setCurrentStep(currentStep + 1);
   };
 
-  const handleCurrencySelect = (value: string) => {
-    setSelectedCurrency(value);
+  const handlePrevStep = () => {
+    setCurrentStep(currentStep - 1);
   };
 
-  const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedPaymentMethod(e.target.value);
+  const handlePaymentMethodSelect = (methodKey: string) => {
+    setSelectedPaymentMethod(methodKey);
+    handleNextStep();
   };
 
-  // Submit bank transfer withdrawal
+  const handleAmountSubmit = async (values: any) => {
+    const amountValue = values.amount;
+    setAmount(amountValue);
+    setWithdrawProcessing(true);
+
+    try {
+      if (wallet?.balance === 0) {
+        message.error('Insufficient Balance');
+        return;
+      }
+
+      if (amountValue > wallet?.balance) {
+        message.error('Amount cannot exceed the wallet balance');
+        return;
+      }
+
+      const selectedMethod = paymentMethods.find(m => m.key === selectedPaymentMethod);
+      if (selectedMethod && amountValue < selectedMethod.minAmount) {
+        message.error(`Minimum withdrawal amount is $${selectedMethod.minAmount}`);
+        return;
+      }
+
+      message.success('Amount validated successfully');
+      handleNextStep();
+    } catch (error) {
+      console.error('Error:', error);
+      message.error('Error validating amount. Please try again.');
+    } finally {
+      setWithdrawProcessing(false);
+    }
+  };
+
   const handleBankWithdrawal = async (values: any) => {
     try {
       setLoading(true);
 
-      const { amount } = values;
-
-      if (wallet?.balance === 0) {
-        message.error({
-          content: 'Insufficient Balance',
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
-        return;
-      }
-
-      if (amount > wallet?.balance) {
-        message.error({
-          content: 'Amount cannot exceed the wallet balance',
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
-        return;
-      }
-
       const formData = {
         type: Type.WALLET_TO_EXT,
-        amount: values.amount,
+        amount: amount,
         currency: 'USD',
         comment: values.comment,
         bank: { ...values },
@@ -294,68 +260,27 @@ const Withdraw: React.FC = () => {
 
       const response = await api.transaction.withdraw(formData);
 
-      if (
-        response.message &&
-        response.message.includes('User does not have enough wallet balance!')
-      ) {
-        message.error({
-          content: response.message,
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
+      if (response.message && response.message.includes('User does not have enough wallet balance!')) {
+        message.error(response.message);
       } else {
-        message.success({
-          content: 'Withdrawal requested successfully',
-          icon: <span className="orange-success-icon"> ✔ </span>,
-          className: 'orange-success-notification',
-          duration: 3,
-        });
+        message.success('Withdrawal requested successfully');
         history.push('/finops/transaction_history');
       }
     } catch (error) {
       console.error('Error processing withdrawal:', error);
-      message.error({
-        content: 'Failed to process withdrawal request',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
-        duration: 3,
-      });
+      message.error('Failed to process withdrawal request');
     } finally {
       setLoading(false);
     }
   };
 
-  // Submit crypto withdrawal
   const handleCryptoWithdrawal = async (values: any) => {
     try {
       setLoading(true);
 
-      const { amount } = values;
-
-      if (wallet?.balance === 0) {
-        message.error({
-          content: 'Insufficient Balance',
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
-        return;
-      }
-
-      if (amount > wallet?.balance) {
-        message.error({
-          content: 'Amount cannot exceed the wallet balance',
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
-        return;
-      }
-
       const formData = {
         type: Type.WALLET_TO_EXT,
-        amount: values.amount,
+        amount: amount,
         currency: 'USD',
         comment: values.comment,
         cryptoWallet: { ...values },
@@ -364,416 +289,476 @@ const Withdraw: React.FC = () => {
 
       const response = await api.transaction.Cryptowithdraw(formData);
 
-      if (
-        response.message &&
-        response.message.includes('User does not have enough wallet balance!')
-      ) {
-        message.error({
-          content: response.message,
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
+      if (response.message && response.message.includes('User does not have enough wallet balance!')) {
+        message.error(response.message);
       } else {
-        message.success({
-          content: 'Withdrawal requested successfully',
-          icon: <span className="orange-success-icon"> ✔ </span>,
-          className: 'orange-success-notification',
-          duration: 3,
-        });
+        message.success('Withdrawal requested successfully');
         history.push('/finops/transaction_history');
       }
     } catch (error) {
       console.error('Error processing crypto withdrawal:', error);
-      message.error({
-        content: 'Failed to process withdrawal request',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
-        duration: 3,
-      });
+      message.error('Failed to process withdrawal request');
     } finally {
       setLoading(false);
     }
   };
 
-  // Render account selection dropdown
-  const renderAccountDropdown = () => (
-    <Card className="step-card">
-      <div className="account-headerr">
-        <div className="account-title">
-          <h2>Withdraw from</h2>
+  const resetWithdraw = () => {
+    setCurrentStep(0);
+    setSelectedPaymentMethod(undefined);
+    setAmount(0);
+    amountForm.resetFields();
+    form.resetFields();
+  };
+
+  // Step components
+  const renderAccountSelection = () => (
+    <Card
+      title={
+        <div style={{ textAlign: 'center' }}>
+          <Title level={3} style={{ margin: 0, color: 'white' }}>
+            Select Source Account
+          </Title>
         </div>
-      </div>
-      <div className="step-content">
-        <Select
-          defaultValue={selectedAccount}
-          style={{ width: '100%', marginBottom: '20px' }}
-          onChange={handleAccountSelection}
-          value={selectedAccount}
-        >
-          <Option value="Wallet Account">Wallet Account</Option>
-          <Option value="MT5 Trading Account">MT5 Trading Account</Option>
-        </Select>
-      </div>
-    </Card>
-  );
+      }
+      className="withdraw-step-card"
+    >
+      <Row justify="center">
+        <Col xs={24} sm={16} md={12}>
+          <Select
+            size="large"
+            value={selectedAccount}
+            onChange={handleAccountChange}
+            style={{ width: '100%' }}
+            placeholder="Choose account type"
+          >
+            <Option value="Wallet Account">
+              <Space>
+                <WalletOutlined />
+                Wallet Account
+              </Space>
+            </Option>
+            <Option value="MT5 Trading Account">
+              <Space>
+                <BankOutlined />
+                MT5 Trading Account
+              </Space>
+            </Option>
+          </Select>
+        </Col>
+      </Row>
 
-  // Render step 1 - Select Currency
-  const renderStep1 = () => (
-    <Card className="step-card">
-      <div ref={step1Ref} className="account-headerr">
-        <div className="account-title">
-          <h2>Select Currency</h2>
-          <div className="account-subtitle">
-            <span className="verification-tag">Step 1</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="step-content">
-        <Text strong>Choose Wallet</Text>
-        <Select
-          className="currency-select"
-          placeholder="Select option"
-          style={{ width: '100%', marginTop: '8px', marginBottom: '20px' }}
-          onChange={handleCurrencySelect}
-          value={selectedCurrency}
-        >
-          <Option value="usd">USD (Available Balance: ${balance.toFixed(2)})</Option>
-        </Select>
-
-        <div className="action-buttons">
-          <Button onClick={resetToMainWithdraw} className="back-button">
-            Back
-          </Button>
+      {selectedAccount === 'Wallet Account' && (
+        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+          <Alert
+            message="Ready to proceed with Wallet withdrawal"
+            description={`Available balance: $${balance.toFixed(2)}`}
+            type="info"
+            showIcon
+            style={{ marginBottom: '16px' }}
+          />
           <Button
             type="primary"
-            onClick={handleContinue}
-            disabled={!selectedCurrency}
-            className="continue-button"
-            style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4', color: '#000' }}
+            size="large"
+            onClick={handleNextStep}
+            icon={<ArrowLeftOutlined />}
           >
             Continue
           </Button>
         </div>
-      </div>
+      )}
     </Card>
   );
 
-  // Render step 2 - Choose Payment Method
-  const renderStep2 = () => (
-    <Card className="step-card">
-      <div ref={step2Ref} className="account-headerr">
-        <div className="account-title">
-          <h2>Choose Payment Method</h2>
-          <div className="account-subtitle">
-            <span className="verification-tag">Step 2</span>
-          </div>
-        </div>
-      </div>
+  const renderPaymentMethods = () => {
+    const traditionalMethods = paymentMethods.filter(m => m.category === 'traditional');
+    const cryptoMethods = paymentMethods.filter(m => m.category === 'crypto');
 
-      <div className="step-content">
-        <div className="payment-table-container">
-          <table className="payment-table">
-            <thead>
-              <tr>
-                <th>Payment Option</th>
-                <th>Details</th>
-                <th>Processing Time</th>
-                <th>Cost</th>
-                <th>Operation</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paymentMethods.map((method, index) => (
-                <tr
-                  key={method.key}
-                  className={selectedPaymentMethod === method.key ? 'selected-row' : ''}
-                  style={{ backgroundColor: index % 2 === 1 ? '#f9f9f9' : '#ffffff' }}
-                >
-                  <td>
-                    <div className="payment-option">
-                      <div className="payment-icon-bg">{method.icon}</div>
-                      <span className="payment-label">{method.label}</span>
-                    </div>
-                  </td>
-                  <td>{method.details}</td>
-                  <td>{method.processingTime}</td>
-                  <td>{method.cost}</td>
-                  <td>
-                    <button
-                      className={`select-button ${
-                        selectedPaymentMethod === method.key ? 'selected' : ''
-                      }`}
-                      onClick={() => {
-                        handlePaymentMethodChange({ target: { value: method.key } });
-                        setCurrentStep(3); // Go to Step 3 immediately
-                      }}
-                    >
-                      Select
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </Card>
-  );
-
-  // Render step 3 - Bank Wire
-  const renderStep3BankWire = () => (
-    <Card className="step-card">
-      <div ref={step3Ref} className="account-headerr">
-        <div className="account-title-container">
-          <div className="account-title">
-            <h2>Bank Wire Withdrawal</h2>
-            <div className="account-subtitle">
-              <span className="verification-tag">Step 3</span>
-            </div>
-          </div>
-          <Button className="change-button chang" onClick={() => setCurrentStep(2)} type="link">
-            Change
-          </Button>
-        </div>
-      </div>
-
-      <div className="step-content">
-        <Text>Minimum withdrawal amount for bank wire should be 50 USD</Text>
-        <Text>Available for withdrawal: {balance.toFixed(2)} USD</Text>
-
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleBankWithdrawal}
-          className="withdraw-form"
-        >
-          <Form.Item
-            name="beneficiary"
-            label="Beneficiary Name"
-            rules={[{ required: true, message: 'Please enter beneficiary name' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="amount"
-            label="Withdrawal Amount*"
-            rules={[
-              { required: true, message: 'Please enter an amount' },
-              { type: 'number', message: 'Please enter a valid number' },
-              {
-                validator: (_, value) =>
-                  value >= 50
-                    ? Promise.resolve()
-                    : Promise.reject('Amount must be at least 50 USD'),
-              },
-            ]}
-          >
-            <InputNumber style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item
-            name="name"
-            label="Bank Name"
-            rules={[{ required: true, message: 'Please enter bank name' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="address"
-            label="Bank Address"
-            rules={[{ required: true, message: 'Please enter bank address' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="account"
-            label="Bank Account Number"
-            rules={[{ required: true, message: 'Please enter account number' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="ifscIban"
-            label="IFSC/IBAN"
-            rules={[{ required: true, message: 'Please enter IFSC/IBAN' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="comment"
-            label="Additional Comment"
-            rules={[{ required: true, message: 'Please enter a comment' }]}
-          >
-            <Input.TextArea />
-          </Form.Item>
-
-          <Form.Item>
-            <Checkbox>
-              I have read all instructions and agree with terms and conditions of payments
-              operations
-            </Checkbox>
-          </Form.Item>
-
-          <Form.Item>
-            <Checkbox>Save Bank Details</Checkbox>
-          </Form.Item>
-
-          <div className="action-buttons">
-            {/* <Button onClick={handleBack} className="back-button">
-              Back
-            </Button> */}
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              className="submit-button"
-              style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4', color: '#000' }}
-            >
-              Submit
-            </Button>
-          </div>
-        </Form>
-      </div>
-    </Card>
-  );
-
-  // Render step 3 - USDT
-  const renderStep3USDT = () => (
-    <Card className="step-card">
-      <div ref={step3UsdtRef} className="account-headerr">
-        <div className="account-title-container">
-          <div className="account-title">
-            <h2>USDT Withdrawal</h2>
-            <div className="account-subtitle">
-              <span className="verification-tag">Step 3</span>
-            </div>
-          </div>
-          <Button className="change-button chang" onClick={() => setCurrentStep(2)} type="link">
-            Change
-          </Button>
-        </div>
-      </div>
-
-      <div className="step-content">
-        <Text>Available for withdrawal: {balance.toFixed(2)} USD</Text>
-
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleCryptoWithdrawal}
-          className="withdraw-form"
-        >
-          <Form.Item
-            name="amount"
-            label="Withdrawal Amount*"
-            rules={[
-              { required: true, message: 'Please enter an amount' },
-              { type: 'number', message: 'Please enter a valid number' },
-              {
-                validator: (_, value) =>
-                  value >= 50
-                    ? Promise.resolve()
-                    : Promise.reject('Amount must be at least 50 USD'),
-              },
-            ]}
-          >
-            <InputNumber style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item
-            name="cyrptoWalletAddress"
-            label="USDT Wallet Address"
-            rules={[{ required: true, message: 'Please enter USDT wallet address' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="comment"
-            label="Additional Comment"
-            rules={[{ required: true, message: 'Please enter a comment' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <div className="action-buttons">
-            {/* <Button onClick={handleBack} className="back-button">
-              Back
-            </Button> */}
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              className="submit-button"
-              style={{ backgroundColor: '#9BF8F4', borderColor: '#9BF8F4' }}
-            >
-              Submit
-            </Button>
-          </div>
-        </Form>
-      </div>
-    </Card>
-  );
-
-  const renderMainContent = () => {
     return (
-      <div className="wallet-withdraw-steps">
-        <Card className="withdraw-card">
-          <div className="account-headerr">
-            <div className="account-title">
-              <h2>FUNDS MANAGEMENT</h2>
-              <div className="account-subtitle">
-                <span className="verification-tag">Select Operation Type</span>
-              </div>
-            </div>
-          </div>
+      <div className="payment-methods-container">
+        <Title level={2} style={{ textAlign: 'center', marginBottom: '32px' }}>
+          Choose Withdrawal Method
+        </Title>
 
-          <div className="withdraw-content">
-            <div className="withdraw-options">
-              <Card hoverable className="withdraw-option-card" onClick={handleWithdrawClick}>
-                <div className="option-container">
-                  <div className="icon-circle">
-                    <ArrowLeftOutlined className="withdraw-icon" />
-                  </div>
-                  <div className="card-text">
-                    <Text strong className="card-text-strong">
-                      Withdraw
+        <div style={{ marginBottom: '32px' }}>
+          <Title level={4}>
+            <BankOutlined style={{ marginRight: '8px' }} />
+            Traditional Methods
+          </Title>
+          <Row gutter={[16, 16]}>
+            {traditionalMethods.map((method) => (
+              <Col xs={24} sm={12} md={8} key={method.key}>
+                <Card
+                  hoverable
+                  className={`payment-method-card ${selectedPaymentMethod === method.key ? 'selected' : ''}`}
+                  onClick={() => handlePaymentMethodSelect(method.key)}
+                  style={{ height: '180px' }}
+                >
+                  <div className="payment-method-content">
+                    <div className="payment-icon">
+                      {method.icon}
+                    </div>
+                    <Title level={5}>{method.label}</Title>
+                    <Text type="secondary" style={{ fontSize: '12px' }}>
+                      {method.details}
                     </Text>
+                    <div className="processing-time">
+                      <Text strong>{method.processingTime}</Text>
+                    </div>
+                    <div style={{ marginTop: '8px' }}>
+                      <Text style={{ fontSize: '11px', color: '#ff6b6b' }}>
+                        Min: ${method.minAmount}
+                      </Text>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </Card>
-
-        {/* Account selection dropdown */}
-        <div className="account-dropdown-container" style={{ marginTop: '16px' }}>
-          {renderAccountDropdown()}
+                </Card>
+              </Col>
+            ))}
+          </Row>
         </div>
 
-        {/* Withdraw steps for wallet account */}
-        {!isMt5 && (
-          <div className="wallet-steps-container" style={{ marginTop: '16px' }}>
-            {currentStep === 1 && renderStep1()}
-            {currentStep === 2 && renderStep2()}
-            {currentStep === 3 && (
-              <>
-                {selectedPaymentMethod === 'bank-wire' && renderStep3BankWire()}
-                {selectedPaymentMethod === 'usdt' && renderStep3USDT()}
-              </>
-            )}
-          </div>
-        )}
+        <div>
+          <Title level={4}>
+            <ThunderboltOutlined style={{ marginRight: '8px' }} />
+            Cryptocurrency
+          </Title>
+          <Row gutter={[16, 16]}>
+            {cryptoMethods.map((method) => (
+              <Col xs={24} sm={12} md={8} key={method.key}>
+                <Card
+                  hoverable
+                  className={`payment-method-card crypto-card ${selectedPaymentMethod === method.key ? 'selected' : ''}`}
+                  onClick={() => handlePaymentMethodSelect(method.key)}
+                  style={{ height: '180px' }}
+                >
+                  <div className="payment-method-content">
+                    <div className="payment-icon crypto-icon">
+                      {method.icon}
+                    </div>
+                    <Title level={5}>{method.label}</Title>
+                    <Text type="secondary" style={{ fontSize: '12px' }}>
+                      {method.details}
+                    </Text>
+                    <div className="processing-time">
+                      <Text strong style={{ color: '#52c41a' }}>{method.processingTime}</Text>
+                    </div>
+                    <div style={{ marginTop: '8px' }}>
+                      <Text style={{ fontSize: '11px', color: '#ff6b6b' }}>
+                        Min: ${method.minAmount}
+                      </Text>
+                    </div>
+                  </div>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: '32px' }}>
+          <Button onClick={handlePrevStep} style={{ marginRight: '16px' }}>
+            Back
+          </Button>
+        </div>
       </div>
     );
   };
+
+  const renderAmountForm = () => {
+    const selectedMethod = paymentMethods.find(m => m.key === selectedPaymentMethod);
+
+    return (
+      <Card className="amount-form-card">
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <Title level={2}>Enter Withdrawal Amount</Title>
+
+          {selectedMethod && (
+            <Card className="selected-method-card" style={{ marginBottom: '24px' }}>
+              <Space>
+                <div className="selected-method-icon">
+                  {selectedMethod.icon}
+                </div>
+                <div>
+                  <Text strong>{selectedMethod.label}</Text>
+                  <br />
+                  <Text type="secondary">{selectedMethod.details}</Text>
+                  <br />
+                  <Text style={{ fontSize: '12px', color: '#ff6b6b' }}>
+                    Minimum: ${selectedMethod.minAmount}
+                  </Text>
+                </div>
+                <a
+                  onClick={() => setCurrentStep(1)}
+                  style={{ color: '#ff6b6b', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                  Change
+                </a>
+              </Space>
+            </Card>
+          )}
+
+          <Alert
+            message="Withdrawal Information"
+            description={`Available balance: $${balance.toFixed(2)}`}
+            type="info"
+            showIcon
+            style={{ marginBottom: '24px' }}
+          />
+        </div>
+
+        <Row justify="center">
+          <Col xs={24} sm={16} md={12}>
+            <Form
+              form={amountForm}
+              layout="vertical"
+              onFinish={handleAmountSubmit}
+              size="large"
+            >
+              <Form.Item
+                name="amount"
+                label="Amount (USD)"
+                rules={[
+                  { required: true, message: 'Please enter an amount' },
+                  { type: 'number', message: 'Please enter a valid number' },
+                  {
+                    validator: (_, value) => {
+                      if (!selectedMethod) return Promise.resolve();
+                      return value >= selectedMethod.minAmount
+                        ? Promise.resolve()
+                        : Promise.reject(`Amount must be at least $${selectedMethod.minAmount}`);
+                    },
+                  },
+                ]}
+              >
+                <InputNumber
+                  prefix="$"
+                  placeholder="Enter amount"
+                  style={{ width: '100%', fontSize: '18px' }}
+                  max={balance}
+                />
+              </Form.Item>
+
+              <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                <Space size="large">
+                  <Button size="large" onClick={handlePrevStep}>
+                    Back
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={withdrawProcessing}
+                    size="large"
+                  >
+                    Continue
+                  </Button>
+                </Space>
+              </div>
+            </Form>
+          </Col>
+        </Row>
+      </Card>
+    );
+  };
+
+  const renderWithdrawalDetails = () => {
+    const isCrypto = selectedPaymentMethod === 'usdt';
+    const isBank = selectedPaymentMethod === 'bank-wire';
+    const selectedMethod = paymentMethods.find(m => m.key === selectedPaymentMethod);
+
+    return (
+      <div className="withdrawal-details-container">
+        <Title level={2} style={{ textAlign: 'center', marginBottom: '32px' }}>
+          Complete Your Withdrawal
+        </Title>
+
+        <Row gutter={[24, 24]} justify="center">
+          <Col xs={24} lg={16}>
+            <Card className="withdrawal-form-card">
+              <div style={{ marginBottom: '24px', textAlign: 'center' }}>
+                <Alert
+                  message="Withdrawal Summary"
+                  description={
+                    <div>
+                      <p><strong>Method:</strong> {selectedMethod?.label}</p>
+                      <p><strong>Amount:</strong> ${amount}</p>
+                      <p><strong>Processing Time:</strong> {selectedMethod?.processingTime}</p>
+                    </div>
+                  }
+                  type="info"
+                  showIcon
+                />
+              </div>
+
+              {isBank && (
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={handleBankWithdrawal}
+                  size="large"
+                >
+                  <Title level={4}>Bank Wire Details</Title>
+                  
+                  <Form.Item
+                    name="beneficiary"
+                    label="Beneficiary Name"
+                    rules={[{ required: true, message: 'Please enter beneficiary name' }]}
+                  >
+                    <Input placeholder="Enter beneficiary name" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="name"
+                    label="Bank Name"
+                    rules={[{ required: true, message: 'Please enter bank name' }]}
+                  >
+                    <Input placeholder="Enter bank name" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="address"
+                    label="Bank Address"
+                    rules={[{ required: true, message: 'Please enter bank address' }]}
+                  >
+                    <Input placeholder="Enter bank address" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="account"
+                    label="Bank Account Number"
+                    rules={[{ required: true, message: 'Please enter account number' }]}
+                  >
+                    <Input placeholder="Enter account number" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="ifscIban"
+                    label="IFSC/IBAN"
+                    rules={[{ required: true, message: 'Please enter IFSC/IBAN' }]}
+                  >
+                    <Input placeholder="Enter IFSC/IBAN" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="comment"
+                    label="Additional Comment"
+                    rules={[{ required: true, message: 'Please enter a comment' }]}
+                  >
+                    <Input.TextArea placeholder="Enter additional comments" />
+                  </Form.Item>
+
+                  <Form.Item>
+                    <Checkbox>
+                      I have read all instructions and agree with terms and conditions of payment operations
+                    </Checkbox>
+                  </Form.Item>
+
+                  <Form.Item>
+                    <Checkbox>Save Bank Details</Checkbox>
+                  </Form.Item>
+
+                  <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <Space size="large">
+                      <Button size="large" onClick={handlePrevStep}>
+                        Back
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                        size="large"
+                        icon={<CheckCircleOutlined />}
+                      >
+                        Submit Withdrawal
+                      </Button>
+                    </Space>
+                  </div>
+                </Form>
+              )}
+
+              {isCrypto && (
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={handleCryptoWithdrawal}
+                  size="large"
+                >
+                  <Title level={4}>USDT Withdrawal Details</Title>
+                  
+                  <Alert
+                    message="Important"
+                    description="Please ensure the wallet address is correct. Cryptocurrency transactions cannot be reversed."
+                    type="warning"
+                    showIcon
+                    style={{ marginBottom: '24px' }}
+                  />
+
+                  <Form.Item
+                    name="cyrptoWalletAddress"
+                    label="USDT Wallet Address"
+                    rules={[{ required: true, message: 'Please enter USDT wallet address' }]}
+                  >
+                    <Input placeholder="Enter your USDT wallet address" />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="comment"
+                    label="Additional Comment"
+                    rules={[{ required: true, message: 'Please enter a comment' }]}
+                  >
+                    <Input placeholder="Enter additional comments" />
+                  </Form.Item>
+
+                  <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <Space size="large">
+                      <Button size="large" onClick={handlePrevStep}>
+                        Back
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                        size="large"
+                        icon={<CheckCircleOutlined />}
+                      >
+                        Submit Withdrawal
+                      </Button>
+                    </Space>
+                  </div>
+                </Form>
+              )}
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    );
+  };
+
+  const renderMT5Withdraw = () => (
+    <div style={{ padding: '24px' }}>
+      <Transfer
+        title={'Withdraw from MT5'}
+        type={Type.MT_TO_WALLET}
+        successMsg={{
+          content: 'Requested withdraw from MT5 successfully!',
+          icon: <span className="orange-success-icon"> ✔ </span>,
+          className: 'orange-success-notification',
+          duration: 3,
+        }}
+        failureMsg={{
+          content: 'Failed to request withdraw amount from MT5!',
+          icon: <span className="orange-error-icon"> ✘ </span>,
+          className: 'orange-error-notification',
+          duration: 3,
+        }}
+      />
+    </div>
+  );
+
+  const steps = [
+    { title: 'Account', icon: <WalletOutlined /> },
+    { title: 'Method', icon: <SwapOutlined /> },
+    { title: 'Amount', icon: <DollarCircleOutlined /> },
+    { title: 'Complete', icon: <CheckCircleOutlined /> },
+  ];
 
   return (
     <>
@@ -781,33 +766,57 @@ const Withdraw: React.FC = () => {
         <CustomLoader />
       ) : proofData === 'Approved' ? (
         <ConfigProvider>
-          {loading ? (
-            <CustomLoader />
-          ) : (
-            <PageContainer>
-              {renderMainContent()}
+          <PageContainer>
+            <div className="modern-withdraw-container">
+              <div className="withdraw-header">
+                <Title level={1} style={{ textAlign: 'center', marginBottom: '8px' }}>
+                  Withdraw Your Funds
+                </Title>
+                <Text
+                  type="secondary"
+                  style={{
+                    display: 'block',
+                    textAlign: 'center',
+                    fontSize: '16px',
+                    color: 'white',
+                  }}
+                >
+                  Quick and secure withdrawals to access your trading profits
+                </Text>
+              </div>
 
-              {/* Conditional Render for MT5 */}
-              {isMt5 && (
-                <Transfer
-                  title={'Withdraw from MT5'}
-                  type={Type.MT_TO_WALLET}
-                  successMsg={{
-                    content: 'Requested withdraw from MT5 successfully!',
-                    icon: <span className="orange-success-icon"> ✔ </span>,
-                    className: 'orange-success-notification',
-                    duration: 3,
-                  }}
-                  failureMsg={{
-                    content: 'Failed to request withdraw amount from MT5!',
-                    icon: <span className="orange-error-icon"> ✘ </span>,
-                    className: 'orange-error-notification',
-                    duration: 3,
-                  }}
-                />
+              {!isMt5 && (
+                <div className="progress-section">
+                  <Steps current={currentStep} size="small" style={{ maxWidth: '800px', margin: '32px auto' }}>
+                    {steps.map((step, index) => (
+                      <Step key={index} title={step.title} icon={step.icon} />
+                    ))}
+                  </Steps>
+                </div>
               )}
-            </PageContainer>
-          )}
+
+              <div className="withdraw-content">
+                {isMt5 ? (
+                  renderMT5Withdraw()
+                ) : (
+                  <>
+                    {currentStep === 0 && renderAccountSelection()}
+                    {currentStep === 1 && renderPaymentMethods()}
+                    {currentStep === 2 && renderAmountForm()}
+                    {currentStep === 3 && renderWithdrawalDetails()}
+                  </>
+                )}
+              </div>
+
+              {currentStep > 0 && !isMt5 && (
+                <div style={{ textAlign: 'center', marginTop: '32px' }}>
+                  <Button onClick={resetWithdraw} type="link">
+                    Start New Withdrawal
+                  </Button>
+                </div>
+              )}
+            </div>
+          </PageContainer>
         </ConfigProvider>
       ) : (
         <StatusPage />

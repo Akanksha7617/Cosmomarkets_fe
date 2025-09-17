@@ -69,79 +69,131 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
 
   useEffect(() => {
     const tabs =
-      appUser.UserDtos?.map((u) => {
+      appUser.UserDtos?.map((u, index) => {
+
         return {
           key: u.Login,
           title: u.Login,
           content: (
-            <div className="live-account-card-wrapper">
-              <div className="live-account-top-strip"></div>
-              <div className="live-account-container">
-                {/* Header Row */}
-                <div className="live-account-header">
-                  <button className="arrow-button" onClick={() => setModalVisible(true)}>
-                    +MT5 Sub Account
-                  </button>
-                </div>
-
-                {/* Main Content - Horizontal Layout */}
-                <div className="main-content-wrapper">
-                  {/* Left Side - Balance Display */}
-                  <div className="balance-display-section">
-                    <div className="main-balance">
-                      <div className="balance-label">Account Balance</div>
-                      <div className="balance-amount">${u.Balance?.toFixed(2) ?? '0.00'}</div>
-                      <div className="balance-subtitle">Available for trading</div>
+            <div className="account-dashboard-card">
+              {/* Header Section */}
+              <div className="dashboard-header">
+                <div className="header-row">
+                  <div className="account-summary">
+                    <h2 className="account-name">MT5 Trading Account</h2>
+                    <div className="account-details">
+                      Account ID: {u.Login} | Server: MT5-Live
                     </div>
-
-                    {/* Quick Action Buttons */}
-                    <div className="quick-actions">
-                      <button
-                        onClick={() => history.push('/finops/deposit?account=mt5')}
-                        className="action-btn deposit-btn"
-                      >
-                        Deposit
-                      </button>
-                      <button
-                        onClick={() => history.push('/finops/withdraw?account=mt5')}
-                        className="action-btn withdraw-btn"
-                      >
-                        Withdraw
-                      </button>
+                    <div className="account-status-badge">
+                      <div className="status-indicator"></div>
+                      Active
                     </div>
                   </div>
+                  <button className="add-account-btn" onClick={() => setModalVisible(true)}>
+                    + Add Sub Account
+                  </button>
+                </div>
+              </div>
 
-                  {/* Right Side - Account Details & Performance */}
-                  <div className="right-content">
-                    {/* Account Details Grid */}
-                    <div className="account-details-section">
-                      <h4 className="section-title">Account Details</h4>
-                      <div className="live-account-grid">
-                        <div className="live-account-field">
-                          <div className="label">Equity</div>
-                          <div className="value">${u.EquityPrevDay?.toFixed(2) ?? '0.00'}</div>
+              {/* Main Content */}
+              <div className="dashboard-content">
+                {/* Balance Section */}
+                <div className="balance-showcase">
+                  <div className="balance-container">
+                    <div className="balance-label">Account Balance</div>
+                    <div className="balance-amount">${u.Balance?.toFixed(2) ?? '0.00'}</div>
+                    <div className="balance-subtitle">Available for trading</div>
+                  </div>
+
+                  <div className="trading-action-buttons">
+                    <button
+                      onClick={() => history.push('/finops/deposit?account=mt5')}
+                      className="trading-btn deposit-trading-btn"
+                    >
+                      Deposit
+                    </button>
+                    <button
+                      onClick={() => history.push('/finops/withdraw?account=mt5')}
+                      className="trading-btn withdraw-trading-btn"
+                    >
+                      Withdraw
+                    </button>
+                  </div>
+                </div>
+
+                {/* Details Section */}
+                <div className="details-showcase">
+                  <h3 className="details-title">Account Metrics</h3>
+
+                  <div className="metrics-container">
+                    <div className="metrics-row">
+                      <div className="metric-card primary">
+
+                        <div className="metric-content">
+                          <div className="metric-name">Equity</div>
+                          <div className="metric-figure">${u.EquityPrevDay?.toFixed(2) ?? '0.00'}</div>
                         </div>
-                        <div className="live-account-field">
-                          <div className="label">Free Margin</div>
-                          <div className="value">${u.MarginFree?.toFixed(2) ?? '0.00'}</div>
+                      </div>
+
+                      <div className="metric-card">
+
+                        <div className="metric-content">
+                          <div className="metric-name">Free Margin</div>
+                          <div className="metric-figure">${u.MarginFree?.toFixed(2) ?? '0.00'}</div>
                         </div>
-                        <div className="live-account-field">
-                          <div className="label">Used Margin</div>
-                          <div className="value">${u.Margin?.toFixed(2) ?? '0.00'}</div>
+                      </div>
+                    </div>
+
+                    <div className="metrics-row">
+                      <div className="metric-card">
+
+                        <div className="metric-content">
+                          <div className="metric-name">Used Margin</div>
+                          <div className="metric-figure">${u.Margin?.toFixed(2) ?? '0.00'}</div>
                         </div>
-                        <div className="live-account-field">
-                          <div className="label">Margin Level</div>
-                          <div className={`value ${u.MarginLevel > 100 ? 'positive' : 'negative'}`}>
+                      </div>
+
+                      <div className="metric-card">
+
+                        <div className="metric-content">
+                          <div className="metric-name">Margin Level</div>
+                          <div className={`metric-figure ${u.MarginLevel > 100 ? 'positive' : 'negative'}`}>
                             {u.MarginLevel?.toFixed(2) ?? '0.00'}%
                           </div>
                         </div>
-                        <div className="live-account-field">
-                          <div className="label">Agent Code</div>
-                          <div className="value">{appUser.Promo || '--'}</div>
+                      </div>
+                    </div>
+
+                    <div className="metrics-row">
+                      <div className="metric-card">
+
+                        <div className="metric-content">
+                          <div className="metric-name">Credit</div>
+                          <div className="metric-figure">${(u.Credit || 0).toFixed(2)}</div>
+                        </div>
+                      </div>
+
+                      <div className="metric-card">
+
+                        <div className="metric-content">
+                          <div className="metric-name">Agent Code</div>
+                          <div className="metric-figure">{appUser.Promo || '--'}</div>
                         </div>
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="dashboard-footer">
+                <div className="footer-info">
+                  <span>Real-time data</span>
+                  <span>•</span>
+                  <span>Secure connection</span>
+                </div>
+                <div className="last-updated">
+                  Last updated: {new Date().toLocaleDateString()}
                 </div>
               </div>
             </div>
@@ -152,6 +204,7 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
     getUserAccount();
     setTabs(tabs);
   }, [appUser]);
+
   const tabBarStyle = {
     background: 'transparent',
     border: 'none',
@@ -509,9 +562,9 @@ const Dashboard: React.FC = () => {
                           fill="none"
                         >
                         </svg>
-                        
+
                       </div>
-                    
+
                     </div>
 
                     {/* Enhanced Wallet ID Card - White Design */}
@@ -528,7 +581,7 @@ const Dashboard: React.FC = () => {
                           viewBox="0 0 24 24"
                           fill="none"
                         >
-                          
+
                         </svg>
                       </div>
                     </div>
@@ -540,14 +593,14 @@ const Dashboard: React.FC = () => {
                       onClick={() => history.push('/finops/deposit')}
                       className="action-btn deposit-btn"
                     >
-                      
+
                       Deposit
                     </button>
                     <button
                       onClick={() => history.push('/finops/withdraw')}
                       className="action-btn withdraw-btn"
                     >
-                      
+
                       Withdraw
                     </button>
                   </div>
@@ -558,13 +611,13 @@ const Dashboard: React.FC = () => {
                   <div className="history-section">
                     <div className="history-header">
                       <h3>History</h3>
-                      <button className="view-all-btn">View All</button>
+
                     </div>
 
                     <div className="history-list">
                       <div className="history-item deposit">
                         <div className="history-icon">
-                          
+
                         </div>
                         <div className="history-details">
                           <div className="history-title">Total Deposit</div>
@@ -575,7 +628,7 @@ const Dashboard: React.FC = () => {
 
                       <div className="history-item withdraw">
                         <div className="history-icon">
-                          
+
                         </div>
                         <div className="history-details">
                           <div className="history-title">Total Withdrawal</div>
@@ -586,8 +639,8 @@ const Dashboard: React.FC = () => {
 
                       <div className="history-item mt5_deposit">
                         <div className="history-icon">
-                         
-                            
+
+
                         </div>
                         <div className="history-details">
                           <div className="history-title">Total MT5 Deposit</div>
@@ -598,7 +651,7 @@ const Dashboard: React.FC = () => {
 
                       <div className="history-item mt5_withdraw">
                         <div className="history-icon">
-                          
+
                         </div>
                         <div className="history-details">
                           <div className="history-title">Total MT5 Withdrawal</div>

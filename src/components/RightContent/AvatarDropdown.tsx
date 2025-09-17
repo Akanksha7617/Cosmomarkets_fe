@@ -8,7 +8,6 @@ import React, { useCallback } from 'react';
 import { flushSync } from 'react-dom';
 import HeaderDropdown from '../HeaderDropdown';
 import {api} from "@/components/common/api";
-import "../../common.css"
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -18,7 +17,7 @@ export type GlobalHeaderRightProps = {
 export const AvatarName = () => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState || {};
-  return <span className="username" style={{color:'black', fontWeight:'bold'}}>{currentUser?.name}</span>;
+  return <span className="username" style={{fontWeight:'bold' , color:'white'}}>{currentUser?.name}</span>;
 };
 
 export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, children }) => {
@@ -114,11 +113,11 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
           },
         ]
       : []),
-    // {
-    //   key: 'logout',
-    //   icon: <LogoutOutlined />,
-    //   label: 'Logout',
-    // },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+    },
     // {
     //   key: 'username',
     //   icon: <UserOutlined />,

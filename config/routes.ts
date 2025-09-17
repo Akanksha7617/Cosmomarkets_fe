@@ -240,12 +240,12 @@
     component: './Admin/HelpDeskUser',
     access: 'canClient',
   },
-  {
-    path: '/signout',
-    name: 'Logout',
-    icon: 'PoweroffOutlined',
-    component: './SignOut',
-  },
+  // {
+  //   path: '/signout',
+  //   name: 'Logout',
+  //   icon: 'PoweroffOutlined',
+  //   component: './SignOut',
+  // },
 
   {
     path: '/',
