@@ -599,13 +599,14 @@ const HelpDeskAdmin: React.FC = () => {
                           key={msg.id}
                           className={`chat-bubble ${msg.isMine ? "mine" : "theirs"}`}
                           style={{
-                            backgroundColor:
+                            background:
                               msg.senderRole === "Admin"
-                                ? "rgba(156, 255, 12, 0.55)"
+                                ? "linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%)"
                                 : msg.isMine
                                   ? "#dcf8c6"
-                                  : "rgb(212, 238, 238)",
+                                  : "#F58C35",
                           }}
+
                         >
                           {/* Show sender (only if not Admin) */}
                           {msg.senderRole !== "Admin" && (
