@@ -15,7 +15,7 @@ interface QueryData {
   createdAt: number;
   updatedAt: number;
   message: string;
-  resolvedAt: number | null; // Added resolvedAt field
+  resolvedAt: number | null;
 }
 
 interface ChatMessage {
@@ -46,9 +46,8 @@ const HelpDeskUser: React.FC = () => {
   const [queries, setQueries] = useState<QueryData[]>([]);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [totalQueries, setTotalQueries] = useState<number>(0);
-
-  //add loader
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   // --- Filter states ---
   const [searchText, setSearchText] = useState<string>('');
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
@@ -73,7 +72,6 @@ const HelpDeskUser: React.FC = () => {
     loadQueries();
   }, []);
 
-  // Add effect to update status when queries change
   useEffect(() => {
     if (selectedQueryId) {
       const currentQuery = queries.find((q) => q.id === selectedQueryId);
@@ -87,16 +85,14 @@ const HelpDeskUser: React.FC = () => {
     return date ? date.format('YYYY-MM-DD') : null;
   };
 
-  // Modify the loadQueries function to use the correct parameter names
   const loadQueries = async (params: FilterParams = filterParams) => {
     try {
       setIsRefreshing(true);
 
-      // Here's the key change - use searchParam instead of search
       const res = await api.app.getUserQueries(
         params.pageNumber,
         params.pageSize,
-        params.search, // This should match 'searchParam' in the API
+        params.search,
         params.startDate,
         params.endDate,
         params.status,
@@ -120,8 +116,8 @@ const HelpDeskUser: React.FC = () => {
       console.error('Failed to fetch queries:', err);
       antMessage.error({
         content: 'Failed to fetch queries.',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
+        icon: <span className="notification-error-icon"> ✘ </span>,
+        className: 'notification-error-style',
         duration: 3,
       });
     } finally {
@@ -135,35 +131,30 @@ const HelpDeskUser: React.FC = () => {
       search: searchText,
       startDate: dateRange && dateRange[0] ? formatDateForApi(dateRange[0]) : null,
       endDate: dateRange && dateRange[1] ? formatDateForApi(dateRange[1]) : null,
-      status: statusFilter === 'All' ? null : statusFilter, // Fix: Convert 'All' to null
-      pageNumber: 1, // Reset to first page when applying new filters
+      status: statusFilter === 'All' ? null : statusFilter,
+      pageNumber: 1,
     };
 
     setFilterParams(updatedParams);
     loadQueries(updatedParams);
   };
 
-  // Handle date range change
   const handleDateRangeChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
     setDateRange(dates);
   };
 
-  // Handle status filter change
   const handleStatusChange = (value: string | null) => {
     setStatusFilter(value);
   };
 
-  // Search button handler
   const handleSearch = () => {
     applyFilters();
-
     antMessage.info({
       content: 'Applying filters...',
       duration: 1,
     });
   };
 
-  // Pagination handler
   const handlePageChange = (page: number, pageSize?: number) => {
     const updatedParams = {
       ...filterParams,
@@ -175,7 +166,6 @@ const HelpDeskUser: React.FC = () => {
     loadQueries(updatedParams);
   };
 
-  // Refresh handler
   const handleRefresh = () => {
     setSearchText('');
     setDateRange(null);
@@ -199,16 +189,16 @@ const HelpDeskUser: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true); //start load
+    setIsSubmitting(true);
     try {
       const resp = await api.app.createTicket({ queryType, message });
       const msg = (resp || '').toString().toLowerCase();
 
       if (msg.includes('ticket created')) {
         antMessage.success({
-          content: ' Ticket submitted successfully!',
-          icon: <span className="orange-success-icon"> ✓ </span>,
-          className: 'orange-success-notification',
+          content: 'Ticket submitted successfully!',
+          icon: <span className="notification-success-icon"> ✓ </span>,
+          className: 'notification-success-style',
           duration: 3,
         });
         setQueryType('');
@@ -216,9 +206,9 @@ const HelpDeskUser: React.FC = () => {
         await loadQueries();
       } else {
         antMessage.error({
-          content: resp || ' Failed to submit ticket.',
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
+          content: resp || 'Failed to submit ticket.',
+          icon: <span className="notification-error-icon"> ✘ </span>,
+          className: 'notification-error-style',
           duration: 3,
         });
       }
@@ -226,13 +216,12 @@ const HelpDeskUser: React.FC = () => {
       console.error(err);
       antMessage.error({
         content: 'Something went wrong while submitting your query.',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
+        icon: <span className="notification-error-icon"> ✘ </span>,
+        className: 'notification-error-style',
         duration: 3,
       });
-    }
-    finally {
-      setIsSubmitting(false);  // stop loader
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -241,13 +230,11 @@ const HelpDeskUser: React.FC = () => {
     setLoadingMessages(true);
 
     try {
-      // Get updated data for this specific query
       const singleQueryParams = {
         ...filterParams,
         search: queryId.toString(),
       };
 
-      // If status is "All", don't send status parameter to API
       const apiStatusParam = singleQueryParams.status === 'All' ? null : singleQueryParams.status;
 
       const updatedQueryRes = await api.app.getUserQueries(
@@ -275,7 +262,6 @@ const HelpDeskUser: React.FC = () => {
       const ticket = updatedQueries.find((q) => q.id === queryId);
 
       if (ticket) {
-        // Make sure we're immediately updating the status
         setSelectedQueryStatus(ticket.status);
 
         const hasInitialMessage = msgs.some(
@@ -297,9 +283,9 @@ const HelpDeskUser: React.FC = () => {
 
         if (ticket.status === 'Resolved') {
           antMessage.success({
-            content: ' Your ticket is resolved!',
-            icon: <span className="orange-success-icon"> ✓ </span>,
-            className: 'orange-success-notification',
+            content: 'Your ticket is resolved!',
+            icon: <span className="notification-success-icon"> ✓ </span>,
+            className: 'notification-success-style',
             duration: 3,
           });
         }
@@ -308,14 +294,13 @@ const HelpDeskUser: React.FC = () => {
         setSelectedQueryStatus(null);
       }
 
-      // Refresh the query list to show updated status
       loadQueries();
     } catch (err) {
       console.error(err);
       antMessage.error({
-        content: ' Could not load chat messages or updated query data.',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
+        content: 'Could not load chat messages or updated query data.',
+        icon: <span className="notification-error-icon"> ✘ </span>,
+        className: 'notification-error-style',
         duration: 3,
       });
     } finally {
@@ -325,7 +310,7 @@ const HelpDeskUser: React.FC = () => {
 
   const handleSendMessage = async () => {
     if (!chatInput.trim() || selectedQueryId === null) {
-      console.warn('🚫 Empty message or no selected query.');
+      console.warn('Empty message or no selected query.');
       return;
     }
 
@@ -343,30 +328,27 @@ const HelpDeskUser: React.FC = () => {
 
       await api.app.postReply(selectedQueryId, chatInput);
 
-      // Success message after the message is sent
       antMessage.success({
-        content: ' Your message was sent successfully!',
-        icon: <span className="orange-success-icon"> ✓ </span>,
-        className: 'orange-success-notification',
+        content: 'Your message was sent successfully!',
+        icon: <span className="notification-success-icon"> ✓ </span>,
+        className: 'notification-success-style',
         duration: 3,
       });
 
-      // Refresh queries to get updated status after sending message
       loadQueries();
     } catch (err: any) {
-      console.error(' Failed to send message:', err);
+      console.error('Failed to send message:', err);
 
       if (err?.response?.data) {
-        console.error('🔍 Server Error Response:', err.response.data);
+        console.error('Server Error Response:', err.response.data);
       } else {
-        console.error('🔍 Error Details:', err);
+        console.error('Error Details:', err);
       }
 
-      // Error message if sending fails
       antMessage.error({
-        content: ' Failed to send message.',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
+        content: 'Failed to send message.',
+        icon: <span className="notification-error-icon"> ✘ </span>,
+        className: 'notification-error-style',
         duration: 3,
       });
     }
@@ -374,7 +356,6 @@ const HelpDeskUser: React.FC = () => {
 
   const selectedQuery = selectedQueryId ? queries.find((q) => q.id === selectedQueryId) : null;
 
-  // Helper function to format date for display
   const formatDate = (timestamp: number | null): string => {
     if (!timestamp) return '-';
     return new Date(timestamp).toLocaleDateString();
@@ -384,14 +365,11 @@ const HelpDeskUser: React.FC = () => {
     const msgDate = new Date(timestamp);
     const today = new Date();
 
-    // Reset times to midnight for accurate comparison
-    const isToday =
-      msgDate.toDateString() === today.toDateString();
+    const isToday = msgDate.toDateString() === today.toDateString();
 
     const yesterday = new Date();
     yesterday.setDate(today.getDate() - 1);
-    const isYesterday =
-      msgDate.toDateString() === yesterday.toDateString();
+    const isYesterday = msgDate.toDateString() === yesterday.toDateString();
 
     if (isToday) return "Today";
     if (isYesterday) return "Yesterday";
@@ -405,7 +383,7 @@ const HelpDeskUser: React.FC = () => {
 
   const groupMessagesByDate = (msgs: ChatMessage[]) => {
     return msgs.reduce((groups: { [key: string]: ChatMessage[] }, msg) => {
-      const dateKey = formatChatDate(msg.createdAt); // 👈 use helper here
+      const dateKey = formatChatDate(msg.createdAt);
       if (!groups[dateKey]) groups[dateKey] = [];
       groups[dateKey].push(msg);
       return groups;
@@ -413,158 +391,179 @@ const HelpDeskUser: React.FC = () => {
   };
 
   return (
-    <div className="page-wrapper">
-      <div className="query-page-container">
-        {/* ====== Submit Form ====== */}
-        <h1>Submit Your Query</h1>
-        <form className="query-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="queryType" className="form-label">
-              Query Title
-            </label>
-            <div className="select-wrapper">
-              <select
-                id="queryType"
-                value={queryType}
-                onChange={(e) => setQueryType(e.target.value)}
-                required
-                className="modern-select"
-              >
-                <option value="" disabled>
-                  Select Query Type
-                </option>
-                <option value="Deposit">Deposit</option>
-                <option value="Withdraw">Withdraw</option>
-                <option value="Technical">Technical</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="message" className="form-label">
-              Message
-            </label>
-            <textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={8}
-              maxLength={2000}
-              placeholder="Type your message here (200 words max)"
-              required
-              className="modern-textarea"
-            />
-          </div>
-          {/* <button type="submit" className="submit-btn">
-            <span>Submit Query</span>
-            <svg
-              className="btn-icon"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
-          </button> */}
-          <button type="submit" className="submit-btn" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <span className="submit-query-loader"></span>
-            ) : (
-              <>
-                <span>Submit Query</span>
-                <svg
-                  className="btn-icon"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </>
-            )}
-          </button>
-        </form>
+    <div className="helpdesk-main-wrapper">
+      <div className="helpdesk-content-container">
+        {/* ====== Header Section ====== */}
+        <div className="helpdesk-header-section">
+          <h1 className="helpdesk-main-title">Support Center</h1>
+          <p className="helpdesk-subtitle">Submit your queries and track their status</p>
+        </div>
 
-        {/* ====== Queries Table ====== */}
-        <div className="queries-table-container">
-          <div className="filters-wrapper">
-            <div className="filters-container">
-              {/* Date Range Picker */}
-              <div className="date-filter">
+        {/* ====== Ticket Creation Form ====== */}
+        <div className="ticket-creation-section">
+          <div className="ticket-form-header">
+            <h2 className="section-title">Create New Ticket</h2>
+            <div className="header-decoration"></div>
+          </div>
+          
+          <form className="ticket-submission-form" onSubmit={handleSubmit}>
+            <div className="form-input-wrapper">
+              <div className="input-label-container">
+                <label htmlFor="queryType" className="enhanced-form-label">
+                  <div className="label-content">
+                    <svg className="label-icon" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4"/>
+                      <circle cx="12" cy="12" r="9"/>
+                    </svg>
+                    <span className="label-title">Issue Category</span>
+                  </div>
+                  {/* <span className="mandatory-asterisk">*</span> */}
+                </label>
+              </div>
+              
+              <div className="enhanced-select-wrapper">
+                <select
+                  id="queryType"
+                  value={queryType}
+                  onChange={(e) => setQueryType(e.target.value)}
+                  required
+                  className="premium-select-field"
+                >
+                  <option value="" disabled>Select your issue category...</option>
+                  <option value="Deposit">💰 Payment & Deposit Issues</option>
+                  <option value="Withdraw">💳 Withdrawal & Payout Problems</option>
+                  <option value="Technical">⚙️ Technical Support & Bugs</option>
+                  <option value="Other">💬 General Questions & Others</option>
+                </select>
+                <div className="select-dropdown-icon">
+                  <svg viewBox="0 0 24 24">
+                    <polyline points="6,9 12,15 18,9"/>
+                  </svg>
+                </div>
+                <div className="select-focus-ring"></div>
+              </div>
+            </div>
+
+            <div className="form-input-wrapper">
+              <div className="input-label-container">
+                <label htmlFor="message" className="enhanced-form-label">
+                  <div className="label-content">
+                    <svg className="label-icon" viewBox="0 0 24 24">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span className="label-title">Issue Details</span>
+                  </div>
+                  {/* <span className="mandatory-asterisk">*</span> */}
+                </label>
+      
+              </div>
+              
+              <div className="enhanced-textarea-wrapper">
+                <textarea
+                  id="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={8}
+                  maxLength={2000}
+                  required
+                  className="premium-textarea-field"
+                />
+                <div className="textarea-focus-ring"></div>
+                <div className="textarea-bottom-bar">
+                  <div className="character-progress-container">
+                    <span className="character-count-text">{message.length}/2000 characters</span>
+                    <div className="character-progress-bar">
+                      <div 
+                        className="character-progress-fill" 
+                        style={{width: `${(message.length / 2000) * 100}%`}}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" className="ticket-submit-button" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <div className="submit-loading-spinner"></div>
+              ) : (
+                <>
+                  <span className="submit-button-text">Submit Ticket</span>
+                  <svg className="submit-button-icon" viewBox="0 0 24 24">
+                    <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+                  </svg>
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+
+        {/* ====== Tickets Management Section ====== */}
+        <div className="tickets-management-section">
+          <div className="management-header">
+            <h2 className="section-title">Your Tickets</h2>
+            <div className="header-decoration"></div>
+          </div>
+
+          {/* Filter Controls */}
+          <div className="filter-controls-wrapper">
+            <div className="filter-controls-container">
+              <div className="date-range-filter">
                 <RangePicker
                   onChange={(dates) => handleDateRangeChange(dates as [Dayjs | null, Dayjs | null])}
                   value={dateRange}
-                  placeholder={['Start Date', 'End Date']}
+                  placeholder={['From Date', 'To Date']}
+                  className="styled-date-picker"
                 />
               </div>
 
-              {/* Status Filter with All option */}
-              <div className="status-filter">
+              <div className="status-dropdown-filter">
                 <Select
-                  placeholder="Status"
+                  placeholder="Filter by Status"
                   value={statusFilter}
                   onChange={handleStatusChange}
                   allowClear
+                  className="styled-status-select"
                   optionLabelProp="label"
                 >
-                  <Select.Option value="All" label="All">
-                    All
-                  </Select.Option>
-                  <Select.Option value="Pending" label="Pending">
-                    Pending
-                  </Select.Option>
-                  <Select.Option value="Resolved" label="Resolved">
-                    Resolved
-                  </Select.Option>
+                  <Select.Option value="All" label="All Status">All Status</Select.Option>
+                  <Select.Option value="Pending" label="Pending">Pending</Select.Option>
+                  <Select.Option value="Resolved" label="Resolved">Resolved</Select.Option>
                 </Select>
               </div>
 
-              {/* Search Box */}
-              <div className="search-container">
+              <div className="search-input-container">
                 <input
                   type="text"
-                  className="search-input"
-                  placeholder="Search"
+                  className="ticket-search-input"
+                  placeholder="Search tickets..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                 />
+                <svg className="search-input-icon" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="m21 21-4.35-4.35"/>
+                </svg>
               </div>
 
-              {/* Action Buttons */}
-              <div className="action-buttons">
-                {/* Search Button */}
-                <button className="search-btn" onClick={handleSearch}>
-                  Search
+              <div className="filter-action-buttons">
+                <button className="apply-filters-button" onClick={handleSearch}>
+                  <svg className="button-icon" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                  </svg>
+                  Apply Filters
                 </button>
 
-                {/* Refresh Button */}
-                <button className="refresh-btn" onClick={handleRefresh} disabled={isRefreshing}>
-                  <Tooltip title="Refresh queries">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
+                <button 
+                  className="refresh-data-button" 
+                  onClick={handleRefresh} 
+                  disabled={isRefreshing}
+                >
+                  <Tooltip title="Refresh ticket data">
+                    <svg 
+                      className={`refresh-button-icon ${isRefreshing ? 'spinning-animation' : ''}`} 
                       viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={`refresh-icon ${isRefreshing ? 'rotating' : ''}`}
                     >
                       <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
                     </svg>
@@ -573,179 +572,207 @@ const HelpDeskUser: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="table-responsive">
-            <table className="queries-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Query Type</th>
-                  <th>Status</th>
-                  <th>Issue Date</th>
-                  {/* <th>Last Updated</th> */}
-                  <th>Resolved Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {queries.length > 0 ? (
-                  queries.map((q) => (
-                    <tr key={q.id}>
-                      <td>{q.id}</td>
-                      <td>{q.name}</td>
-                      <td>{q.queryType}</td>
-                      <td>
-                        <span
-                          style={{
-                            padding: '3px 8px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            backgroundColor: q.status === 'Resolved' ? '#c6f6d5' : '#feebc8',
-                            color: q.status === 'Resolved' ? '#22543d' : '#7b341e',
-                          }}
-                        >
-                          {q.status}
-                        </span>
-                      </td>
-                      <td>{formatDate(q.createdAt)}</td>
-                      {/* <td>{formatDate(q.updatedAt)}</td> */}
-                      <td>{q.status === 'Resolved' ? formatDate(q.resolvedAt) : '-'}</td>
-                      <td>
-                        <button className="view-btn" onClick={() => handleView(q.id)}>
-                          View
-                        </button>
+
+          {/* Tickets Table */}
+          <div className="tickets-table-wrapper">
+            <div className="responsive-table-container">
+              <table className="modern-tickets-table">
+                <thead className="table-header-section">
+                  <tr>
+                    <th className="table-header-cell">Ticket ID</th>
+                    <th className="table-header-cell">Customer Name</th>
+                    <th className="table-header-cell">Category</th>
+                    <th className="table-header-cell">Status</th>
+                    <th className="table-header-cell">Created Date</th>
+                    <th className="table-header-cell">Resolved Date</th>
+                    <th className="table-header-cell">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="table-body-section">
+                  {queries.length > 0 ? (
+                    queries.map((ticket) => (
+                      <tr key={ticket.id} className="table-data-row">
+                        <td className="table-data-cell ticket-id-cell">#{ticket.id}</td>
+                        <td className="table-data-cell customer-name-cell">{ticket.name}</td>
+                        <td className="table-data-cell category-cell">{ticket.queryType}</td>
+                        <td className="table-data-cell status-cell">
+                          <span className={`status-badge ${ticket.status.toLowerCase()}-status`}>
+                            {ticket.status}
+                          </span>
+                        </td>
+                        <td className="table-data-cell date-cell">{formatDate(ticket.createdAt)}</td>
+                        <td className="table-data-cell date-cell">
+                          {ticket.status === 'Resolved' ? formatDate(ticket.resolvedAt) : '-'}
+                        </td>
+                        <td className="table-data-cell action-cell">
+                          <button 
+                            className="view-ticket-button" 
+                            onClick={() => handleView(ticket.id)}
+                          >
+                            <svg className="view-button-icon" viewBox="0 0 24 24">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                              <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr className="empty-state-row">
+                      <td colSpan={7} className="empty-state-cell">
+                        <div className="empty-state-content">
+                          {isRefreshing ? (
+                            <div className="loading-state">
+                              <div className="loading-spinner"></div>
+                              <span>Loading tickets...</span>
+                            </div>
+                          ) : (
+                            <div className="no-data-state">
+                              <svg className="empty-state-icon" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="m9 9 6 6"/>
+                                <path d="m15 9-6 6"/>
+                              </svg>
+                              <span>No tickets found matching your criteria</span>
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={9} style={{ textAlign: 'center' }}>
-                      {isRefreshing
-                        ? 'Loading queries...'
-                        : 'No queries found matching your filters.'}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Pagination Component */}
-          <div className="pagination-container" style={{ marginTop: '20px', textAlign: 'right' }}>
-            <Pagination
-              current={filterParams.pageNumber}
-              pageSize={filterParams.pageSize}
-              total={totalQueries}
-              onChange={handlePageChange}
-              showSizeChanger
-              showQuickJumper
-              showTotal={(total) => `Total ${total}`}
-            />
+            <div className="table-pagination-container">
+              <Pagination
+                current={filterParams.pageNumber}
+                pageSize={filterParams.pageSize}
+                total={totalQueries}
+                onChange={handlePageChange}
+                showSizeChanger
+                showQuickJumper
+                showTotal={(total) => `Total ${total} tickets`}
+                className="styled-pagination"
+              />
+            </div>
           </div>
         </div>
 
-        {/* ====== Overlay Chat Panel ====== */}
+        {/* ====== Chat Dialog Modal ====== */}
         {selectedQueryId !== null && (
-          <div className="chat-overlay">
-            <div className="chat-modal">
-              <div className="chat-modal-header">
-                <h3>
-                  {selectedQuery
-                    ? `Conversation: ${selectedQuery.queryType} (#${selectedQuery.id})`
-                    : 'Conversation'}
-                </h3>
-                <div className="query-status-info">
+          <div className="chat-dialog-backdrop">
+            <div className="chat-dialog-container">
+              <div className="chat-dialog-header">
+                <div className="dialog-header-info">
+                  <h3 className="dialog-title">
+                    {selectedQuery
+                      ? `Ticket Conversation: ${selectedQuery.queryType} (#${selectedQuery.id})`
+                      : 'Ticket Conversation'}
+                  </h3>
                   {selectedQuery && selectedQuery.status === 'Resolved' && (
-                    <span style={{ fontSize: '14px', color: '#22543d' }}>
-                      Resolved on: {formatDate(selectedQuery.resolvedAt)}
-                    </span>
+                    <div className="resolution-info">
+                      <svg className="resolution-icon" viewBox="0 0 24 24">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22,4 12,14.01 9,11.01"/>
+                      </svg>
+                      <span>Resolved on: {formatDate(selectedQuery.resolvedAt)}</span>
+                    </div>
                   )}
                 </div>
-                <button className="close-btn" onClick={() => setSelectedQueryId(null)}>
-                  &times;
+                <button 
+                  className="dialog-close-button" 
+                  onClick={() => setSelectedQueryId(null)}
+                >
+                  <svg viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
                 </button>
               </div>
 
               {loadingMessages ? (
-                <div className="chat-loading">Loading messages...</div>
+                <div className="chat-loading-state">
+                  <div className="chat-loading-spinner"></div>
+                  <span>Loading conversation...</span>
+                </div>
               ) : (
-                <div className="chat-window">
+                <div className="chat-messages-container">
                   {Object.entries(groupMessagesByDate(messages)).map(([date, msgs]) => (
-                    <div key={date}>
-                      {/* Date Separator */}
-                      <div className="chat-date-separator">{date}</div>
+                    <div key={date} className="message-group">
+                      <div className="message-date-divider">
+                        <span className="date-divider-text">{date}</span>
+                      </div>
 
                       {msgs.map((msg) => (
                         <div
                           key={msg.id}
-                          className={`chat-bubble ${msg.isMine ? 'mine' : 'theirs'}`}
-                          style={{
-                            backgroundColor:
-                              msg.senderRole === 'Admin'
-                                ? 'rgba(156, 255, 12, 0.55)'
-                                : msg.isMine
-                                  ? '#dcf8c6'
-                                  : 'rgb(212, 238, 238)',
-                          }}
+                          className={`chat-message-bubble ${msg.isMine ? 'user-message' : 'system-message'} ${
+                            msg.senderRole === 'Admin' ? 'admin-message' : ''
+                          }`}
                         >
                           {msg.senderRole === 'Admin' && (
-                            <div
-                              style={{
-                                fontSize: '12px',
-                                fontWeight: 'bold',
-                                marginBottom: '4px',
-                                color: '#3670c7',
-                              }}
-                            >
-                              Admin:
+                            <div className="admin-message-label">
+                              <svg className="admin-icon" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                              </svg>
+                              Support Agent
                             </div>
                           )}
-                          <div className="chat-text">{msg.text || msg.message}</div>
-                          <div className="chat-time">
-                             {/* {new Date(msg.createdAt).toLocaleTimeString()} */}
-                            {/* {new Date(msg.createdAt).toLocaleTimeString("en-GB", {
+                          <div className="message-bubble-content">{msg.text || msg.message}</div>
+                          <div className="message-timestamp">
+                            {new Date(msg.createdAt).toLocaleTimeString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
                               hour12: true,
-                            })} */}
+                            })}
                           </div>
                         </div>
                       ))}
                     </div>
                   ))}
                 </div>
-
               )}
 
-              <div className="message-send-box">
-                <textarea
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  placeholder={
-                    selectedQueryStatus === 'Resolved'
-                      ? 'Your ticket is resolved; you cannot send further messages. If you have any further queries, you may raise a new ticket '
-                      : 'Type your message here'
-                  }
-                  rows={3}
-                  maxLength={2000}
-                  className="message-input"
-                  disabled={selectedQueryStatus === 'Resolved'}
-                />
-                <Tooltip
-                  title={
-                    selectedQueryStatus === 'Resolved'
-                      ? 'Your ticket is resolved, you cannot send further messages'
-                      : ''
-                  }
-                >
-                  <button
-                    className="send-btn"
-                    onClick={handleSendMessage}
+              <div className="chat-input-section">
+                <div className="message-compose-area">
+                  <textarea
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    placeholder={
+                      selectedQueryStatus === 'Resolved'
+                        ? 'This ticket is resolved. Create a new ticket for further assistance.'
+                        : 'Type your message here...'
+                    }
+                    rows={3}
+                    maxLength={2000}
+                    className="chat-message-input"
                     disabled={selectedQueryStatus === 'Resolved'}
-                  >
-                    Send
-                  </button>
-                </Tooltip>
+                  />
+                  <div className="message-input-actions">
+                    <span className="message-character-count">{chatInput.length}/2000</span>
+                    <Tooltip
+                      title={
+                        selectedQueryStatus === 'Resolved'
+                          ? 'This ticket is resolved. You cannot send further messages.'
+                          : 'Send message'
+                      }
+                    >
+                      <button
+                        className="send-message-button"
+                        onClick={handleSendMessage}
+                        disabled={selectedQueryStatus === 'Resolved' || !chatInput.trim()}
+                      >
+                        <svg className="send-button-icon" viewBox="0 0 24 24">
+                          <line x1="22" y1="2" x2="11" y2="13"/>
+                          <polygon points="22,2 15,22 11,13 2,9"/>
+                        </svg>
+                        Send
+                      </button>
+                    </Tooltip>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -754,6 +781,5 @@ const HelpDeskUser: React.FC = () => {
     </div>
   );
 };
-
 
 export default HelpDeskUser;
