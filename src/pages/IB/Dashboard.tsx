@@ -1,53 +1,38 @@
 import { api } from '@/components/common/api';
 import { ApiError, IbRequestModel } from '@/generated';
-import Clients from '@/pages/IB/Clients';
 import {
   BankOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   CopyOutlined,
-  DashboardOutlined,
   LinkOutlined,
-  MailOutlined,
-  SendOutlined,
   StarOutlined,
   TeamOutlined,
   UserOutlined,
-  
+  UsergroupAddOutlined,
 } from '@ant-design/icons';
-import { Button, message, Typography } from 'antd';
+import { Button, message, Typography, Card, Row, Col, Progress } from 'antd';
 import React, { useEffect, useState } from 'react';
 import '../../common.css';
 import config from '../../components/config.json';
 import CustomLoader from '../CustomLoader';
+import Clients from '@/pages/IB/Clients';
 
 const { Title, Text } = Typography;
 
-// Base URL configuration
-let BaseUrl;
-if (config.prod === 'yes') {
-  BaseUrl = config.baseUrl;
-} else {
-  BaseUrl = config.local + ':' + config.localPort;
-}
+// Base URL config
+const BaseUrl = config.prod === 'yes' ? config.baseUrl : `${config.local}:${config.localPort}`;
 
-// Dashboard component
-const DashboardContent = () => {
+const IB = () => {
   const [ibRequest, setIbRequest] = useState<IbRequestModel>({});
   const [requested, setRequested] = useState(false);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
-  // Fetch data on component mount
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -60,11 +45,9 @@ const DashboardContent = () => {
           setRequested(true);
         }
       })
-      .catch(() => {});
-    setRequested(false);
+      .catch(() => setRequested(false));
   }, []);
 
-  // Request IB account function
   const requestIbAccount = async () => {
     setLoading(true);
     try {
@@ -81,49 +64,13 @@ const DashboardContent = () => {
       setData(response);
     } catch (e) {
       const er = e as ApiError;
-      message.error({
-        content: er.body.message,
-        duration: 3,
-      });
+      message.error({ content: er.body.message, duration: 3 });
     } finally {
       setLoading(false);
     }
   };
+  const [clientsCount, setClientsCount] = useState(0);
 
-  // Loading state
-  if (loading) {
-    return <CustomLoader />;
-  }
-
-  // Not requested state
-  if (!requested) {
-    return (
-      <div className="ib-onboarding-container">
-        <div className="ib-onboarding-card">
-          <div style={{ marginBottom: '24px' }}>
-            <BankOutlined className="ib-onboarding-icon" />
-          </div>
-          <Title level={3} className="ib-onboarding-title">
-            Become an IB Partner
-          </Title>
-          <Text className="ib-onboarding-description">
-            Join our introducing broker program and earn commissions by referring clients to our
-            trading platform. Build your network and grow your revenue with our comprehensive
-            partnership program.
-          </Text>
-          <Button
-            type="primary"
-            size="large"
-            onClick={requestIbAccount}
-            className="ib-primary-button"
-            icon={<StarOutlined />}
-          >
-            Request IB Account
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -143,146 +90,145 @@ const DashboardContent = () => {
       case 'approved':
         return <CheckCircleOutlined />;
       case 'pending':
-        return <ClockCircleOutlined />;
       default:
         return <ClockCircleOutlined />;
     }
   };
 
-  // Requested state
-  return (
-    <div>
-      {/* Page Header */}
-      <div className="ib-page-header">
-        <Title level={2} className="ib-page-title">
-          IB Dashboard
-        </Title>
-        <Text className="ib-page-subtitle">
-          Monitor your account status and manage your referral activities
-        </Text>
-      </div>
+  if (loading) return <CustomLoader />;
 
-      {/* Stats Grid */}
-      <div className="ib-stats-container">
-        <div
-          className={`ib-stat-card ${hoveredCard === 'status' ? 'hovered' : ''}`}
-          onMouseEnter={() => setHoveredCard('status')}
-          onMouseLeave={() => setHoveredCard(null)}
-        >
-          <div
-            className="ib-icon-container status"
-            style={{ backgroundColor: getStatusColor(ibRequest.status || 'Pending') + '10' }}
-          >
-            {React.cloneElement(getStatusIcon(ibRequest.status || 'Pending'), {
-              style: { fontSize: '20px', color: getStatusColor(ibRequest.status || 'Pending') },
-            })}
-          </div>
-          <Text className="ib-stat-label">Account Status</Text>
-          <Title level={4} className="ib-stat-value">
-            {ibRequest.status || 'Pending'}
+  if (!requested)
+    return (
+      <div className="ib-onboarding-container">
+        <div className="ib-onboarding-card">
+          <BankOutlined className="ib-onboarding-icon" />
+          <Title level={3} className="ib-onboarding-title">
+            Become an IB Partner
           </Title>
-        </div>
-
-        <div
-          className={`ib-stat-card ${hoveredCard === 'code' ? 'hovered' : ''}`}
-          onMouseEnter={() => setHoveredCard('code')}
-          onMouseLeave={() => setHoveredCard(null)}
-        >
-          <div className="ib-icon-container code">
-            <LinkOutlined style={{ fontSize: '20px', color: '#1a73e8' }} />
-          </div>
-          <Text className="ib-stat-label">IB Code</Text>
-          <Title level={4} className="ib-stat-value code">
-            {ibRequest.ibCode || 'Pending'}
-          </Title>
-        </div>
-
-        <div
-          className={`ib-stat-card ${hoveredCard === 'manager' ? 'hovered' : ''}`}
-          onMouseEnter={() => setHoveredCard('manager')}
-          onMouseLeave={() => setHoveredCard(null)}
-        >
-          <div className="ib-icon-container manager">
-            <UserOutlined style={{ fontSize: '20px', color: '#5f6368' }} />
-          </div>
-          <Text className="ib-stat-label">Account Manager</Text>
-          <Title level={4} className="ib-stat-value">
-            {ibRequest.managerName || 'Not Assigned'}
-          </Title>
-        </div>
-      </div>
-
-      {/* Referral Section */}
-      <div className="ib-referral-card">
-        <Title level={4} className="ib-referral-title">
-          Referral Link
-        </Title>
-        <Text className="ib-referral-description">
-          Share this link with potential clients to earn commissions on their trading activities.
-        </Text>
-
-        <div className="ib-link-box">
-          <Text className="ib-link-text">
-            {ibRequest.ibCode
-              ? `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`
-              : 'Your referral link will be generated once your account is approved'}
+          <Text className="ib-onboarding-description">
+            Join our introducing broker program and earn commissions by referring clients.
           </Text>
-          {ibRequest.ibCode && (
-            <Button
-              className="ib-copy-button"
-              icon={<CopyOutlined />}
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
-                );
-                message.success({
-                  content: 'Link copied to clipboard',
-                  icon: <CheckCircleOutlined style={{ color: '#34a853' }} />,
-                  duration: 2,
-                });
-              }}
-            >
-              Copy
-            </Button>
-          )}
+          <Button
+            type="primary"
+            size="large"
+            onClick={requestIbAccount}
+            className="ib-primary-button"
+            icon={<StarOutlined />}
+          >
+            Request IB Account
+          </Button>
         </div>
-
       </div>
-    </div>
-  );
-};
-
-// Main IB component with elegant tabs
-const IB = () => {
-  const [activeKey, setActiveKey] = useState('1');
+    );
 
   return (
     <div className="ib-container">
       <div className="ib-content-wrapper">
-        <div className="ib-custom-tabs">
-          {/* Elegant Tab Header */}
-          <div className="ib-tab-header">
-            <button
-              className={`ib-tab-button ${activeKey === '1' ? 'active' : ''}`}
-              onClick={() => setActiveKey('1')}
-            >
-              <DashboardOutlined style={{ fontSize: '16px' }} />
-              Dashboard
-            </button>
-            <button
-              className={`ib-tab-button ${activeKey === '2' ? 'active' : ''}`}
-              onClick={() => setActiveKey('2')}
-            >
-              <TeamOutlined style={{ fontSize: '16px' }} />
-              Clients
-            </button>
-          </div>
-
-          {/* Tab Content */}
-          <div className="ib-tab-content">
-            {activeKey === '1' ? <DashboardContent /> : <Clients />}
-          </div>
+        <div className="ib-hero-section">
+          <Row align="middle" justify="space-between">
+            <Col span={16}>
+              <Title level={1} className="ib-hero-title">
+                Welcome to Your IB Dashboard
+              </Title>
+              <Text className="ib-hero-description">
+                Track your performance, manage clients, and grow your network
+              </Text>
+            </Col>
+          </Row>
         </div>
+
+        {/* Stats Cards */}
+        {/* Stats Cards */}
+        <Row gutter={[20, 20]} className="ib-stats-row">
+          <Col xs={24} sm={12} lg={12}>
+            <div
+              className={`ib-stat-card ${hoveredCard === 'status' ? 'hovered' : ''}`}
+              onMouseEnter={() => setHoveredCard('status')}
+              onMouseLeave={() => setHoveredCard(null)}
+            >
+              <div
+                className="ib-icon-container status"
+                style={{ backgroundColor: getStatusColor(ibRequest.status || 'Pending') + '10' }}
+              >
+                {React.cloneElement(getStatusIcon(ibRequest.status || 'Pending'), {
+                  style: { fontSize: '20px', color: getStatusColor(ibRequest.status || 'Pending') },
+                })}
+              </div>
+              <Text className="ib-stat-label">Account Status</Text>
+              <Title level={4} className="ib-stat-value">
+                {ibRequest.status || 'Pending'}
+              </Title>
+            </div>
+          </Col>
+
+          <Col xs={24} sm={12} lg={12}>
+            <div className="ib-stat-card">
+              <div className="ib-icon-container">
+                <UsergroupAddOutlined className="ib-stat-icon" />
+              </div>
+              <Text className="ib-stat-label">Clients</Text>
+              <Title level={4} className="ib-stat-value">
+                {clientsCount}
+              </Title>
+
+            </div>
+          </Col>
+        </Row>
+        {/* Referral + Clients */}
+        <Row gutter={[24, 24]}>
+          <Col xs={24} lg={8}>
+            <div className="ib-referral-card">
+              <Title level={4} className="ib-referral-title">
+                <LinkOutlined className="ib-referral-icon" />
+                Referral Link
+              </Title>
+              <Text>Share this link to earn commissions on your clients’ trades.</Text>
+              <div className="ib-referral-code-box">
+                <Text className="ib-referral-label">Your IB Code</Text>
+                <Title level={3} className="ib-referral-code">
+                  {ibRequest.ibCode || 'Pending'}
+                </Title>
+              </div>
+
+              <div className="ib-link-box">
+                <Text>
+                  {ibRequest.ibCode
+                    ? `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`
+                    : 'Referral link will be generated once approved'}
+                </Text>
+                {ibRequest.ibCode && (
+                  <Button
+                    className="ib-copy-button"
+                    icon={<CopyOutlined />}
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        `${BaseUrl}/user/login/Signup?signup=true&promo=${ibRequest.ibCode}`,
+                      );
+                      message.success('Link copied to clipboard');
+                    }}
+                  >
+                    Copy
+                  </Button>
+                )}
+              </div>
+
+              {/* <Progress percent={50} strokeColor="#34a853" size="small" /> */}
+              <div className="ib-manager-box">
+                <UserOutlined /> Manager: <b>{ibRequest.managerName || 'Not Assigned'}</b>
+              </div>
+            </div>
+          </Col>
+
+          <Col xs={24} lg={16}>
+            <Card className="ib-clients-card">
+              <Clients
+                defaultTab="active"
+                onClientCountChange={(count) => setClientsCount(count)}
+              />
+            </Card>
+          </Col>
+
+        </Row>
       </div>
     </div>
   );

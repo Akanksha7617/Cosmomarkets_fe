@@ -4709,6 +4709,22 @@ margin-left: -100px;
 
 /* Transaction History user side page */
 
+.transaction-header {
+  background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
+  padding: 20px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+}
+
+.transaction-header .dashboard-title {
+  color: white;
+  margin: 0 0 8px 0;
+}
+
+.transaction-header .dashboard-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
 .page-container {
   min-height: 90vh;
   background-color: #f5f7f9;
@@ -4797,21 +4813,28 @@ margin-left: -100px;
   padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  background: transparent;
+  color: #666;
+}
+
+.tab-item:hover {
+  background: linear-gradient(135deg, rgba(0, 18, 25, 0.1) 0%, rgba(0, 95, 115, 0.1) 35%, rgba(10, 147, 150, 0.1) 70%, rgba(148, 210, 189, 0.1) 100%);
+  color: #0a9396;
+  border-radius: 6px;
 }
 
 .tab-item.active {
-  color: #1890ff;
-  font-weight: 500;
+  background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(10, 147, 150, 0.3);
 }
 
 .tab-item.active:after {
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #1890ff;
-  content: '';
+  display: none;
 }
 
 .transaction-table {
@@ -5040,7 +5063,7 @@ margin-left: -100px;
 /* Transaction History user side page */
 
 /* Profile setting page */
-/* Flowing Curved Tabs Design - Like Reference Image */
+
 .profile-setting-parent {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
@@ -8688,6 +8711,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
 
 /* Dashboard ib tab */
 
+ 
 .tab-label {
   width: 100%;
   margin-bottom: -1px;
@@ -8700,452 +8724,141 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
-
+ 
 .tab-label.active {
   color: #4b5563;
   font-weight: 500;
   border: 1px solid #eaecef;
   border-bottom: none;
 }
-
+ 
 .copy-button {
   position: absolute;
   top: 8px;
   right: 12px;
 }
-
+ 
 /* IB Component Styles */
-
-/* Base Container */
-.ib-container {
-  min-height: 100vh;
-  padding: 24px;
-  background-color: #fafbfc;
-}
-
-.ib-content-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Custom Tabs */
-.ib-custom-tabs {
+ .ib-hero-section {
+  background:  linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 32px;
+  color: white;
+  position: relative;
   overflow: hidden;
-  background-color: white;
-  border: 1px solid #e8eaed;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
-
-.ib-tab-header {
-  display: flex;
-  margin: 0;
-  padding: 0;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e8eaed;
-}
-
-.ib-tab-button {
-  position: relative;
-  display: flex;
-  flex: 1;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 32px;
-  color: #5f6368;
-  font-weight: 500;
-  font-size: 15px;
-  background: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.ib-tab-button:hover {
-  color: #252627;
-  background-color: #f8f9fa;
-}
-
-.ib-tab-button.active {
-  color: #252627;
-  background-color: #f8f9fa;
-  border-bottom: 3px solid #F58C35;
-}
-
-.ib-tab-content {
-  padding: 32px;
-  background-color: white;
-}
-
-/* Page Header */
-.ib-page-header {
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e8eaed;
-}
-
-.ib-page-title {
+ 
+.ib-hero-title {
   margin-bottom: 8px;
-  color: #202124;
-  font-weight: 400;
-  font-size: 28px;
+  color: white !important;
 }
-
-.ib-page-subtitle {
-  color: #5f6368;
-  font-size: 15px;
+ 
+.ib-hero-description {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
 }
-
-/* Stats Container */
-.ib-stats-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+ 
+.ib-stats-row {
   margin-bottom: 32px;
 }
-
+ 
 .ib-stat-card {
-  position: relative;
-  padding: 24px;
-  background-color: white;
-  border: 1px solid #e8eaed;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  cursor: default;
+  transition: all 0.3s ease;
 }
-
-.ib-stat-card:hover {
-  border-color: #F58C35;
-  box-shadow: 0 2px 12px rgba(26, 115, 232, 0.1);
-  transform: translateY(-2px);
+ 
+.ib-stat-card.hovered {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
-
+ 
 .ib-icon-container {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  margin-bottom: 16px;
-  border-radius: 8px;
+  margin: 0 auto 8px auto;
 }
-
-.ib-icon-container.status {
-  background-color: #34a85310;
+ 
+.ib-stat-icon {
+  font-size: 20px;
+  color: #1a73e8;
 }
-
-.ib-icon-container.code {
-  background-color: #1a73e810;
-}
-
-.ib-icon-container.manager {
-  background-color: #5f636810;
-}
-
+ 
 .ib-stat-label {
   display: block;
   margin-bottom: 4px;
-  color: #5f6368;
-  font-size: 13px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
 }
-
+ 
 .ib-stat-value {
-  margin: 0;
-  color: #202124;
-  font-weight: 500;
+  font-weight: bold;
 }
-
-.ib-stat-value.code {
-  font-family: monospace;
-}
-
-/* Referral Card */
+ 
 .ib-referral-card {
-  padding: 32px;
-  background-color: white;
-  border: 1px solid #e8eaed;
-  border-radius: 8px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
-
+ 
 .ib-referral-title {
-  margin-bottom: 8px;
-  color: #202124;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
 }
-
-.ib-referral-description {
-  color: #5f6368;
+ 
+.ib-referral-icon {
+  color: #1a73e8;
+}
+ 
+.ib-referral-code-box {
+  padding: 16px;
+  background-color: #f0f8ff;
+  border-radius: 8px;
+  margin: 16px 0;
+  border: 2px dashed #1a73e8;
+}
+ 
+.ib-referral-label {
   font-size: 14px;
-  line-height: 1.5;
 }
-
+ 
+.ib-referral-code {
+  margin: 0;
+  color: #1a73e8;
+}
+ 
 .ib-link-box {
   display: flex;
-  gap: 12px;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 16px;
-  padding: 16px;
-  background-color: #f8f9fa;
-  border: 1px solid #e8eaed;
-  border-radius: 6px;
+  margin-top: 8px;
 }
-
-.ib-link-text {
-  flex: 1;
-  color: #202124;
-  font-size: 13px;
-  font-family: Monaco, Consolas, monospace;
-  word-break: break-all;
-}
-
+ 
 .ib-copy-button {
-  height: 36px;
-
-  color: white;
-  font-size: 13px;
-  background-color: #1a73e8;
-  border-radius: 6px;
+  margin-left: 12px;
 }
-
-.ib-share-buttons-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 24px;
+ 
+.ib-manager-box {
+  margin-top: 12px;
 }
-
-.ib-share-button {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 10px 16px;
-  color: #5f6368;
-  background-color: white;
-  border: 1px solid #F58C35;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.ib-share-button:hover {
-  color: #1a73e8;
-  border-color: #F58C35;
-}
-
-/* Onboarding */
-.ib-onboarding-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  padding: 40px 20px;
-}
-
-.ib-onboarding-card {
-  width: 100%;
-  max-width: 480px;
-  padding: 48px;
-  text-align: center;
-  background-color: white;
-  border: 1px solid #e8eaed;
+ 
+.ib-clients-card {
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
-
-.ib-onboarding-icon {
-  margin-bottom: 16px;
-  color: #1a73e8;
-  font-size: 48px;
-}
-
-.ib-onboarding-title {
-  margin-bottom: 12px;
-  color: #202124;
-  font-weight: 400;
-}
-
-.ib-onboarding-description {
-  display: block;
-  margin-bottom: 32px;
-  color: #5f6368;
-  font-size: 15px;
-  line-height: 1.5;
-}
-
-.ib-primary-button {
-  height: 40px;
-  font-weight: 500;
-  font-size: 14px;
-  background-color: #1a73e8;
-  border-color: #F58C35;
-  border-radius: 6px;
-}
-
-@media (max-width: 768px) {
-  .ib-container {
-    padding: 16px;
-  }
-
-  .ib-custom-tabs {
-    border-radius: 8px;
-  }
-
-  .ib-tab-header {
-    flex-direction: column;
-  }
-
-  .ib-tab-button {
-    gap: 8px;
-    padding: 16px 24px;
-    font-size: 14px;
-    border-bottom: none;
-    border-left: 3px solid transparent;
-  }
-
-  .ib-tab-button.active {
-    border-bottom: none;
-    border-left: 3px solid #1a73e8;
-  }
-
-  .ib-tab-content {
-    padding: 24px 16px;
-  }
-
-  .ib-page-header {
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-  }
-
-  .ib-page-title {
-    font-size: 24px;
-  }
-
-  .ib-page-subtitle {
-    font-size: 14px;
-  }
-
-  .ib-stats-container {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .ib-stat-card {
-    padding: 20px;
-  }
-
-  .ib-icon-container {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 12px;
-  }
-
-  .ib-referral-card {
-    padding: 24px 16px;
-  }
-
-  .ib-link-box {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
-    padding: 12px;
-  }
-
-  .ib-link-text {
-    font-size: 12px;
-    text-align: center;
-  }
-
-  .ib-copy-button {
-    width: 100%;
-    height: 40px;
-  }
-
-  .ib-share-buttons-container {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .ib-share-button {
-    justify-content: center;
-    width: 100%;
-    padding: 12px 16px;
-  }
-
-  .ib-onboarding-container {
-    min-height: 50vh;
-    padding: 20px 16px;
-  }
-
-  .ib-onboarding-card {
-    padding: 32px 24px;
-  }
-
-  .ib-onboarding-icon {
-    font-size: 40px;
-  }
-
-  .ib-onboarding-title {
-    font-size: 20px;
-  }
-
-  .ib-onboarding-description {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .ib-container {
-    padding: 12px;
-  }
-
-  .ib-tab-content {
-    padding: 16px 12px;
-  }
-
-  .ib-stats-container {
-    gap: 12px;
-  }
-
-  .ib-stat-card {
-    padding: 16px;
-  }
-
-  .ib-referral-card {
-    padding: 20px 12px;
-  }
-
-  .ib-onboarding-card {
-    padding: 24px 16px;
-  }
-
-  .ib-link-text {
-    font-size: 11px;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .ib-container {
-    padding: 20px;
-  }
-
-  .ib-stats-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .ib-tab-content {
-    padding: 28px 24px;
-  }
-
-  .ib-referral-card {
-    padding: 28px 24px;
-  }
-}
-
-/* Ib Dashboard */
+ 
+ 
+/* dashboard ib tab end */
 
 /* ✅ Responsive Styles for Mobile (320px to 500px) */
 @media (max-width: 500px) {

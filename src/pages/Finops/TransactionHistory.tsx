@@ -17,9 +17,8 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import type { Dayjs } from 'dayjs';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import '../../common.css';
-
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -327,445 +326,136 @@ export default () => {
     },
   ];
 
-  // ================ HELP DESK METHODS ================
-  useEffect(() => {
-    if (activeMainTab === 'helpdesk') {
-      loadQueries();
-    }
-  }, [activeMainTab]);
-
-  // Add effect to update status when queries change
-  useEffect(() => {
-    if (selectedQueryId) {
-      const currentQuery = queries.find((q) => q.id === selectedQueryId);
-      if (currentQuery) {
-        setSelectedQueryStatus(currentQuery.status);
-      }
-    }
-  }, [queries, selectedQueryId]);
-
-  const formatDateForApi = (date: Dayjs | null): string | null => {
-    return date ? date.format('YYYY-MM-DD') : null;
-  };
-
-  // Modify the loadQueries function to use the correct parameter names
-  const loadQueries = async (params: FilterParams = filterParams) => {
-    try {
-      setIsRefreshing(true);
-
-      // Here's the key change - use searchParam instead of search
-      const res = await api.app.getUserQueries(
-        params.pageNumber,
-        params.pageSize,
-        params.search, // This should match 'searchParam' in the API
-        params.startDate,
-        params.endDate,
-        params.status,
-      );
-
-      const mapped = (res.tickets || []).map((t: any) => ({
-        id: t.id,
-        name: `${t.firstName} ${t.lastName}`,
-        email: t.email,
-        queryType: t.queryType,
-        status: t.status,
-        createdAt: t.createdAt,
-        updatedAt: t.updatedAt,
-        message: t.message,
-        resolvedAt: t.status === 'Resolved' ? t.resolvedAt || t.updatedAt : null,
-      }));
-
-      setQueries(mapped);
-      setTotalQueries(res.totalCount || mapped.length);
-    } catch (err) {
-      console.error('Failed to fetch queries:', err);
-      antMessage.error({
-        content: 'Failed to fetch queries.',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
-        duration: 3,
-      });
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
-  const applyFilters = () => {
-    const updatedParams = {
-      ...filterParams,
-      search: helpDeskSearchText,
-      startDate:
-        helpDeskDateRange && helpDeskDateRange[0] ? formatDateForApi(helpDeskDateRange[0]) : null,
-      endDate:
-        helpDeskDateRange && helpDeskDateRange[1] ? formatDateForApi(helpDeskDateRange[1]) : null,
-      status: statusFilter === 'All' ? null : statusFilter, // Fix: Convert 'All' to null
-      pageNumber: 1, // Reset to first page when applying new filters
-    };
-
-    setFilterParams(updatedParams);
-    loadQueries(updatedParams);
-  };
-
-  // Handle date range change
-  const handleDateRangeChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
-    setHelpDeskDateRange(dates);
-  };
-
-  // Handle status filter change
-  const handleStatusChange = (value: string | null) => {
-    setStatusFilter(value);
-  };
-
-  // Search button handler
-  const handleSearch = () => {
-    applyFilters();
-
-    antMessage.info({
-      content: 'Applying filters...',
-      duration: 1,
-    });
-  };
-
-  // Pagination handler for help desk
-  const handleHelpDeskPageChange = (page: number, pageSize?: number) => {
-    const updatedParams = {
-      ...filterParams,
-      pageNumber: page,
-      pageSize: pageSize || filterParams.pageSize,
-    };
-
-    setFilterParams(updatedParams);
-    loadQueries(updatedParams);
-  };
-
-  // Refresh handler
-  const handleRefresh = () => {
-    setHelpDeskSearchText('');
-    setHelpDeskDateRange(null);
-    setStatusFilter(null);
-    const defaultParams = {
-      search: '',
-      startDate: null,
-      endDate: null,
-      status: null,
-      pageNumber: 1,
-      pageSize: 10,
-    };
-    setFilterParams(defaultParams);
-    loadQueries(defaultParams);
-
-    antMessage.info({
-      content: 'Refreshing queries...',
-      duration: 1,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const resp = await api.app.createTicket({ queryType, message });
-      const msg = (resp || '').toString().toLowerCase();
-
-      if (msg.includes('ticket created')) {
-        antMessage.success({
-          content: ' Ticket submitted successfully!',
-          icon: <span className="orange-success-icon"> ✓ </span>,
-          className: 'orange-success-notification',
-          duration: 3,
-        });
-        setQueryType('');
-        setMessage('');
-        await loadQueries();
-      } else {
-        antMessage.error({
-          content: resp || ' Failed to submit ticket.',
-          icon: <span className="orange-error-icon"> ✘ </span>,
-          className: 'orange-error-notification',
-          duration: 3,
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      antMessage.error({
-        content: 'Something went wrong while submitting your query.',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
-        duration: 3,
-      });
-    }
-  };
-
-  const handleView = async (queryId: number) => {
-    setSelectedQueryId(queryId);
-    setLoadingMessages(true);
-
-    try {
-      // Get updated data for this specific query
-      const singleQueryParams = {
-        ...filterParams,
-        search: queryId.toString(),
-      };
-
-      // If status is "All", don't send status parameter to API
-      const apiStatusParam = singleQueryParams.status === 'All' ? null : singleQueryParams.status;
-
-      const updatedQueryRes = await api.app.getUserQueries(
-        singleQueryParams.pageNumber,
-        singleQueryParams.pageSize,
-        singleQueryParams.search,
-        singleQueryParams.startDate,
-        singleQueryParams.endDate,
-        apiStatusParam,
-      );
-
-      const updatedQueries = (updatedQueryRes.tickets || []).map((t: any) => ({
-        id: t.id,
-        name: `${t.firstName} ${t.lastName}`,
-        email: t.email,
-        queryType: t.queryType,
-        status: t.status,
-        createdAt: t.createdAt,
-        updatedAt: t.updatedAt,
-        message: t.message,
-        resolvedAt: t.status === 'Resolved' ? t.resolvedAt || t.updatedAt : null,
-      }));
-
-      const msgs = await api.app.getMessages(queryId);
-      const ticket = updatedQueries.find((q) => q.id === queryId);
-
-      if (ticket) {
-        // Make sure we're immediately updating the status
-        setSelectedQueryStatus(ticket.status);
-
-        const hasInitialMessage = msgs.some(
-          (msg) => msg.text === ticket.message || msg.message === ticket.message,
-        );
-
-        if (!hasInitialMessage) {
-          const initialMsg: ChatMessage = {
-            id: 0,
-            text: ticket.message,
-            isMine: false,
-            createdAt: ticket.createdAt,
-            updatedAt: ticket.createdAt,
-          };
-          setMessages([initialMsg, ...msgs]);
-        } else {
-          setMessages(msgs);
-        }
-
-        if (ticket.status === 'Resolved') {
-          antMessage.success({
-            content: ' Your ticket is resolved!',
-            icon: <span className="orange-success-icon"> ✓ </span>,
-            className: 'orange-success-notification',
-            duration: 3,
-          });
-        }
-      } else {
-        setMessages(msgs);
-        setSelectedQueryStatus(null);
-      }
-
-      // Refresh the query list to show updated status
-      loadQueries();
-    } catch (err) {
-      console.error(err);
-      antMessage.error({
-        content: ' Could not load chat messages or updated query data.',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
-        duration: 3,
-      });
-    } finally {
-      setLoadingMessages(false);
-    }
-  };
-
-  const handleSendMessage = async () => {
-    if (!chatInput.trim() || selectedQueryId === null) {
-      console.warn('🚫 Empty message or no selected query.');
-      return;
-    }
-
-    try {
-      const tempMessage: ChatMessage = {
-        id: Date.now(),
-        text: chatInput,
-        isMine: true,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      };
-
-      setMessages((prevMessages) => [...prevMessages, tempMessage]);
-      setChatInput('');
-
-      await api.app.postReply(selectedQueryId, chatInput);
-
-      // Success message after the message is sent
-      antMessage.success({
-        content: ' Your message was sent successfully!',
-        icon: <span className="orange-success-icon"> ✓ </span>,
-        className: 'orange-success-notification',
-        duration: 3,
-      });
-
-      // Refresh queries to get updated status after sending message
-      loadQueries();
-    } catch (err: any) {
-      console.error(' Failed to send message:', err);
-
-      if (err?.response?.data) {
-        console.error('🔍 Server Error Response:', err.response.data);
-      } else {
-        console.error('🔍 Error Details:', err);
-      }
-
-      // Error message if sending fails
-      antMessage.error({
-        content: ' Failed to send message.',
-        icon: <span className="orange-error-icon"> ✘ </span>,
-        className: 'orange-error-notification',
-        duration: 3,
-      });
-    }
-  };
-
-  const selectedQuery = selectedQueryId ? queries.find((q) => q.id === selectedQueryId) : null;
-
-  // Helper function to format date for display
-  const formatDate = (timestamp: number | null): string => {
-    if (!timestamp) return '-';
-    return new Date(timestamp).toLocaleDateString();
-  };
-
   return (
     <div className="page-container">
-      <div className="tab-header">
-        <div
-          className={`tab ${activeMainTab === 'transaction' ? 'active' : ''}`}
-          onClick={() => setActiveMainTab('transaction')}
-        >
-          Transaction History
-        </div>
-       
-      </div>
+
 
       {/* TRANSACTION HISTORY TAB */}
       {activeMainTab === 'transaction' && (
-        <div className="content-container">
-          <div className="filter-section">
-            <div className="search-filter">
-              <Input
-                placeholder="Search transactions..."
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                prefix={<SearchOutlined />}
-                className="search-input"
-              />
-              <div className="date-range-picker ntg">
-                <DatePicker.RangePicker
-                  value={dateRange}
-                  onChange={setDateRange}
-                  format="YYYY-MM-DD"
-                  placeholder={['Start Date', 'End Date']}
+        <>
+          {/* Dashboard Header */}
+          <div className="transaction-header">
+            <div>
+              <h1 className="dashboard-title">Transaction History</h1>
+              <p className="dashboard-subtitle">
+                Track all your deposits, withdrawals, and MT5 transfers
+              </p>
+            </div>
+          </div>
+
+          {/* Content Container */}
+          <div className="content-container">
+            <div className="filter-section">
+              <div className="search-filter">
+                <Input
+                  placeholder="Search transactions..."
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  prefix={<SearchOutlined />}
+                  className="search-input"
                 />
+                <div className="date-range-picker ntg">
+                  <DatePicker.RangePicker
+                    value={dateRange}
+                    onChange={setDateRange}
+                    format="YYYY-MM-DD"
+                    placeholder={['Start Date', 'End Date']}
+                  />
+                </div>
+                <div className="dropdown-filters">
+                  <Select
+                    placeholder="Status"
+                    value={selectedStatus}
+                    onChange={setSelectedStatus}
+                    className="status-select"
+                    dropdownMatchSelectWidth={false}
+                  >
+                    <Option value="All">All Status</Option>
+                    <Option value="Requested">Requested</Option>
+                    <Option value="Approved">Approved</Option>
+                    <Option value="Rejected">Rejected</Option>
+                    <Option value="Completed">Completed</Option>
+                  </Select>
+                </div>
+                <div className="action-buttons">
+                  <button className="custom-btn" onClick={fetchTransactionData}>
+                    <ReloadOutlined />
+                    Refresh
+                  </button>
+                  <button className="custom-btn export-btn" onClick={exportToExcel}>
+                    <DownloadOutlined />
+                    Export
+                  </button>
+                </div>
               </div>
-              <div className="dropdown-filters">
-                <Select
-                  placeholder="Status"
-                  value={selectedStatus}
-                  onChange={setSelectedStatus}
-                  className="status-select"
-                  dropdownMatchSelectWidth={false}
-                >
-                  <Option value="All">All Status</Option>
-                  <Option value="Requested">Requested</Option>
-                  <Option value="Approved">Approved</Option>
-                  <Option value="Rejected">Rejected</Option>
-                  <Option value="Completed">Completed</Option>
-                </Select>
+            </div>
+
+            <div className="transaction-tabs">
+              <div
+                className={`tab-item ${activeTab === 'All' ? 'active' : ''}`}
+                onClick={() => handleTabChange('All')}
+              >
+                All Transactions
+              </div>
+              <div
+                className={`tab-item ${activeTab === 'Deposits' ? 'active' : ''}`}
+                onClick={() => handleTabChange('Deposits')}
+              >
+                Deposits
+              </div>
+              <div
+                className={`tab-item ${activeTab === 'Withdrawals' ? 'active' : ''}`}
+                onClick={() => handleTabChange('Withdrawals')}
+              >
+                Withdrawals
+              </div>
+              <div
+                className={`tab-item ${activeTab === 'DepositMT5' ? 'active' : ''}`}
+                onClick={() => handleTabChange('DepositMT5')}
+              >
+                Deposit to MT5
+              </div>
+              <div
+                className={`tab-item ${activeTab === 'WithdrawMT5' ? 'active' : ''}`}
+                onClick={() => handleTabChange('WithdrawMT5')}
+              >
+                Withdraw from MT5
+              </div>
+              <div
+                className={`tab-item ${activeTab === 'Transfers' ? 'active' : ''}`}
+                onClick={() => handleTabChange('Transfers')}
+              >
+                Transfers
               </div>
             </div>
-            <div className="action-buttons">
-              <button className="custom-btn " onClick={fetchTransactionData}>
-                <ReloadOutlined />
-                Refresh
-              </button>
 
-              <button className="custom-btn export-btn" onClick={exportToExcel}>
-                <DownloadOutlined /> Export
-              </button>
-            </div>
+            <Table
+              columns={columns}
+              dataSource={data}
+              loading={loading}
+              rowKey="id"
+              pagination={{
+                current: pagination.current,
+                pageSize: pagination.pageSize,
+                total: pagination.total,
+                onChange: handlePageChange,
+                showSizeChanger: true,
+                position: ['bottomCenter'],
+                itemRender: (page, type, originalElement) => {
+                  if (type === 'prev') {
+                    return <a>← Previous</a>;
+                  }
+                  if (type === 'next') {
+                    return <a>Next →</a>;
+                  }
+                  return originalElement;
+                },
+              }}
+              className="transaction-table"
+            />
           </div>
-
-          <div className="transaction-tabs">
-            <div
-              className={`tab-item ${activeTab === 'All' ? 'active' : ''}`}
-              onClick={() => handleTabChange('All')}
-            >
-              All Transactions
-            </div>
-            <div
-              className={`tab-item ${activeTab === 'Deposits' ? 'active' : ''}`}
-              onClick={() => handleTabChange('Deposits')}
-            >
-              Deposits
-            </div>
-            <div
-              className={`tab-item ${activeTab === 'Withdrawals' ? 'active' : ''}`}
-              onClick={() => handleTabChange('Withdrawals')}
-            >
-              Withdrawals
-            </div>
-            <div
-              className={`tab-item ${activeTab === 'DepositMT5' ? 'active' : ''}`}
-              onClick={() => handleTabChange('DepositMT5')}
-            >
-              Deposit to MT5
-            </div>
-            <div
-              className={`tab-item ${activeTab === 'WithdrawMT5' ? 'active' : ''}`}
-              onClick={() => handleTabChange('WithdrawMT5')}
-            >
-              Withdraw from MT5
-            </div>
-            <div
-              className={`tab-item ${activeTab === 'Transfers' ? 'active' : ''}`}
-              onClick={() => handleTabChange('Transfers')}
-            >
-              Transfers
-            </div>
-          </div>
-
-          <Table
-            columns={columns}
-            dataSource={data}
-            loading={loading}
-            rowKey="id"
-            pagination={{
-              current: pagination.current,
-              pageSize: pagination.pageSize,
-              total: pagination.total,
-              onChange: handlePageChange,
-              showSizeChanger: true,
-              position: ['bottomCenter'],
-              itemRender: (page, type, originalElement) => {
-                if (type === 'prev') {
-                  return <a>← Previous</a>;
-                }
-                if (type === 'next') {
-                  return <a>Next →</a>;
-                }
-                return originalElement;
-              },
-            }}
-            className="transaction-table"
-          />
-        </div>
+        </>
       )}
-
-      
     </div>
   );
 };
