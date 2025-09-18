@@ -734,16 +734,7 @@ const Withdraw: React.FC = () => {
 
   const renderMT5Withdraw = () => (
     <div style={{ padding: '24px' }}>
-      <Button
-        type="default"
-        style={{ marginBottom: '16px' }}
-        onClick={() => {
-          setIsMt5(false);   // switch back to wallet flow
-          setCurrentStep(0); // reset to account selection
-        }}
-      >
-        ← Back
-      </Button>
+      
       <Transfer
         title={'Withdraw from MT5'}
         type={Type.MT_TO_WALLET}
@@ -759,6 +750,11 @@ const Withdraw: React.FC = () => {
           className: 'orange-error-notification',
           duration: 3,
         }}
+
+         onBack={() => {
+        setIsMt5(false);
+        setCurrentStep(0);
+      }}
       />
     </div>
   );

@@ -764,7 +764,7 @@ const Deposit: React.FC = () => {
   const renderMT5Deposit = () => (
     <div style={{ padding: '24px' }}>
 
-      <Button
+      {/* <Button
       type="default"
       style={{ marginBottom: '16px' }}
       onClick={() => {
@@ -773,12 +773,13 @@ const Deposit: React.FC = () => {
       }}
     >
       ← Back
-    </Button>
+    </Button> */}
       <DepositTransferCommon
         title="Deposit to MT5 Account"
         type={Type.WALLET_TO_MT}
         successMsg="Deposit to MT5 account successful"
         failureMsg="Failed to deposit to MT5 account"
+        onBack={() => setIsMt5(false)}
       />
     </div>
   );

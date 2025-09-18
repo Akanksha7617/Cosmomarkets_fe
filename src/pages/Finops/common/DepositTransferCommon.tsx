@@ -9,7 +9,7 @@ import {
   ProFormTextArea,
 } from '@ant-design/pro-components';
 import { history } from '@umijs/max';
-import { Card, ConfigProvider, Form, message } from 'antd';
+import { Button, Card, ConfigProvider, Form, message } from 'antd';
 import enUS from 'antd/lib/locale/en_US';
 import React, { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
@@ -47,7 +47,8 @@ const DepositTransferCommon: React.FC<{
   type: Type;
   successMsg: String;
   failureMsg: string;
-}> = ({ title, type, successMsg, failureMsg }) => {
+  onBack?: () => void;
+}> = ({ title, type, successMsg, failureMsg, onBack }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const { initialState, setInitialState } = useModel('@@initialState');
@@ -103,7 +104,7 @@ const DepositTransferCommon: React.FC<{
     }
   };
 
- 
+
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
@@ -127,16 +128,28 @@ const DepositTransferCommon: React.FC<{
   };
 
   return (
-   
+
     <div className="mt5-parent-class">
       <div className="mt5-card">
         <ConfigProvider locale={enUS}>
           <Card
-            title={title}
+            title={
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <span>{title}</span>
+      <Button
+        type="default"
+        onClick={() => {
+          if (onBack) onBack();
+        }}
+      >
+        ← Back
+      </Button>
+    </div>
+  }
             headStyle={{
               background: '#f9f7f0',
               textTransform: 'uppercase',
-              
+
             }}
           >
             <ProForm
@@ -196,7 +209,7 @@ const DepositTransferCommon: React.FC<{
                         );
                       },
                     }),
-                   
+
                   ]}
                   fieldProps={{
                     addonAfter: 'USD',
