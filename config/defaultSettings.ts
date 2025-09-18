@@ -13,7 +13,7 @@ const Settings: ProLayoutProps & {
   navTheme: 'light',
   colorPrimary: '#c78534',
   layout: 'mix',
-  // layout: 'side',
+  // layout: 'top',
   contentWidth: 'Fluid',
   fixedHeader: false,
   fixSiderbar: true,

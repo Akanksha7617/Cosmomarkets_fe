@@ -434,9 +434,43 @@
   border-bottom-right-radius: 20%;
 }
 
-.ant-tag:hover {
-  background-color: white;
+/* client n admin side navbar pill button */
+.ant-tag {
+  width: 140px;
+  height: 30px;
+  color: white;
+  text-align: center;
+  background: #fff;
+  border-color: #fff;
+  border-radius: 0;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%);
 }
+
+.ant-tag:hover {
+  background-color: #fff;
+  color: white;
+}
+.wallet-pill {
+  width: auto;
+  padding: 0px 1rem;
+  color: #000;
+}
+
+.wallet-pill:hover {
+  color: #000;
+  background-color: #fff;
+}
+.wallet-pill-text {
+  display: inline-block;
+  min-width: 80px;
+  max-width: 100px;
+  margin-top: 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* client n admin side navbar pill button end */
 
 .row-1 {
   display: inline-block;
@@ -961,19 +995,7 @@
   color: white !important;
 }
 
-.ant-tag {
-  width: 140px;
-  height: 30px;
-  color: black;
-  text-align: center;
-  /* background: linear-gradient(45deg, #F58C35 , #ffb74d); */
-  border-color: #F58C35;
 
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
-  border-bottom-left-radius: 16px;
-}
 
 /* .ant-tag :hover{
     background-color: #08087f;
@@ -2736,7 +2758,7 @@ margin-left: -100px;
 /* To maintain compatibility with your existing Navbar styles */
 .ant-pro-top-nav-header-main {
   /* background: linear-gradient(26deg, #3a7d44 0%, #9dc08b 100%); */
-  background: linear-gradient(90deg, rgba(67, 64, 64, 0.953) 0%, rgb(27, 32, 27) 100%);
+  
 }
 
 .ant-menu-submenu-popup .ant-menu-vertical.ant-menu-sub:not([class*='-active']) {
@@ -2913,17 +2935,6 @@ margin-left: -100px;
   margin-bottom: 20px;
 }
 
-.wallet-pill {
-  width: auto;
-  padding: 0px 1rem;
-  color: #000;
-}
-
-.wallet-pill:hover {
-  color: #000;
-  background-color: #fff;
-}
-
 .ant-layout-content {
   /* background-color: #4bbcb2; */
   overflow-x: hidden;
@@ -3017,7 +3028,8 @@ margin-left: -100px;
   align-items: center;
   justify-content: center;
 }
-
+/* in profile reset password  */
+/* Keep your existing styles */
 .change-pwd-form {
   display: flex;
   flex-direction: column;
@@ -3028,7 +3040,191 @@ margin-left: -100px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 20px;
 }
+
+.btn-at-end {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+}
+
+/* New styles for reset password design */
+.reset-password-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.reset-title {
+  font-size: 28px;
+  font-weight: 400;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.reset-steps {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.step-container {
+  display: flex;
+  align-items: center;
+}
+
+.step {
+  position: relative;
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 18px;
+  border: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.step.active .step-icon {
+  background-color: #2672c3;
+  color: white;
+  border-color: #2672c3;
+}
+
+.step-line {
+  width: 80px;
+  height: 2px;
+  background-color: #f0f0f0;
+  margin: 0 10px;
+  transition: background-color 0.3s ease;
+}
+
+.step-line.active {
+  background-color: #2672c3;
+}
+
+.steps-labels {
+  display: flex;
+  justify-content: space-between;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.step-label {
+  color: #999;
+  font-size: 14px;
+  flex: 1;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.step-label.active {
+  color: #2672c3;
+  font-weight: 500;
+}
+
+.reset-form-section {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 400;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.section-description {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+
+.reset-input {
+  width: 100%;
+  height: 40px;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.reset-input:focus {
+  border-color: #2672c3;
+  box-shadow: 0 0 0 2px rgba(92, 179, 245, 0.2);
+}
+
+.help-link {
+  color: #2672c3;
+  font-size: 12px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.help-link:hover {
+  text-decoration: underline;
+}
+
+.send-email-btn {
+  background-color: #2672c3;
+  border-color: #2672c3;
+  border-radius: 4px;
+  height: 45px;
+  padding: 0 40px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.send-email-btn:hover {
+  background-color: #2672c3;
+  border-color: #2672c3;
+}
+
+.reset-password-form {
+  align-items: stretch;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .reset-title {
+    font-size: 24px;
+  }
+  
+  .steps-labels {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .step-container {
+    flex-direction: column;
+  }
+  
+  .step-line {
+    width: 2px;
+    height: 20px;
+    margin: 5px 0;
+  }
+}
+/* reset end  */
 
 .btn-at-end {
   display: flex;
@@ -3094,15 +3290,6 @@ margin-left: -100px;
   justify-content: end;
 }
 
-.wallet-pill-text {
-  display: inline-block;
-  min-width: 80px;
-  max-width: 100px;
-  margin-top: 5px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
 
 
 #password_help .ant-form-item-explain-error {

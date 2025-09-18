@@ -2,7 +2,14 @@ import { api } from '@/components/common/api';
 import { history } from '@umijs/max';
 import { Button, Card, Form, Input, message } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { LockOutlined, KeyOutlined, UnlockOutlined } from '@ant-design/icons';
+import { 
+  LockOutlined, 
+  KeyOutlined, 
+  UnlockOutlined, 
+  MailOutlined, 
+  UserOutlined, 
+  CheckOutlined 
+} from '@ant-design/icons';
 
 import '../../common.css';
 
@@ -10,9 +17,27 @@ const Password: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [userId, setUserId] = useState<String>();
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [formValues, setFormValues] = useState<any>({});
+  
   useEffect(() => {
     getDetails().then();
   }, []);
+
+  // Watch form values changes to update progress
+  const handleFormValuesChange = (changedValues: any, allValues: any) => {
+    setFormValues(allValues);
+    
+    // Update progress based on filled fields
+    let step = 1;
+    if (allValues.oldPassword) {
+      step = 2;
+    }
+    if (allValues.oldPassword && allValues.newPassword) {
+      step = 3;
+    }
+    setCurrentStep(step);
+  };
 
   async function getDetails() {
     try {
@@ -31,13 +56,11 @@ const Password: React.FC = () => {
     }
   }
   
-
   async function handleOk(record: { id: any }) {
     setLoading(true);
   
     try {
       const values = await form.validateFields();
-      //   console.log("handleOk :::",userId,record);
   
       const response = await api.app.password(userId, {
         oldPassword: values.oldPassword,
@@ -90,93 +113,142 @@ const Password: React.FC = () => {
 
   return (
     <>
-     <Card  className="change-password">
-          <div className="profile-info pdinginfo" style={{ marginBottom: 30 }}>
-          <div className="avatar-container">
-          </div>
+      <Card className="change-password">
+        {/* Keep your existing profile-info div unchanged */}
+        <div className="profile-info pdinginfo" style={{ marginBottom: 30 }}>
+          <div className="avatar-container"></div>
           <div className="user-info">
-            <h2 className="user-name">Password</h2>
+            <h2 className="user-name">Reset Account Password</h2>
           </div>
         </div>
-      
-      <div className="btn-at-end">
-        {/* <Button type="button" onClick={() => history.push('/dashboard')} className="back-btn">Back</Button> */}
-      </div>
-      <Form
-        className="change_pwd change-pwd-form"
-        form={form}
-        onFinish={handleOk}
-        name="basic"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: '100%' }}
-        initialValues={{ remember: true }}
-        autoComplete="off"
-      >
-        <Form.Item
-         label={
-          <span>
-            <KeyOutlined style={{ marginRight: 8 }} />
-            Old Password
-          </span>
-        }
-          name="oldPassword"
-          rules={[{ required: true, message: 'Please Fill out this Field!' }]}
-          style={{ width: 350, marginTop: 0,  }}
-          labelCol={{ span: 24 }}
-          wrapperCol={{ span: 24 }}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label={
-            <span>
-              <UnlockOutlined style={{ marginRight: 8 }} />
-              New Password
-            </span>
-          }
-          name="newPassword"
-          rules={[
-            { required: true, message: 'Please Fill out this Field!' },
-            {
-              pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-              min: 8,
-              message:
-                'New Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special symbol, and be at least 8 characters long!',
-            },
-          ]}
-          style={{ width: 350, marginTop: 0,  }}
-          labelCol={{ span: 24 }}
-          wrapperCol={{ span: 24 }}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-           label={
-            <span>
-              <LockOutlined style={{ marginRight: 8 }} />
-              Confirm Password
-            </span>
-          }
-          name="Confirm Password"
-          rules={[
-            { required: true, message: 'Please Fill out this Field!' },
-            { validator: validateConfirmPassword },
-          ]}
-          style={{ width: 350, marginTop: 0,  }}
-          labelCol={{ span: 24 }}
-          wrapperCol={{ span: 24 }}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item className="change-pwd-btn">
-          <Button type="button" htmlType="submit" className="updatepassword-btn">
-            Update Password
-          </Button>
-        </Form.Item>
-      </Form>
-    </Card>
+
+        {/* New Reset Password Header */}
+        <div className="reset-password-header">
+          {/* Progress Steps */}
+          <div className="reset-steps">
+            <div className="step-container">
+              <div className={`step ${currentStep >= 1 ? 'active' : ''}`}>
+                <div className="step-icon">
+                  <KeyOutlined />
+                </div>
+              </div>
+              <div className={`step-line ${currentStep >= 2 ? 'active' : ''}`}></div>
+              <div className={`step ${currentStep >= 2 ? 'active' : ''}`}>
+                <div className="step-icon">
+                  <UnlockOutlined />
+                </div>
+              </div>
+              <div className={`step-line ${currentStep >= 3 ? 'active' : ''}`}></div>
+              <div className={`step ${currentStep >= 3 ? 'active' : ''}`}>
+                <div className="step-icon">
+                  <LockOutlined />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="steps-labels">
+            <span className={`step-label ${currentStep >= 1 ? 'active' : ''}`}>1. Enter old password</span>
+            <span className={`step-label ${currentStep >= 2 ? 'active' : ''}`}>2. Create new password</span>
+            <span className={`step-label ${currentStep >= 3 ? 'active' : ''}`}>3. Confirm password</span>
+          </div>
+        </div>
+
+        {/* Reset Form Section */}
+        <div className="reset-form-section">
+
+          <Form
+            className="change_pwd change-pwd-form reset-password-form"
+            form={form}
+            onFinish={handleOk}
+            onValuesChange={handleFormValuesChange}
+            name="basic"
+            style={{ maxWidth: '100%' }}
+            initialValues={{ remember: true }}
+            autoComplete="off"
+          >
+            <div className="form-group">
+              <label className="form-label">
+                <KeyOutlined style={{ marginRight: 8 }} />
+                Old Password:
+              </label>
+              <Form.Item
+                name="oldPassword"
+                rules={[{ required: true, message: 'Please Fill out this Field!' }]}
+                style={{ marginBottom: 0 }}
+              >
+                <Input.Password 
+                  className="reset-input"
+                  placeholder="Enter your current password"
+                />
+              </Form.Item>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">
+                <UnlockOutlined style={{ marginRight: 8 }} />
+                New Password:
+              </label>
+              <Form.Item
+                name="newPassword"
+                rules={[
+                  { required: true, message: 'Please Fill out this Field!' },
+                  {
+                    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+                    min: 8,
+                    message:
+                      'New Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special symbol, and be at least 8 characters long!',
+                  },
+                ]}
+                style={{ marginBottom: 0 }}
+              >
+                <Input.Password 
+                  className="reset-input"
+                  placeholder="Enter your new password"
+                />
+              </Form.Item>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">
+                <LockOutlined style={{ marginRight: 8 }} />
+                Confirm Password:
+              </label>
+              <Form.Item
+                name="Confirm Password"
+                rules={[
+                  { required: true, message: 'Please Fill out this Field!' },
+                  { validator: validateConfirmPassword },
+                ]}
+                style={{ marginBottom: 0 }}
+              >
+                <Input.Password 
+                  className="reset-input"
+                  placeholder="Confirm your new password"
+                />
+              </Form.Item>
+            </div>
+
+            <Form.Item className="change-pwd-btn">
+              <Button 
+                type="primary" 
+                htmlType="submit" 
+                className="send-email-btn"
+                loading={loading}
+                size="large"
+              >
+                Update Password
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+
+        <div className="btn-at-end">
+          {/* Keep your back button if needed */}
+        </div>
+      </Card>
     </>
   );
 };
+
 export default Password;

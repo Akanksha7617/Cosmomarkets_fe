@@ -121,6 +121,15 @@ const Clients: React.FC = () => {
         </div>
       ),
     },
+    
+    {
+      title: 'Total Deposit',
+      key: 'totalDeposit',
+      render: (_, record) => {
+        const amount = record.totalDeposit || 0;
+        return <div style={{ fontWeight: 500 }}>{`$${amount.toFixed(2)}`}</div>;
+      },
+    },
     {
       title: 'Total Withdraw',
       key: 'totalWithdraw',
@@ -129,14 +138,6 @@ const Clients: React.FC = () => {
           <div style={{ fontWeight: 500 }}>{`$${(record.totalWithdraw || 0).toFixed(2)}`}</div>
         </div>
       ),
-    },
-    {
-      title: 'Total Deposit',
-      key: 'totalDeposit',
-      render: (_, record) => {
-        const amount = record.totalDeposit || 0;
-        return <div style={{ fontWeight: 500 }}>{`$${amount.toFixed(2)}`}</div>;
-      },
     },
     {
       title: 'Total MT5 Deposit',

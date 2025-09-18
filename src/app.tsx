@@ -1,6 +1,6 @@
 import { AvatarDropdown, AvatarName } from '@/components';
 import { api, updateAPIToken } from '@/components/common/api';
-import { WalletOutlined } from '@ant-design/icons';
+import { MoneyCollectOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
@@ -142,7 +142,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     };
     checkUserSession();
   }, []);
-  
+
 
   return {
     actionsRender: () =>
@@ -150,7 +150,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       [
         <Tag
           className="wallet-pill"
-          icon={<WalletOutlined style={{ fontSize: '18px' }} />}
+          icon={<MoneyCollectOutlined style={{ fontSize: '18px' }} />}
           style={{ display: 'inline-flex', alignItems: 'center' }}
         >
           <span className="wallet-pill-text">{balance}</span>
@@ -196,11 +196,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ],
     links: isDev
       ? [
-          // <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-          //   <LinkOutlined />
-          //   <span>OpenAPI strrstrr</span>
-          // </Link>,
-        ]
+        // <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+        //   <LinkOutlined />
+        //   <span>OpenAPI strrstrr</span>
+        // </Link>,
+      ]
       : [],
     menuHeaderRender: undefined,
     // strrstrrstrr 403 strrstrr
@@ -239,3 +239,5 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 export const request = {
   ...errorConfig,
 };
+
+// wallet pill button

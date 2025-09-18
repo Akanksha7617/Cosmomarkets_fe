@@ -135,7 +135,17 @@ const Deposit: React.FC = () => {
 
   // Payment methods organized by category
   const paymentMethods: PaymentMethod[] = [
+   
     {
+      key: 'card-payment',
+      label: 'Card Payment',
+      icon: <CreditCardOutlined />,
+      details: 'Instant credit/debit card payment',
+      processingTime: 'Instant',
+      cost: 0,
+      category: 'traditional'
+    },
+     {
       key: 'bank-transfer',
       label: 'Bank Transfer',
       icon: <BankOutlined />,
@@ -145,13 +155,13 @@ const Deposit: React.FC = () => {
       category: 'traditional'
     },
     {
-      key: 'card-payment',
-      label: 'Card Payment',
-      icon: <CreditCardOutlined />,
-      details: 'Instant credit/debit card payment',
+      key: 'usdtc-deposit',
+      label: 'USDT (TRC)',
+      icon: <RocketOutlined />,
+      details: 'USDT TRC-20 token',
       processingTime: 'Instant',
       cost: 0,
-      category: 'traditional'
+      category: 'crypto'
     },
     {
       key: 'other-payment',
@@ -180,15 +190,7 @@ const Deposit: React.FC = () => {
       cost: 0,
       category: 'crypto'
     },
-    {
-      key: 'usdtc-deposit',
-      label: 'USDT (TRC)',
-      icon: <RocketOutlined />,
-      details: 'USDT TRC-20 token',
-      processingTime: 'Instant',
-      cost: 0,
-      category: 'crypto'
-    }
+    
   ];
 
   async function init() {
