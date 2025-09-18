@@ -489,7 +489,7 @@ const Deposit: React.FC = () => {
                   hoverable
                   className={`payment-method-card ${selectedPaymentMethod === method.key ? 'selected' : ''}`}
                   onClick={() => handlePaymentMethodSelect(method.key)}
-                  style={{ height: '160px' }}
+                
                 >
                   <div className="payment-method-content">
                     <div className="payment-icon">
@@ -521,7 +521,7 @@ const Deposit: React.FC = () => {
                   hoverable
                   className={`payment-method-card crypto-card ${selectedPaymentMethod === method.key ? 'selected' : ''}`}
                   onClick={() => handlePaymentMethodSelect(method.key)}
-                  style={{ height: '160px' }}
+                 
                 >
                   <div className="payment-method-content">
                     <div className="payment-icon crypto-icon">
