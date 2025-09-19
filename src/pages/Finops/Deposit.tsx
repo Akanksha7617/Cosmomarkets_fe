@@ -135,7 +135,7 @@ const Deposit: React.FC = () => {
 
   // Payment methods organized by category
   const paymentMethods: PaymentMethod[] = [
-   
+
     {
       key: 'card-payment',
       label: 'Card Payment',
@@ -145,7 +145,7 @@ const Deposit: React.FC = () => {
       cost: 0,
       category: 'traditional'
     },
-     {
+    {
       key: 'bank-transfer',
       label: 'Bank Transfer',
       icon: <BankOutlined />,
@@ -190,7 +190,7 @@ const Deposit: React.FC = () => {
       cost: 0,
       category: 'crypto'
     },
-    
+
   ];
 
   async function init() {
@@ -491,7 +491,7 @@ const Deposit: React.FC = () => {
                   hoverable
                   className={`payment-method-card ${selectedPaymentMethod === method.key ? 'selected' : ''}`}
                   onClick={() => handlePaymentMethodSelect(method.key)}
-                
+
                 >
                   <div className="payment-method-content">
                     <div className="payment-icon">
@@ -523,7 +523,7 @@ const Deposit: React.FC = () => {
                   hoverable
                   className={`payment-method-card crypto-card ${selectedPaymentMethod === method.key ? 'selected' : ''}`}
                   onClick={() => handlePaymentMethodSelect(method.key)}
-                 
+
                 >
                   <div className="payment-method-content">
                     <div className="payment-icon crypto-icon">
@@ -562,23 +562,24 @@ const Deposit: React.FC = () => {
 
           {selectedMethod && (
             <Card className="selected-method-card" style={{ marginBottom: '24px' }}>
-              <Space>
+              <div className="selected-method-mobile-responsive">
                 <div className="selected-method-icon">
                   {selectedMethod.icon}
                 </div>
-                <div>
-                  <Text strong>{selectedMethod.label}</Text>
-                  <br />
-                  <Text type="secondary">{selectedMethod.details}</Text>
+                <div className="selected-method-text">
+                  <Text strong>{selectedMethod.label}</Text><br></br>
+                  <Text type="secondary" className="method-details">{selectedMethod.details}
+                    <br></br>
+                  </Text>
+                  <Text className="method-minimum">Minimum: ${selectedMethod.minAmount}</Text>
                 </div>
                 <a
                   onClick={() => setCurrentStep(1)}
-                  style={{ color: '#1677ff', cursor: 'pointer', textDecoration: 'underline' }}
+                  style={{ color: '#ff6b6b', cursor: 'pointer', textDecoration: 'underline' }}
                 >
                   Change
                 </a>
-
-              </Space>
+              </div>
             </Card>
           )}
         </div>
@@ -636,6 +637,7 @@ const Deposit: React.FC = () => {
     const isCrypto = ['erc-deposit', 'btc-deposit', 'usdtc-deposit'].includes(selectedPaymentMethod);
     const isBank = selectedPaymentMethod === 'bank-transfer';
     const isCard = selectedPaymentMethod === 'card-payment';
+    const hasLeftContent = isCrypto || isBank || isCard;
 
     return (
       <div className="payment-details-container">
@@ -643,87 +645,98 @@ const Deposit: React.FC = () => {
           Complete Your Deposit
         </Title>
 
-        <Row gutter={[24, 24]}>
-          <Col xs={24} lg={12}>
-            {/* Payment Instructions */}
-            {isCrypto && cryptoDetails[selectedPaymentMethod] && (
-              <Card title="Cryptocurrency Deposit" className="crypto-details-card">
-                <div style={{ textAlign: 'center' }}>
-                  <Title level={4}>{cryptoDetails[selectedPaymentMethod].name}</Title>
-                  <Text>Send exactly <strong>${amount}</strong> to the address below</Text>
+        <Row gutter={[24, 24]} justify={hasLeftContent ? "start" : "center"}>
+          {/* Left side content - only render if there's content */}
+          {hasLeftContent && (
+            <Col xs={24} lg={12}>
+              {/* Payment Instructions */}
+              {isCrypto && cryptoDetails[selectedPaymentMethod] && (
+                <Card title="Cryptocurrency Deposit" className="crypto-details-card">
+                  <div style={{ textAlign: 'center' }}>
+                    <Title level={4}>{cryptoDetails[selectedPaymentMethod].name}</Title>
+                    <Text>Send exactly <strong>${amount}</strong> to the address below</Text>
 
-                  <div className="qr-section" style={{ margin: '24px 0' }}>
-                    <img
-                      src={cryptoDetails[selectedPaymentMethod].qrCode}
-                      alt="QR Code"
-                      style={{ width: '200px', height: '200px', border: '1px solid #d9d9d9' }}
-                    />
-                  </div>
-
-                  <div className="wallet-address">
-                    <Text strong>Wallet Address:</Text>
-                    <Input.Group compact style={{ marginTop: '8px' }}>
-                      <Input
-                        value={cryptoDetails[selectedPaymentMethod].walletAddress}
-                        readOnly
-                        style={{ fontFamily: 'monospace' }}
+                    <div className="qr-section" style={{ margin: '24px 0' }}>
+                      <img
+                        src={cryptoDetails[selectedPaymentMethod].qrCode}
+                        alt="QR Code"
+                        style={{ width: '200px', height: '200px', border: '1px solid #d9d9d9' }}
                       />
-                      <Button
-                        icon={<CopyOutlined />}
-                        onClick={() => {
-                          navigator.clipboard.writeText(cryptoDetails[selectedPaymentMethod].walletAddress);
-                          message.success('Address copied to clipboard!');
-                        }}
-                      >
-                        Copy
-                      </Button>
-                    </Input.Group>
+                    </div>
+
+                    <div className="wallet-address">
+                      <Text strong>Wallet Address:</Text>
+                      <Input.Group compact style={{ marginTop: '8px' }}>
+                        <Input
+                          value={cryptoDetails[selectedPaymentMethod].walletAddress}
+                          readOnly
+                          style={{ fontFamily: 'monospace' }}
+                        />
+                        <Button
+                          icon={<CopyOutlined />}
+                          onClick={() => {
+                            navigator.clipboard.writeText(cryptoDetails[selectedPaymentMethod].walletAddress);
+                            message.success('Address copied to clipboard!');
+                          }}
+                        >
+                          Copy
+                        </Button>
+                      </Input.Group>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            )}
+                </Card>
+              )}
 
-            {isBank && bankWireDetails && (
-              <Card title="Bank Transfer Details" className="bank-details-card">
-                <Alert
-                  message="Use these bank details for your transfer"
-                  description={`Transfer amount: $${amount}`}
-                  type="info"
-                  style={{ marginBottom: '16px' }}
-                />
-                <Table
-                  dataSource={dataSource}
-                  columns={columns}
-                  pagination={false}
-                  bordered
-                  size="small"
-                />
-              </Card>
-            )}
+              {isBank && bankWireDetails && (
+                <Card title="Bank Transfer Details" className="bank-details-card">
+                  <Alert
+                    message="Use these bank details for your transfer"
+                    description={`Transfer amount: $${amount}`}
+                    type="info"
+                    style={{ marginBottom: '16px' }}
+                  />
+                  <Table
+                    dataSource={dataSource}
+                    columns={columns}
+                    pagination={false}
+                    bordered
+                    size="small"
+                  />
+                </Card>
+              )}
 
-            {isCard && paymentLinks && paymentLinks.length > 0 && (
-              <Card title="Payment Options" className="payment-links-card">
-                <Text>Choose a payment gateway to complete your deposit of <strong>${amount}</strong></Text>
-                <div style={{ marginTop: '16px' }}>
-                  {paymentLinks.map((link, index) => (
-                    <Button
-                      key={link.id}
-                      type="primary"
-                      block
-                      style={{ marginBottom: '8px' }}
-                      onClick={() => handleRedirect(link.url)}
-                    >
-                      {link.name || `Payment Option ${index + 1}`}
-                    </Button>
-                  ))}
-                </div>
-              </Card>
-            )}
-          </Col>
+              {isCard && paymentLinks && paymentLinks.length > 0 && (
+                <Card title="Payment Options" className="payment-links-card">
+                  <Text>Choose a payment gateway to complete your deposit of <strong>${amount}</strong></Text>
+                  <div style={{ marginTop: '16px' }}>
+                    {paymentLinks.map((link, index) => (
+                      <Button
+                        key={link.id}
+                        type="primary"
+                        block
+                        style={{ marginBottom: '8px' }}
+                        onClick={() => handleRedirect(link.url)}
+                      >
+                        {link.name || `Payment Option ${index + 1}`}
+                      </Button>
+                    ))}
+                  </div>
+                </Card>
+              )}
+            </Col>
+          )}
 
-          <Col xs={24} lg={12}>
+          {/* Upload Section - responsive width based on left content */}
+          <Col xs={24} lg={hasLeftContent ? 12 : 16}>
             {/* Upload Section */}
-            <Card title="Upload Transaction Proof (Optional)" className="upload-card">
+            <Card
+              title={
+                ['bank-transfer', 'other-payment'].includes(selectedPaymentMethod)
+                  ? "Upload Transaction Proof (Required)"
+                  : "Upload Transaction Proof (Optional)"
+              }
+              className="upload-card"
+            >
               <Upload {...uploadProps} className="proof-upload">
                 <div className="upload-area">
                   <UploadOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
@@ -735,26 +748,44 @@ const Deposit: React.FC = () => {
                   <Text type="secondary" style={{ fontSize: '12px' }}>
                     JPEG, PNG, PDF (Max 2MB)
                   </Text>
+                  {['bank-transfer', 'other-payment'].includes(selectedPaymentMethod) && (
+                    <>
+                      <br />
+                    </>
+                  )}
                 </div>
               </Upload>
 
               <Divider />
 
-              <div style={{ textAlign: 'center' }}>
-                <Space size="large">
-                  <Button size="large" onClick={handlePrevStep}>
-                    Back
-                  </Button>
-                  <Button
-                    type="primary"
-                    size="large"
-                    loading={loading}
-                    onClick={handleFinalSubmit}
-                    icon={<CheckCircleOutlined />}
-                  >
-                    Complete Deposit
-                  </Button>
-                </Space>
+              {/* Mobile responsive button section */}
+              <div className="deposit-actions-mobile" style={{ textAlign: 'center' }}>
+                <Row gutter={[8, 8]} justify="center">
+                  <Col xs={24} sm={12} md={8}>
+                    <Button
+                      size="large"
+                      onClick={handlePrevStep}
+                      block
+                      style={{ minHeight: '44px' }}
+                    >
+                      Back
+                    </Button>
+                  </Col>
+                  <Col xs={24} sm={12} md={16}>
+                    <Button
+                      type="primary"
+                      size="large"
+                      loading={loading}
+                      onClick={handleFinalSubmit}
+                      icon={<CheckCircleOutlined />}
+                      disabled={['bank-transfer', 'other-payment'].includes(selectedPaymentMethod) && fileList.length === 0}
+                      block
+                      style={{ minHeight: '44px' }}
+                    >
+                      Complete Deposit
+                    </Button>
+                  </Col>
+                </Row>
               </div>
             </Card>
           </Col>

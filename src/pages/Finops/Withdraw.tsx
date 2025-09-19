@@ -473,18 +473,16 @@ const Withdraw: React.FC = () => {
 
           {selectedMethod && (
             <Card className="selected-method-card" style={{ marginBottom: '24px' }}>
-              <Space>
+              <div className="selected-method-mobile-responsive">
                 <div className="selected-method-icon">
                   {selectedMethod.icon}
                 </div>
-                <div>
-                  <Text strong>{selectedMethod.label}</Text>
-                  <br />
-                  <Text type="secondary">{selectedMethod.details}</Text>
-                  <br />
-                  <Text style={{ fontSize: '12px', color: '#ff6b6b' }}>
-                    Minimum: ${selectedMethod.minAmount}
+                <div className="selected-method-text">
+                  <Text strong>{selectedMethod.label}</Text><br></br>
+                  <Text type="secondary" className="method-details">{selectedMethod.details}
+                    <br></br>
                   </Text>
+                  <Text className="method-minimum">Minimum: ${selectedMethod.minAmount}</Text>
                 </div>
                 <a
                   onClick={() => setCurrentStep(1)}
@@ -492,7 +490,7 @@ const Withdraw: React.FC = () => {
                 >
                   Change
                 </a>
-              </Space>
+              </div>
             </Card>
           )}
 
@@ -734,7 +732,7 @@ const Withdraw: React.FC = () => {
 
   const renderMT5Withdraw = () => (
     <div style={{ padding: '24px' }}>
-      
+
       <Transfer
         title={'Withdraw from MT5'}
         type={Type.MT_TO_WALLET}
@@ -751,10 +749,10 @@ const Withdraw: React.FC = () => {
           duration: 3,
         }}
 
-         onBack={() => {
-        setIsMt5(false);
-        setCurrentStep(0);
-      }}
+        onBack={() => {
+          setIsMt5(false);
+          setCurrentStep(0);
+        }}
       />
     </div>
   );
