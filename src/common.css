@@ -1245,7 +1245,7 @@
   color: #fbf9f9;
   /* font-weight: 600; */
   font-size: 16.5px;
-  font-family: 'math', serif;
+  font-family: Futura PT, sans-serif;
 }
 
 .ant-menu-submenu-arrow {
@@ -8260,7 +8260,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
   .modern-deposit-container {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    /* background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); */
   }
   
   .deposit-form-container,
@@ -8905,7 +8905,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
   .modern-withdraw-container {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    /* background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); */
   }
   
   .step-card,
@@ -9121,8 +9121,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
 
 /* sign up page start  */
 
-
-/* Page & background lines */
+ /* Page & background lines */
 .signup-page {
   min-height: 100vh;
   display: flex;
@@ -9132,7 +9131,6 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   position: relative;
   overflow: hidden;
   background: #08334A;
-  /* base dark behind lines */
 }
 
 /* Blue angled line */
@@ -9175,7 +9173,6 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   overflow: hidden;
   position: relative;
   z-index: 2;
-  /* above background lines */
 }
 
 /* Left panel – logo */
@@ -9185,7 +9182,6 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   justify-content: center;
   align-items: center;
   background: #004AAD;
-  /* solid blue panel inside card */
   padding: 20px;
 }
 
@@ -9196,7 +9192,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   object-fit: contain;
 }
 
-/* Right panel – scrollable signup form */
+/* Right panel – form */
 .signup-right {
   flex: 1;
   padding: 20px 30px 40px;
@@ -9214,7 +9210,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   margin: 0 0 20px 0;
 }
 
-/* Name row for side-by-side inputs */
+/* Name row */
 .name-row {
   display: flex;
   gap: 15px;
@@ -9238,6 +9234,27 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   color: rgba(0, 0, 0, 0.5);
 }
 
+/* Fix Select box to match Input */
+ .signup-input.ant-select-dropdown {
+  border-radius: 10px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+  padding: 5px 0 !important;
+  z-index: 2000 !important; /* ensures it shows above modal/card */
+}
+
+/* Each option */
+.signup-input.ant-select-dropdown .ant-select-item {
+  font-size: 14px;
+  padding: 8px 12px;
+}
+
+/* Highlight selected/hover */
+.signup-input.ant-select-dropdown .ant-select-item-option-selected,
+.signup-input.ant-select-dropdown .ant-select-item-option-active {
+  background: rgba(0, 74, 173, 0.08) !important;
+  font-weight: 600;
+  color: #004AAD !important;
+}
 /* Submit button */
 .signup-submit-button {
   width: 100%;
@@ -9276,7 +9293,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   margin-top: 15px;
 }
 
-/* Terms checkbox styling */
+/* Terms checkbox */
 .terms-checkbox .ant-checkbox {
   margin-right: 8px;
 }
@@ -9296,14 +9313,13 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   color: #004AAD;
 }
 
-/* Error message for terms */
 .error-message {
   color: #e53e3e;
   font-size: 12px;
   margin-top: 5px;
 }
 
-/* Phone input customization */
+/* Phone input */
 .react-phone-input input {
   background: #f8fafc !important;
   border: 1px solid rgba(0, 0, 0, 0.2) !important;
@@ -9322,81 +9338,62 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   border-radius: 10px 0 0 10px !important;
 }
 
-/* Select dropdown styling */
-.signup-input.ant-select .ant-select-selector {
-  border: 1px solid rgba(0, 0, 0, 0.2) !important;
-  border-radius: 10px !important;
-  padding: 8px 11px !important;
-  height: 40px !important;
-}
-
-.signup-input.ant-select .ant-select-selection-item {
-  line-height: 24px !important;
-}
-
-/* Form item spacing */
+/* Antd form labels */
 .signup-form .ant-form-item {
   margin-bottom: 16px;
 }
 
-.signup-form .ant-form-item-label>label {
+.signup-form .ant-form-item-label > label {
   font-weight: 600;
   color: #2d3748;
   font-size: 13px;
 }
 
-/* Mobile Responsive Styles */
+/* ---------------- Responsive ---------------- */
+
+/* Tablets */
 @media (max-width: 900px) {
   .signup-card {
     flex-direction: column;
     height: auto;
     max-height: 95vh;
   }
-
-  .signup-left,
-  .signup-right {
+  .signup-left, .signup-right {
     flex: unset;
     width: 100%;
   }
-
   .signup-left {
     padding: 30px 0;
     min-height: 120px;
   }
-
   .signup-left img {
     width: 60%;
     max-width: 200px;
   }
-
   .signup-right {
     max-height: calc(95vh - 120px);
     padding: 20px 25px 30px;
   }
-
   .name-row {
     flex-direction: column;
     gap: 0;
   }
-
   .name-input {
     margin-bottom: 16px;
   }
-
   .signup-title {
     font-size: 24px;
     margin-bottom: 15px;
   }
 }
 
-/* Mobile phones (320px - 768px) */
+/* Mobile phones */
 @media screen and (max-width: 768px) {
   .signup-page {
     padding: 10px;
     align-items: flex-start;
     padding-top: 20px;
   }
-
   .signup-card {
     width: 100%;
     max-width: 100%;
@@ -9405,163 +9402,144 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
     margin: 0;
     border-radius: 15px;
   }
-
   .signup-left {
     padding: 25px 0;
     min-height: 100px;
   }
-
   .signup-left img {
     width: 50%;
     max-width: 150px;
   }
-
   .signup-right {
     max-height: calc(100vh - 140px);
     padding: 15px 20px 25px;
     overflow-y: auto;
   }
-
   .signup-title {
     font-size: 22px;
     margin-bottom: 12px;
   }
-
-  /* Scrollbar styling for mobile */
   .signup-right::-webkit-scrollbar {
     width: 3px;
   }
-
   .signup-right::-webkit-scrollbar-thumb {
     background: rgba(102, 126, 234, 0.4);
     border-radius: 2px;
   }
-
   .signup-right::-webkit-scrollbar-track {
     background: transparent;
   }
+  .signup-input.ant-select .ant-select-selector {
+    height: 36px !important;
+  }
+  .signup-input.ant-select .ant-select-selection-item,
+  .signup-input.ant-select .ant-select-selection-placeholder {
+    line-height: 34px !important;
+    font-size: 13px !important;
+  }
 }
 
-/* Small mobile phones (320px - 480px) */
+/* Small mobiles */
 @media screen and (max-width: 480px) {
   .signup-page {
     padding: 5px;
     padding-top: 15px;
   }
-
   .signup-card {
     border-radius: 12px;
     max-height: calc(100vh - 30px);
   }
-
   .signup-left {
     padding: 20px 0;
     min-height: 80px;
   }
-
   .signup-left img {
     width: 45%;
     max-width: 120px;
   }
-
   .signup-right {
     max-height: calc(100vh - 110px);
     padding: 12px 15px 20px;
   }
-
   .signup-title {
     font-size: 20px;
     margin-bottom: 10px;
   }
-
   .signup-input {
     font-size: 13px;
     padding: 8px;
     margin-bottom: 12px;
   }
-
   .signup-submit-button {
     padding: 10px;
     font-size: 14px;
   }
-
   .name-row {
     gap: 0;
   }
-
   .name-input {
     margin-bottom: 12px;
   }
-
   .signup-form .ant-form-item {
     margin-bottom: 12px;
   }
-
-  .signup-form .ant-form-item-label>label {
+  .signup-form .ant-form-item-label > label {
     font-size: 12px;
   }
-
   .checkbox-text {
     font-size: 12px;
   }
-
   .signup-signin-text {
     font-size: 12px;
     margin-top: 10px;
   }
-
-  /* Phone input mobile adjustments */
   .react-phone-input input {
     height: 36px !important;
     font-size: 13px !important;
     padding: 8px 14px 8px 50px !important;
     margin-bottom: 12px !important;
   }
-
-  .react-phone-input .flag-dropdown {
-    border-radius: 10px 0 0 10px !important;
-  }
-
-  /* Select dropdown mobile adjustments */
   .signup-input.ant-select .ant-select-selector {
     height: 36px !important;
-    padding: 6px 9px !important;
   }
-
-  .signup-input.ant-select .ant-select-selection-item {
-    line-height: 22px !important;
+  .signup-input.ant-select .ant-select-selection-item,
+  .signup-input.ant-select .ant-select-selection-placeholder {
+    line-height: 34px !important;
+    font-size: 13px !important;
   }
 }
 
-/* Extra small screens (320px and below) */
+/* Extra small (320px and below) */
 @media screen and (max-width: 320px) {
   .signup-right {
     padding: 10px 12px 15px;
   }
-
   .signup-title {
     font-size: 18px;
   }
-
   .signup-input {
     font-size: 12px;
     padding: 6px;
   }
-
   .signup-submit-button {
     font-size: 13px;
     padding: 8px;
   }
-
   .react-phone-input input {
     height: 32px !important;
     font-size: 12px !important;
     padding: 6px 12px 6px 45px !important;
   }
-  .ant-pro-global-header {
-  background: linear-gradient(135deg, #929799 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
+  .signup-input.ant-select .ant-select-selector {
+    height: 32px !important;
+  }
+  .signup-input.ant-select .ant-select-selection-item,
+  .signup-input.ant-select .ant-select-selection-placeholder {
+    line-height: 30px !important;
+    font-size: 12px !important;
+  }
 }
-}
+
 
 /* singnup end  */
 
