@@ -628,12 +628,12 @@ const HelpDeskAdmin: React.FC = () => {
                           {/* Message time */}
                           <div className="chat-time">
                             {/* {new Date(msg.createdAt).toLocaleTimeString()} */}
-                            {/* {new Date(msg.createdAt).toLocaleTimeString("en-GB", {
+                            {new Date(msg.createdAt).toLocaleTimeString("en-GB", {
                               hour: "2-digit",
                               minute: "2-digit",
                               hour12: true,
                               
-                            })} */}
+                            })}
                           </div>
                         </div>
                       ))}
