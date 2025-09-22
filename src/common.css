@@ -137,10 +137,10 @@
   cursor: pointer;
 }
 
-.divrefresh-btn:hover {
+/* .divrefresh-btn:hover {
   color: black;
-  background-color: white;
-}
+  background-color: orange;
+} */
 
 .divrefresh-btn {
   /* width: 120px; */
@@ -4898,7 +4898,7 @@ margin-left: -100px;
 
 .transaction-header {
   background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
-  padding: 20px;
+  padding: 40px;
   margin-bottom: 16px;
   border-radius: 8px;
 }
@@ -5035,7 +5035,7 @@ margin-left: -100px;
 }
 
 .transaction-id {
-  color: #1890ff;
+  color: black;
   cursor: pointer;
 }
 
@@ -6237,8 +6237,8 @@ margin-left: -100px;
 
 .premium-select-field:focus {
   outline: none;
-  border-color: var(--primary-color);
-  background: var(--background-primary);
+  /* border-color: var(--primary-color);
+  background: var(--background-primary); */
 }
 
 .premium-select-field:focus + .select-dropdown-icon {
@@ -6412,9 +6412,9 @@ margin-left: -100px;
 /* Enhanced Focus States */
 .premium-select-field:focus,
 .premium-textarea-field:focus {
-  box-shadow: 
+  /* box-shadow: 
     0 0 0 4px rgb(37 99 235 / 0.1),
-    0 4px 12px rgb(0 0 0 / 0.05);
+    0 4px 12px rgb(0 0 0 / 0.05); */
   transform: translateY(-1px);
 }
 
@@ -7260,37 +7260,39 @@ margin-left: -100px;
 /* Help Desk user end */
 
 /* Help Desk Admin side */
-.page-wrapper {
+ .page-wrapper {
   width: 100%;
   min-height: 100vh;
   padding: 2rem;
   color: #333;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
+  box-sizing: border-box;
 }
 
-.query-page-container {
-  position: relative;
+ .query-page-container {
   max-width: 1200px;
-  padding: 2.5rem;
-  overflow: hidden;
+  margin: 0 auto;
+  padding: 2rem;
   border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 }
-
 /* Filters Section */
-.filters-wrapper {
+ .filters-wrapper {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
 }
-
-.filters-container {
+ .filters-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
-  align-items: center;
+  gap: 10px;
   width: 100%;
 }
+
 
 .date-filter {
   flex-grow: 1;
@@ -7452,9 +7454,9 @@ margin-left: -100px;
   transition: all 0.2s ease;
 }
 
-.view-btn:hover {
+/* .view-btn:hover {
   background-color: #0b7dda;
-}
+} */
 
 .resolve-btn {
   margin-left: 5px;
@@ -7466,9 +7468,9 @@ margin-left: -100px;
   cursor: pointer;
 }
 
-.resolve-btn:hover {
+/* .resolve-btn:hover {
   background-color: #ec971f;
-}
+} */
 
 /* Pagination */
 .pagination-container {
@@ -7508,7 +7510,8 @@ margin-left: -100px;
   padding: 10px 20px;
   color: white;
   font-size: 16px;
-  background: #d0d9e2;
+  background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
+    color: #ffffff;
 }
 
 .close-btn {
@@ -7558,11 +7561,17 @@ margin-left: -100px;
 
 .chat-bubble.mine {
   align-self: flex-end;
-  background-color: #dcf8c6;
+  background-color: linear-gradient(135deg, rgb(0, 18, 25) 0%, rgb(0, 95, 115) 35%, rgb(10, 147, 150) 70%, rgb(148, 210, 189) 100%);
   margin-left: auto;
   text-align: right;
 }
 
+.date-filter .ant-picker,
+.status-filter .ant-select,
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+}
 .chat-bubble.theirs {
   align-self: flex-start;
   background-color: #e6e6e6;
@@ -9050,7 +9059,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   background-color: #f0f8ff;
   border-radius: 8px;
   margin: 16px 0;
-  border: 2px dashed #1a73e8;
+  border: 2px   ;
 }
  
 .ib-referral-label {
@@ -12164,7 +12173,6 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   gap: 20px;
   width: 100%;
 }
-
 .mt5-card {
   flex: 1;
   min-width: 0;
@@ -12245,6 +12253,64 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
     font-size: 12px;
   }
 }
+/* deposite page admin */
+
+
+
+.total-amount-display {
+  width: 200px;               /* default width */
+  padding: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  text-align: left;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin-top: 0;
+}
+ .drawer-deposit-request .ant-drawer-body {
+  padding-bottom: 80px;
+  overflow-y: auto;
+}
+@media (max-width: 768px) {
+  .drawer-deposit-request .ant-drawer-content-wrapper {
+    width: 100% !important; /* Full width on mobile */
+  }
+}
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .total-amount-display {
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
+}
+ .dep-refresh {
+  padding: 6px 16px;
+  margin: 8px;
+  background-color: #eeab4c;   /* outline style */
+  color: white;                  /* golden text */
+  border: 2px solid #eeab4c;       /* golden border */
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.dep-refresh:hover {
+  background-color:  #eeab4c;  /* golden fill on hover */
+  color: white;               /* white text */
+}
+.search-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
 
 /* submit query loader */
 .submit-query-loader {
@@ -12253,12 +12319,225 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   border: 2px solid #fff;
   border-top: 2px solid transparent;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.8s linear infinite; 
   display: inline-block;
 }
 
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+/* admin side deposite  */
+ 
+.actionbtn-wid{
+  background-color: #eeab4c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 4px 10px;
+  display: flex;             /* keeps text + icon aligned */
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;            /* centers inside the cell */
+  cursor: pointer;
+
+
+}
+@media (max-width: 768px) {
+  .search-wrapper {
+    justify-content: center;
+  }
+
+  .depsearch-input {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .status,
+  .dep-refresh {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+  }
+
+  .table-deposit-transactions h2 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .transactions-container {
+    overflow-x: auto;
+  }
+}
+@media (max-width: 768px) {
+  .dep-action-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+.dep-action-btn {
+  border: 2px solid #eeab4c;
+  background-color: #eeab4c;
+  color: white;
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 6px 12px;
+  min-width: 80px;
+}
+ .modal-edit-user .ant-modal-body {
+  flex: 1;
+  overflow-y: auto;   /* scroll only the body */
+}
+.modal-edit-user .ant-modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+
+ .status{
+  padding: 5.5px 6px;
+  margin: 8px;
+  background-color:rgb(238, 171, 76);   /* no fill */
+  color: white;                  /* golden text */
+  border: 2px solid #eeab4c;       /* golden border */
+  border-radius: 6px;              /* rounded edges */
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;                        /* spacing between text & icon */
+  transition: all 0.3s ease;
+  line-height: 1;
+}
+
+.status:hover {
+  background-color: #eeab4c;       /* fill on hover */
+  color: white;                    /* white text */
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+}
+.drawer-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px; /* spacing between buttons */
+  margin-top: 20px;
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
+}
+.approve-btn,
+.reject-btn {
+  flex: 1;
+  max-width: 120px; /* prevents buttons from getting too wide */
+  min-width: 100px; /* ensures minimum button width */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* spacing between text and icon */
+}
+
+.depsearch-input {
+  width: 250px;
+  height: 36px;
+  border: 2px solid #eeab4c;
+  border-radius: 10px 0px 10px 0px;
+  padding-left: 10px;  /* spacing so text doesn’t overlap icon */
+  background-color: #fff;
+  font-size: 14px;
+  justify-content: flex-end ; 
+}
+ .search-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* Prefix Icon */
+.search-icon {
+  color: #eeab4c;   /* golden color */
+  font-size: 16px;  /* adjust size */
+}
+@media (max-width: 768px) {
+  .ant-modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: #fff;   /* same background as modal */
+    padding: 10px;
+    z-index: 10;
+    border-top: 1px solid #ddd;
+  }
+}
+.payment-proof-title {
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.payment-proof-img {
+  width: 100%;
+  max-width: 600px; /* max size on desktop */
+  max-height: 80vh; /* won't overflow viewport height */
+  object-fit: contain; /* maintains aspect ratio */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+@media (max-width: 768px) {
+  .payment-proof-img {
+    max-width: 100%;
+    max-height: 60vh; /* slightly smaller on mobile */
+  }
+}
+@media (max-width: 768px) {
+  .drawer-actions {
+    flex-direction: column; /* stack buttons vertically on mobile */
+    gap: 12px;
+  }
+  
+  .approve-btn,
+  .reject-btn {
+    width: 100%;
+    max-width: none;
+  }
+  
+  /* Fix for TextPopconfirm buttons on mobile */
+  .ant-popover-inner-content {
+    max-width: 90vw; /* prevents overflow on small screens */
+  }
+  
+  .ant-popconfirm-buttons {
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    margin-top: 12px !important;
+  }
+  
+  .ant-popconfirm-buttons .ant-btn {
+    flex: 1 !important;
+    min-width: 60px !important;
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+  }
+  
+  /* Ensure popconfirm content is responsive */
+  .ant-popover {
+    max-width: 95vw !important;
+  }
+  
+  .ant-popover-content {
+    max-width: 100% !important;
+  }
+  
+  /* Form fields in popconfirm */
+  .ant-form-item {
+    margin-bottom: 8px !important;
+  }
+  
+  .ant-input {
+    font-size: 14px !important;
   }
 }

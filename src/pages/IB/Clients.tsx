@@ -5,9 +5,14 @@ import { Button, Input, Table, Tag, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import CustomLoader from '../CustomLoader';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
-const Clients: React.FC = () => {
+interface ClientsProps {
+  onClientCountChange?: (count: number) => void;
+  defaultTab?: string;
+}
+
+const Clients: React.FC<ClientsProps> = ({ onClientCountChange }) => {
   // State
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,15 +33,6 @@ const Clients: React.FC = () => {
     return () => clearTimeout(timer);
   }, [searchText, pagination.current, pagination.pageSize]);
 
-  // Initial loading effect
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   // Fetch client data
   const getData = async (page, pageSize, param) => {
     try {
@@ -44,6 +40,11 @@ const Clients: React.FC = () => {
       const response = await api.ib.getAttractedClientsLimited(page, pageSize, param);
       setPagination({ ...pagination, current: page, total: response.totalRecords });
       setData(response.requests || []);
+
+      // ✅ count वर पाठव
+      if (onClientCountChange) {
+        onClientCountChange(response.totalRecords || 0);
+      }
     } catch (error) {
       console.error('Error fetching client data:', error);
     } finally {
