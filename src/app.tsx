@@ -12,13 +12,11 @@ import defaultSettings from '../config/defaultSettings';
 import './common.css';
 import { errorConfig } from './requestErrorConfig';
 import { API } from './services/ant-design-pro/typings';
+import ChatBot from './components/Chatbot';
 
 const { Text } = Typography;
 const isDev = process.env.NODE_ENV === 'development';
 let loginPath: any;
-/**
- * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
- * */
 
 const urlSearchParams = new URLSearchParams(window.location.search);
 const tokenParam = urlSearchParams.get('token');
@@ -39,8 +37,9 @@ if (passCodeParam) {
     loginPath = '/user/login/ForgotPassword';
   }
 }
-// loginPath = '/user/login'
+
 console.log('Index token ------', loginPath);
+
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.CurrentUser;
@@ -62,14 +61,11 @@ export async function getInitialState(): Promise<{
       };
       return user;
     } catch (error: any) {
-      // ShowError(error)
-      // history.push(loginPath);
       redirectToLogin();
     }
     return undefined;
   };
 
-  // strrstrrstrrstrrstrrstrrstrrstrr，strrstrr
   const { location } = history;
   if (location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
@@ -94,11 +90,7 @@ const redirectToLogin = () => {
   }
 };
 
-// const redirectToLogin = () => {
-//     history.push(loginPath)
-// }
-
-// ProLayout strrstrrstrrapi https://procomponents.ant.design/components/layout
+// ProLayout API https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   const wallet = initialState?.currentUser?.wallet;
   const balance = `${wallet?.balance?.toFixed(2)} ${wallet?.currency}`;
@@ -143,10 +135,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     checkUserSession();
   }, []);
 
-
   return {
     actionsRender: () =>
-      //[<Question key="doc" />, <SelectLang key="SelectLang" />],
       [
         <Tag
           className="wallet-pill"
@@ -166,10 +156,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     waterMarkProps: {
       //content: initialState?.currentUser?.name,
     },
-    // footerRender: () => <Footer/>,
     onPageChange: () => {
       const { location } = history;
-      // strrstrrstrrstrrstrrstrr，strrstrrstrrstrr login
       if (!initialState?.currentUser && location.pathname !== loginPath) {
         redirectToLogin();
       }
@@ -196,21 +184,53 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ],
     links: isDev
       ? [
-        // <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-        //   <LinkOutlined />
-        //   <span>OpenAPI strrstrr</span>
-        // </Link>,
+        // Your existing links
       ]
       : [],
     menuHeaderRender: undefined,
-    // strrstrrstrr 403 strrstrr
-    // unAccessible: <div>unAccessible</div>,
-    // strrstrrstrrstrr loading strrstrrstrr
+    // Modified childrenRender to include ChatBot for all authenticated users
     childrenRender: (children) => {
-      // if (initialState?.loading) return <PageLoading />;
+  // Check if user is on login pages
+  const { location } = history;
+  const isAuthPage = location.pathname.startsWith('/user/login') || 
+                    location.pathname.startsWith('/user/') ||
+                    location.pathname === '/';
+
+  // Debug: Log user object to console
+  console.log('Current User Object:', initialState?.currentUser);
+  console.log('Current Path:', location.pathname);
+  console.log('Is Auth Page:', isAuthPage);
+
+  // Simple check - if user object exists and has basic user properties, show chatbot
+  const isAuthenticated = initialState?.currentUser && 
+                         (initialState?.currentUser?.id || 
+                          initialState?.currentUser?.userid || 
+                          initialState?.currentUser?.firstName ||
+                          initialState?.currentUser?.email);
+
+  console.log('Is Authenticated:', isAuthenticated);
+
+  // Determine user type based on current route or user properties
+  const isAdminRoute = location.pathname.startsWith('/admin/');
+  const userType = isAdminRoute ? 'Admin' : 'Client';
+
+  console.log('User Type:', userType);
+
       return (
         <>
           {children}
+          
+          {/* Show ChatBot for all authenticated users */}
+          {isAuthenticated && !isAuthPage && (
+            <ChatBot 
+              userId={initialState?.currentUser?.userid || initialState?.currentUser?.id}
+              userName={initialState?.currentUser?.firstName ? 
+                      `${initialState?.currentUser?.firstName} ${initialState?.currentUser?.lastName || ''}`.trim() : 
+                      initialState?.currentUser?.name || 'User'}
+              userType={userType}
+            />
+          )}
+          
           {isDev && (
             <SettingDrawer
               disableUrlParams
@@ -232,12 +252,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 };
 
 /**
- * @name request strrstrr，strrstrrstrrstrrstrrstrrstrrstrr
- * strrstrrstrr axios strr ahooks strr useRequest strrstrrstrrstrrstrrstrrstrrstrrstrrstrrstrrstrrstrrstrrstrrstrrstrrstrrstrr。
- * @doc https://umijs.org/docs/max/request#strrstrr
+ * @name request configuration
  */
 export const request = {
   ...errorConfig,
 };
-
-// wallet pill button

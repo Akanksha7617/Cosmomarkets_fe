@@ -705,19 +705,29 @@ const Withdraw: React.FC = () => {
                     <Input placeholder="Enter additional comments" />
                   </Form.Item>
 
-                  <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                    <Space size="large">
-                      <Button size="large" onClick={handlePrevStep}>
-                        Back
-                      </Button>
+                  <div className="mobile-button-container" style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <Space
+                      size="large"
+                      direction="vertical"
+                      className="mobile-button-space"
+                      style={{ width: '100%' }}
+                    >
                       <Button
                         type="primary"
                         htmlType="submit"
                         loading={loading}
                         size="large"
                         icon={<CheckCircleOutlined />}
+                        className="submit-withdrawal-btn"
                       >
                         Submit Withdrawal
+                      </Button>
+                      <Button
+                        size="large"
+                        onClick={handlePrevStep}
+                        className="back-btn"
+                      >
+                        Back
                       </Button>
                     </Space>
                   </div>

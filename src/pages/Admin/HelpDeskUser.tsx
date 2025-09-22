@@ -390,6 +390,20 @@ const HelpDeskUser: React.FC = () => {
     }, {});
   };
 
+  // Add this function to handle message changes with word limit
+  const handleMessageChange = (e) => {
+    const value = e.target.value;
+
+    if (queryType === 'Other') {
+      const words = value.trim().split(/\s+/).filter(word => word.length > 0);
+      if (words.length <= 8) {
+        setMessage(value);
+      }
+    } else {
+      setMessage(value);
+    }
+  };
+
   return (
     <div className="helpdesk-main-wrapper">
       <div className="helpdesk-content-container">
@@ -405,22 +419,22 @@ const HelpDeskUser: React.FC = () => {
             <h2 className="section-title">Create New Ticket</h2>
             <div className="header-decoration"></div>
           </div>
-          
+
           <form className="ticket-submission-form" onSubmit={handleSubmit}>
             <div className="form-input-wrapper">
               <div className="input-label-container">
                 <label htmlFor="queryType" className="enhanced-form-label">
                   <div className="label-content">
                     <svg className="label-icon" viewBox="0 0 24 24">
-                      <path d="M9 12l2 2 4-4"/>
-                      <circle cx="12" cy="12" r="9"/>
+                      <path d="M9 12l2 2 4-4" />
+                      <circle cx="12" cy="12" r="9" />
                     </svg>
                     <span className="label-title">Issue Category</span>
                   </div>
                   {/* <span className="mandatory-asterisk">*</span> */}
                 </label>
               </div>
-              
+
               <div className="enhanced-select-wrapper">
                 <select
                   id="queryType"
@@ -430,14 +444,16 @@ const HelpDeskUser: React.FC = () => {
                   className="premium-select-field"
                 >
                   <option value="" disabled>Select your issue category...</option>
-                  <option value="Deposit">💰 Payment & Deposit Issues</option>
-                  <option value="Withdraw">💳 Withdrawal & Payout Problems</option>
-                  <option value="Technical">⚙️ Technical Support & Bugs</option>
-                  <option value="Other">💬 General Questions & Others</option>
+                  <option value="Login">Login Issue</option>
+                  <option value="KYC">Document Verified (KYC)</option>
+                  <option value="Deposit">Deposit</option>
+                  <option value="Withdraw">Withdraw</option>
+                  <option value="Technical">Technical Support</option>
+                  <option value="Other">Others</option>
                 </select>
                 <div className="select-dropdown-icon">
                   <svg viewBox="0 0 24 24">
-                    <polyline points="6,9 12,15 18,9"/>
+                    <polyline points="6,9 12,15 18,9" />
                   </svg>
                 </div>
                 <div className="select-focus-ring"></div>
@@ -449,33 +465,43 @@ const HelpDeskUser: React.FC = () => {
                 <label htmlFor="message" className="enhanced-form-label">
                   <div className="label-content">
                     <svg className="label-icon" viewBox="0 0 24 24">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                     </svg>
                     <span className="label-title">Issue Details</span>
                   </div>
                   {/* <span className="mandatory-asterisk">*</span> */}
                 </label>
-      
+
               </div>
-              
+
               <div className="enhanced-textarea-wrapper">
                 <textarea
                   id="message"
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={handleMessageChange}
                   rows={8}
-                  maxLength={2000}
+                  maxLength={queryType === 'Other' ? 100 : 2000}
                   required
                   className="premium-textarea-field"
+                  placeholder={
+                    queryType === 'Other'
+                      ? 'Please describe your issue in 8 words or less...'
+                      : 'Describe your issue in detail...'
+                  }
                 />
                 <div className="textarea-focus-ring"></div>
                 <div className="textarea-bottom-bar">
                   <div className="character-progress-container">
-                    <span className="character-count-text">{message.length}/2000 characters</span>
+                    <span className="character-count-text">
+                      {queryType === 'Other'
+                        ? `${message.trim().split(/\s+/).filter(word => word.length > 0).length}/8 words`
+                        : `${message.length}/2000 characters`
+                      }
+                    </span>
                     <div className="character-progress-bar">
-                      <div 
-                        className="character-progress-fill" 
-                        style={{width: `${(message.length / 2000) * 100}%`}}
+                      <div
+                        className="character-progress-fill"
+                        style={{ width: `${(message.length / 2000) * 100}%` }}
                       ></div>
                     </div>
                   </div>
@@ -490,7 +516,7 @@ const HelpDeskUser: React.FC = () => {
                 <>
                   <span className="submit-button-text">Submit Ticket</span>
                   <svg className="submit-button-icon" viewBox="0 0 24 24">
-                    <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+                    <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
                   </svg>
                 </>
               )}
@@ -541,28 +567,28 @@ const HelpDeskUser: React.FC = () => {
                   onChange={(e) => setSearchText(e.target.value)}
                 />
                 <svg className="search-input-icon" viewBox="0 0 24 24">
-                  <circle cx="11" cy="11" r="8"/>
-                  <path d="m21 21-4.35-4.35"/>
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
                 </svg>
               </div>
 
               <div className="filter-action-buttons">
                 <button className="apply-filters-button" onClick={handleSearch}>
                   <svg className="button-icon" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.35-4.35"/>
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
                   </svg>
                   Apply Filters
                 </button>
 
-                <button 
-                  className="refresh-data-button" 
-                  onClick={handleRefresh} 
+                <button
+                  className="refresh-data-button"
+                  onClick={handleRefresh}
                   disabled={isRefreshing}
                 >
                   <Tooltip title="Refresh ticket data">
-                    <svg 
-                      className={`refresh-button-icon ${isRefreshing ? 'spinning-animation' : ''}`} 
+                    <svg
+                      className={`refresh-button-icon ${isRefreshing ? 'spinning-animation' : ''}`}
                       viewBox="0 0 24 24"
                     >
                       <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
@@ -605,13 +631,13 @@ const HelpDeskUser: React.FC = () => {
                           {ticket.status === 'Resolved' ? formatDate(ticket.resolvedAt) : '-'}
                         </td>
                         <td className="table-data-cell action-cell">
-                          <button 
-                            className="view-ticket-button" 
+                          <button
+                            className="view-ticket-button"
                             onClick={() => handleView(ticket.id)}
                           >
                             <svg className="view-button-icon" viewBox="0 0 24 24">
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                              <circle cx="12" cy="12" r="3"/>
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
                             </svg>
                             View
                           </button>
@@ -630,9 +656,9 @@ const HelpDeskUser: React.FC = () => {
                           ) : (
                             <div className="no-data-state">
                               <svg className="empty-state-icon" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10"/>
-                                <path d="m9 9 6 6"/>
-                                <path d="m15 9-6 6"/>
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="m9 9 6 6" />
+                                <path d="m15 9-6 6" />
                               </svg>
                               <span>No tickets found matching your criteria</span>
                             </div>
@@ -674,20 +700,20 @@ const HelpDeskUser: React.FC = () => {
                   {selectedQuery && selectedQuery.status === 'Resolved' && (
                     <div className="resolution-info">
                       <svg className="resolution-icon" viewBox="0 0 24 24">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <polyline points="22,4 12,14.01 9,11.01"/>
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22,4 12,14.01 9,11.01" />
                       </svg>
                       <span>Resolved on: {formatDate(selectedQuery.resolvedAt)}</span>
                     </div>
                   )}
                 </div>
-                <button 
-                  className="dialog-close-button" 
+                <button
+                  className="dialog-close-button"
                   onClick={() => setSelectedQueryId(null)}
                 >
                   <svg viewBox="0 0 24 24">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 </button>
               </div>
@@ -708,16 +734,15 @@ const HelpDeskUser: React.FC = () => {
                       {msgs.map((msg) => (
                         <div
                           key={msg.id}
-                          className={`chat-message-bubble ${msg.isMine ? 'user-message' : 'system-message'} ${
-                            msg.senderRole === 'Admin' ? 'admin-message' : ''
-                          }`}
+                          className={`chat-message-bubble ${msg.isMine ? 'user-message' : 'system-message'} ${msg.senderRole === 'Admin' ? 'admin-message' : ''
+                            }`}
                         >
                           {msg.senderRole === 'Admin' && (
                             <div className="admin-message-label">
                               <svg className="admin-icon" viewBox="0 0 24 24">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                               </svg>
-                              Support Agent
+                              cosmo customer support
                             </div>
                           )}
                           <div className="message-bubble-content">{msg.text || msg.message}</div>
@@ -765,8 +790,8 @@ const HelpDeskUser: React.FC = () => {
                         disabled={selectedQueryStatus === 'Resolved' || !chatInput.trim()}
                       >
                         <svg className="send-button-icon" viewBox="0 0 24 24">
-                          <line x1="22" y1="2" x2="11" y2="13"/>
-                          <polygon points="22,2 15,22 11,13 2,9"/>
+                          <line x1="22" y1="2" x2="11" y2="13" />
+                          <polygon points="22,2 15,22 11,13 2,9" />
                         </svg>
                         Send
                       </button>
