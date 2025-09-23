@@ -158,14 +158,27 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       if (!initialState?.currentUser) return null;
 
       return (
-        <div style={{ padding: 16, textAlign: 'center' }}>
-          <AvatarDropdown>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Avatar src={initialState.currentUser.avatar} size="large" />
-              <AvatarName />
-            </div>
-          </AvatarDropdown>
-        </div>
+     
+        <div style={{ 
+  padding: 5, 
+  textAlign: 'center',
+  border: '1px solid #d9d9d9',
+  borderRadius: '8px',
+  backgroundColor: '#fafafa',
+  margin: '5px',
+}}>
+  <AvatarDropdown>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'row', 
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
+      <Avatar src={initialState.currentUser.avatar} size="medium" />
+      <AvatarName />
+    </div>
+  </AvatarDropdown>
+</div>
       );
     },
     waterMarkProps: {

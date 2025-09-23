@@ -992,7 +992,8 @@
 }
 
 .username {
-  color: white !important;
+  color: black !important;
+  font-family: Futura PT, sans-serif;
 }
 
 
