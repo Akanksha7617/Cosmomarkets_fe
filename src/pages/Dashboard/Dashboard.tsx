@@ -20,6 +20,7 @@ import {
   TabsProps,
   theme,
   Typography,
+  Select,
 } from 'antd';
 import { FilterConfirmProps } from 'antd/es/table/interface';
 import TabPane from 'antd/es/tabs/TabPane';
