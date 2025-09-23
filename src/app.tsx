@@ -146,12 +146,27 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
           <span className="wallet-pill-text">{balance}</span>
         </Tag>,
       ],
-    avatarProps: {
-      src: initialState?.currentUser?.avatar,
-      title: <AvatarName />,
-      render: (_, avatarChildren) => {
-        return <AvatarDropdown>{avatarChildren}</AvatarDropdown>;
-      },
+    // avatarProps: {
+    //   src: initialState?.currentUser?.avatar,
+    //   title: <AvatarName />,
+    //   render: (_, avatarChildren) => {
+    //     return <AvatarDropdown>{avatarChildren}</AvatarDropdown>;
+    //   },
+    // },
+
+    menuFooterRender: () => {
+      if (!initialState?.currentUser) return null;
+
+      return (
+        <div style={{ padding: 16, textAlign: 'center' }}>
+          <AvatarDropdown>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <Avatar src={initialState.currentUser.avatar} size="large" />
+              <AvatarName />
+            </div>
+          </AvatarDropdown>
+        </div>
+      );
     },
     waterMarkProps: {
       //content: initialState?.currentUser?.name,
