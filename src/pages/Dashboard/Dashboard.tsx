@@ -134,91 +134,50 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
     if (!hasMT5Accounts) {
       // If no MT5 accounts, show create account card
       const createAccountTab = {
-        key: 'create-mt5',
-        title: 'Create MT5 Account',
-        content: (
-          <div className="live-account-card-wrapper">
-            <div className="live-account-top-strip"></div>
-            <div className="live-account-container">
-              <div className="live-account-header">
-                <h3 className="live-account-title">Create Your MT5 Account</h3>
-              </div>
-
-              {showSuccessMessage ? (
-                <div
-                  className="success-message"
-                  style={{
-                    textAlign: 'center',
-                    padding: '40px 20px',
-                    color: '#52c41a',
-                    fontSize: '18px',
-                    fontWeight: '500',
-                  }}
-                >
-                  🎉 Your MT5 account has been created successfully!
-                </div>
-              ) : (
-                <div
-                  className="create-account-content"
-                  style={{
-                    textAlign: 'center',
-                    padding: '40px 20px',
-                  }}
-                >
-                  <p
-                    style={{
-                      marginBottom: '30px',
-                      color: '#666',
-                      fontSize: '16px',
-                    }}
-                  >
-                    You don't have any MT5 accounts yet. Create your first trading account to get
-                    started.
-                  </p>
-
-                  <div style={{ textAlign: 'center' }}>
-                    <Button
-                      type="primary"
-                      size="large"
-                      disabled={accountStatus === 'creating'}
-                      loading={accountStatus === 'creating'}
-                      onClick={handleButtonClick}
-                      style={{
-                        backgroundColor: accountStatus === 'creating' ? '#CCCCCC' : '#b2be2c',
-                        borderColor: accountStatus === 'creating' ? '#CCCCCC' : '#b2be2c',
-                        height: '60px',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        borderRadius: '8px',
-                        width: '90%',
-                        maxWidth: '350px',
-                        opacity: accountStatus === 'creating' ? 0.6 : 1,
-                        transform: accountStatus === 'creating' ? 'scale(0.95)' : 'scale(1)',
-                        transition: 'all 0.3s ease',
-                      }}
-                    >
-                      {accountStatus === 'creating' ? 'CREATING ACCOUNT...' : 'CREATE MT5 ACCOUNT'}
-                    </Button>
-
-                    {/* Warning when creating */}
-                    {accountStatus === 'creating' && (
-                      <div style={{
-                        marginTop: '15px',
-                        color: '#FF0000',
-                        fontWeight: 'bold',
-                        fontSize: '16px'
-                      }}>
-                        ⚠️ PLEASE WAIT - DO NOT REFRESH OR CLICK AGAIN! ⚠️
-                      </div>
-                    )}
-                  </div>
+  key: 'create-mt5',
+  title: 'Create MT5 Account',
+  content: (
+    <div className="live-account-card-wrapper">
+      <div className="live-account-top-strip"></div>
+      <div className="live-account-container">
+        <div className="live-account-header">
+          <h3 className="live-account-title">Create Your MT5 Account</h3>
+        </div>
+        
+        {showSuccessMessage ? (
+          <div className="success-message">
+            Your MT5 account has been created successfully!
+          </div>
+        ) : (
+          <div className="create-account-content">
+            <p className="create-account-description">
+              You don't have any MT5 accounts yet. Create your first trading account to get started.
+            </p>
+            
+            <div className="create-account-button-container">
+              <Button
+                type="primary"
+                size="large"
+                disabled={accountStatus === 'creating'}
+                loading={accountStatus === 'creating'}
+                onClick={handleButtonClick}
+                className={`create-mt5-button ${accountStatus === 'creating' ? 'creating' : ''}`}
+              >
+                {accountStatus === 'creating' ? 'CREATING ACCOUNT...' : 'CREATE MT5 ACCOUNT'}
+              </Button>
+              
+              {accountStatus === 'creating' && (
+                <div className="creation-warning">
+                  ⚠️ PLEASE WAIT - DO NOT REFRESH OR CLICK AGAIN! ⚠️
                 </div>
               )}
             </div>
           </div>
-        ),
-      };
-
+        )}
+      </div>
+    </div>
+  ),
+};
       setTabs([createAccountTab]);
     } else {
       // If has MT5 accounts, show existing account tabs

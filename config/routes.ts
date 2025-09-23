@@ -1,7 +1,7 @@
 ﻿export default [
   {
     path: '/dashboard',
-    name: 'Overview',
+    name: 'Home',
       icon: 'DashboardOutlined',
     component: './Dashboard/Dashboard',
     //  access: 'canClient',
@@ -130,14 +130,16 @@
   {
     path: '/ProfileSettings',
       icon: 'SettingOutlined',
-    name: ' Personalize Account',
+    // name: ' Personalize Account',
+    name: ' Account Settings',
     component: './Profile/ProfileSettings',
     access: 'canClient',
   },
 
   {
     path: '/finops',
-    name: 'Finance',
+    // name: 'Finance',
+    name:'Transactions',
      icon: 'BankOutlined',
     access: 'canClient',
     routes: [
@@ -227,7 +229,7 @@
   },
   {
     path: '/ib',
-    name: 'IB Hub',
+    name: 'IB Centre',
    icon: 'IdcardOutlined',
     component: './IB/Dashboard',
     access: 'canClient',
@@ -235,7 +237,7 @@
 
   {
     path: '/admin/helpDeskUser',
-    name: 'Assistance',
+    name: 'Customer Care',
     icon: 'MessageOutlined',
     component: './Admin/HelpDeskUser',
     access: 'canClient',
