@@ -6,6 +6,7 @@ import {
   PlusOutlined,
   SafetyCertificateOutlined,
   UserOutlined,
+  DollarOutlined,
 } from '@ant-design/icons';
 import { history } from '@umijs/max';
 import type { FormInstance } from 'antd';
@@ -366,7 +367,7 @@ const ProfileSettings: React.FC = () => {
     {
       key: '2',
       component: <Verification />,
-      icon: <SafetyCertificateOutlined />,
+      icon: <DollarOutlined />,
       title: 'Approval',
       subtitle: 'Submit ID and address proof',
     },
