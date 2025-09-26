@@ -422,14 +422,14 @@ const Leads: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({ appUser
         </Button>
       ),
     },
-    // {
-    //   name: 'CRM',
-    //   cell: (row) => (
-    //     <Button type="link" onClick={() => handleOpenCRM(row)}>
-    //       <PlusOutlined />
-    //     </Button>
-    //   ),
-    // },
+    {
+      name: 'CRM',
+      cell: (row) => (
+        <Button type="link" onClick={() => handleOpenCRM(row)}>
+          <PlusOutlined />
+        </Button>
+      ),
+    },
     {
       name: 'Name',
       selector: (row: any) => `${row.firstName} ${row.lastName}`,

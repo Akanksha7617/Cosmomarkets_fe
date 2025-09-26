@@ -13,7 +13,7 @@ import './common.css';
 import { errorConfig } from './requestErrorConfig';
 import { API } from './services/ant-design-pro/typings';
 import ChatBot from './components/Chatbot';
-
+import { DollarOutlined } from "@ant-design/icons";
 const { Text } = Typography;
 const isDev = process.env.NODE_ENV === 'development';
 let loginPath: any;
@@ -140,7 +140,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       [
         <Tag
           className="wallet-pill"
-          icon={<MoneyCollectOutlined style={{ fontSize: '18px' }} />}
+          icon={< DollarOutlined  style={{ fontSize: '18px' }} />}
           style={{ display: 'inline-flex', alignItems: 'center' }}
         >
           <span className="wallet-pill-text">{balance}</span>

@@ -436,7 +436,7 @@ const SignUp = () => {
                   >
                     Terms & Conditions
                   </a>{' '}
-                  of iQease.
+                  of Cosmo Markets.
                 </span>
               </Checkbox>
             </Form.Item>

@@ -4086,7 +4086,7 @@ margin-left: -100px;
 }
 
 .add-account-btn {
-  background: linear-gradient(135deg, #0d9488 0%, #38b2ac 100%);
+  background:  linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -4112,7 +4112,7 @@ margin-left: -100px;
 
 /* Enhanced Balance Section */
 .balance-showcase {
-  background: linear-gradient(135deg, #0f766e 0%, #0d9488 25%, #14b8a6 75%, #5eead4 100%);
+  background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
   padding: 40px 32px;
   display: flex;
   flex-direction: column;
@@ -9299,7 +9299,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   justify-content: center;
   align-items: center;
   background: 
-    linear-gradient(135deg, #004AAD 0%, #0ea5e9 25%, #0074D9 50%, #004AAD 75%, #002d6b 100%);
+ linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -9885,7 +9885,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   justify-content: center;
   align-items: center;
   background: 
-    linear-gradient(135deg, #004AAD 0%, #0ea5e9 25%, #0074D9 50%, #004AAD 75%, #002d6b 100%);
+     linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -13509,7 +13509,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .chat-bot-container {
     .chat-window {
       background: #1f2937;
@@ -13557,7 +13557,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
       }
     }
   }
-}
+} */
 
 /* Custom scrollbar */
 .chat-messages {
@@ -13610,7 +13610,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
 }
 
 .live-account-header {
-  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+  background:  linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
   padding: 24px;
   text-align: center;
 }
@@ -13648,7 +13648,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
 }
 
 .create-mt5-button {
-  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+  background:  linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%) !important;
   border-color: #0d9488 !important;
   height: 60px !important;
   font-size: 16px !important;
@@ -13663,7 +13663,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
 }
 
 .create-mt5-button:hover {
-  background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%) !important;
+  background-color:#F58C35   !important;
   border-color: #0f766e !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4) !important;
@@ -13792,7 +13792,7 @@ background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2b
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(8, 51, 74, 0.85); /* dark overlay */
+  background: transparent;/* dark overlay */
   z-index: 9999; /* always on top */
 }
  

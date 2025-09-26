@@ -237,7 +237,7 @@
 
   {
     path: '/admin/helpDeskUser',
-    name: 'Customer Care',
+    name: 'Customer Support',
     icon: 'MessageOutlined',
     component: './Admin/HelpDeskUser',
     access: 'canClient',

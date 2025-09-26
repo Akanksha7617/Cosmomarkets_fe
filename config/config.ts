@@ -75,7 +75,7 @@ export default defineConfig({
    * @name layout strrstrr
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'Mevora Capital',
+  title: 'Cosmo Markets',
   layout: {
     locale: true,
     ...defaultSettings,
