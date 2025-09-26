@@ -135,7 +135,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ userId, userName, userType = 'client'
     '2fa_answer': "Make sure your device time is synchronized. If you've lost access to your authenticator app, please contact support for assistance.",
     settings_answer: "Go to Account Customization → Security Settings → Reset Old Password. Enter your current password and set a new one.",
     login_page_answer: "Click 'Forgot Password' on the login page. Enter your email and follow the reset instructions.",
-    how_deposit_answer: "Go to Transactions → Deposit → Select payment method → Upload receipt → Submit request. Admin will approve and funds will be added to your wallet.",
+    how_deposit_answer: "Go to Transactions → Deposit → Select payment method → Upload receipt → Submit request. ",
     methods_answer: "Available methods: Bank transfer, Card deposit, Wire transfer. Each method has different processing times.",
     not_reflecting_answer: "Deposits require admin approval. Check your transaction history or contact support if it's been more than 24 hours.",
     w_methods_answer: "Available withdrawal methods: Bank transfer, Cryptocurrency, Cash pickup. Processing times vary: Bank (2-5 days), Crypto (1-24 hours), Cash (Same day).",

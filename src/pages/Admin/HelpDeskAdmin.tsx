@@ -515,30 +515,18 @@ const HelpDeskAdmin: React.FC = () => {
                       <td>{q.email}</td>
                       <td>{q.queryType}</td>
                       <td>
-                        <span
-                          style={{
-                            padding: '3px 8px',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            backgroundColor: q.status === 'Resolved' ? '#c6f6d5' : '#feebc8',
-                            color: q.status === 'Resolved' ? '#22543d' : '#7b341e',
-                          }}
-                        >
-                          {q.status}
-                        </span>
+                        <span className={`status-badge ${q.status.toLowerCase()}`}>{q.status}</span>
+
                       </td>
                       <td>{formatDate(q.createdAt)}</td>
                       {/* <td>{formatDate(q.updatedAt)}</td> */}
                       {/* <td>{q.status === 'Resolved' ? formatDate(q.resolvedAt) : '-'}</td> */}
                       <td>
-                        <div style={{ display: "flex", gap: "8px" }}>
-                          <button className="view-btn" onClick={() => handleView(q.id)}>
-                            View
-                          </button>
-                          <button className="resolve-btn" onClick={() => handleResolve(q.id)}>
-                            Resolve
-                          </button>
-                        </div>
+                         <div className="action-buttons-wrapper">
+                           <button className="view-btn" onClick={() => handleView(q.id)}>View</button>
+                           <button className="resolve-btn" onClick={() => handleResolve(q.id)}>Resolve</button>
+                         </div>
+
                       </td>
                     </tr>
                   ))
@@ -596,30 +584,14 @@ const HelpDeskAdmin: React.FC = () => {
                       {/* Messages under this date */}
                       {msgs.map((msg) => (
                         <div
-                          key={msg.id}
-                          className={`chat-bubble ${msg.isMine ? "mine" : "theirs"}`}
-                          style={{
-                            background:
-                              msg.senderRole === "Admin"
-                                ? "linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%)"
-                                : msg.isMine
-                                  ? "#dcf8c6"
-                                  : "#F58C35",
-                          }}
+  key={msg.id}
+  className={`chat-bubble ${msg.isMine ? "mine" : "theirs"} ${msg.senderRole === "Admin" ? "admin" : ""}`}
+>
 
-                        >
                           {/* Show sender (only if not Admin) */}
                           {msg.senderRole !== "Admin" && (
-                            <div
-                              style={{
-                                fontSize: "12px",
-                                fontWeight: "bold",
-                                marginBottom: "4px",
-                                color: "#222",
-                              }}
-                            >
-                              User:
-                            </div>
+                             <div className="chat-sender-label">User:</div>
+
                           )}
 
                           {/* Message text */}

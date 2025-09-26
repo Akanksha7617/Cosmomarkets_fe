@@ -7262,9 +7262,8 @@ margin-left: -100px;
 }
 
 /* Help Desk user end */
-
-/* Help Desk Admin side */
- .page-wrapper {
+ /* Help Desk Admin side */
+.page-wrapper {
   width: 100%;
   min-height: 100vh;
   padding: 2rem;
@@ -7273,7 +7272,7 @@ margin-left: -100px;
   box-sizing: border-box;
 }
 
- .query-page-container {
+.query-page-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -7282,27 +7281,26 @@ margin-left: -100px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
 }
+
 /* Filters Section */
- .filters-wrapper {
+.filters-wrapper {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 15px;
 }
- .filters-container {
+.filters-container {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   width: 100%;
 }
 
-
 .date-filter {
   flex-grow: 1;
   min-width: 280px;
 }
-
 .date-filter .ant-picker {
   width: 100%;
 }
@@ -7311,12 +7309,10 @@ margin-left: -100px;
   flex-grow: 0;
   min-width: 120px;
 }
-
 .status-filter .ant-select {
   width: 100%;
   border-color: #F58C35 !important;
 }
-
 .status-filter .ant-select-focused .ant-select-selector,
 .status-filter .ant-select-open .ant-select-selector {
   border-color: #F58C35 !important;
@@ -7329,7 +7325,6 @@ margin-left: -100px;
   min-width: 150px;
   width: 269px;
 }
-
 .search-input {
   width: 50%;
   max-width: 300px;
@@ -7340,7 +7335,6 @@ margin-left: -100px;
   border-radius: 6px;
   outline: none;
 }
-
 .search-input:focus {
   border-color: #F58C35;
   outline: none;
@@ -7371,7 +7365,6 @@ margin-left: -100px;
   transition: all 0.3s ease;
   pointer-events: auto;
 }
-
 .search-btn:hover {
   background: #F58C35;
 }
@@ -7391,7 +7384,6 @@ margin-left: -100px;
   transition: all 0.3s ease;
   pointer-events: auto;
 }
-
 .refresh-btn:hover {
   background-color: #e6e6e6;
 }
@@ -7399,7 +7391,6 @@ margin-left: -100px;
 .refresh-icon {
   transition: transform 0.5s ease;
 }
-
 .refresh-icon.rotating {
   transform: rotate(180deg);
 }
@@ -7416,14 +7407,12 @@ margin-left: -100px;
   margin-top: 1rem;
   overflow-x: auto;
 }
-
 .queries-table {
   width: 100%;
   font-size: 0.95rem;
   text-align: left;
   border-collapse: collapse;
 }
-
 .queries-table th {
   padding: 1rem 0.75rem;
   color: #555;
@@ -7431,22 +7420,19 @@ margin-left: -100px;
   background-color: #f8f8f8;
   border-bottom: 2px solid #eee;
 }
-
 .queries-table td {
   padding: 1rem 0.75rem;
   color: #444;
   border-bottom: 1px solid #eee;
 }
-
 .queries-table tr:last-child td {
   border-bottom: none;
 }
-
 .queries-table tr:hover {
   background-color: rgba(190, 139, 74, 0.05);
 }
 
-/* Action Buttons in Table */
+/* Table Action Buttons */
 .view-btn {
   padding: 5px 10px;
   color: #000;
@@ -7457,11 +7443,6 @@ margin-left: -100px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
-
-/* .view-btn:hover {
-  background-color: #0b7dda;
-} */
-
 .resolve-btn {
   margin-left: 5px;
   padding: 5px 10px;
@@ -7472,9 +7453,26 @@ margin-left: -100px;
   cursor: pointer;
 }
 
-/* .resolve-btn:hover {
-  background-color: #ec971f;
-} */
+/* Action buttons container inside table cell */
+.table-action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Status Badge */
+.status-badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+.status-badge.resolved {
+  background-color: #c6f6d5;
+  color: #22543d;
+}
+.status-badge.pending {
+  background-color: #feebc8;
+  color: #7b341e;
+}
 
 /* Pagination */
 .pagination-container {
@@ -7512,10 +7510,9 @@ margin-left: -100px;
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  color: white;
   font-size: 16px;
   background: linear-gradient(135deg, #001219 0%, #005f73 35%, #0a9396 70%, #94d2bd 100%);
-    color: #ffffff;
+  color: #ffffff;
 }
 
 .close-btn {
@@ -7525,7 +7522,6 @@ margin-left: -100px;
   border: none;
   cursor: pointer;
 }
-
 .close-btn:hover {
   color: #333;
 }
@@ -7562,19 +7558,10 @@ margin-left: -100px;
   border-radius: 12px;
   margin-bottom: 5px;
 }
-
 .chat-bubble.mine {
   align-self: flex-end;
-  background-color: linear-gradient(135deg, rgb(0, 18, 25) 0%, rgb(0, 95, 115) 35%, rgb(10, 147, 150) 70%, rgb(148, 210, 189) 100%);
   margin-left: auto;
   text-align: right;
-}
-
-.date-filter .ant-picker,
-.status-filter .ant-select,
-.search-input {
-  width: 100%;
-  box-sizing: border-box;
 }
 .chat-bubble.theirs {
   align-self: flex-start;
@@ -7600,7 +7587,6 @@ margin-left: -100px;
   background-color: #f5f5f5;
   border-top: 1px solid #e0e0e0;
 }
-
 .message-input {
   flex: 1;
   padding: 10px;
@@ -7608,7 +7594,6 @@ margin-left: -100px;
   border-radius: 6px;
   resize: none;
 }
-
 .send-btn {
   padding: 8px 16px;
   color: white;
@@ -7617,7 +7602,6 @@ margin-left: -100px;
   border-radius: 20px;
   cursor: pointer;
 }
-
 .send-btn:hover {
   background-color: #45a049;
 }
@@ -7626,15 +7610,12 @@ margin-left: -100px;
 .orange-error-icon {
   color: #ef4444;
 }
-
 .orange-success-icon {
   color: #10b981;
 }
-
 .orange-error-notification {
   border-left: 4px solid #ef4444;
 }
-
 .orange-success-notification {
   border-left: 4px solid #10b981;
 }
@@ -7644,35 +7625,29 @@ margin-left: -100px;
   .page-wrapper {
     padding: 1rem;
   }
-
   .query-page-container {
     padding: 1.5rem;
   }
-
   .filters-container {
     flex-direction: column;
     gap: 10px;
     align-items: stretch;
   }
-
   .date-filter,
   .status-filter,
   .search-container {
     width: 100%;
     min-width: 100%;
   }
-
   .search-input {
     width: 100%;
     margin-right: 1px;
   }
-
   .action-buttons {
     display: flex;
     justify-content: space-between;
     width: 100%;
   }
-
   .search-btn,
   .refresh-btn {
     flex: 1;
@@ -7680,17 +7655,14 @@ margin-left: -100px;
     margin-top: 43px;
     margin-left: 0;
   }
-
   .queries-table-container {
     padding: 1rem;
   }
-
   .queries-table th,
   .queries-table td {
     padding: 0.75rem 0.5rem;
     font-size: 0.85rem;
   }
-
   .message-input {
     font-size: 10px;
   }
@@ -7701,23 +7673,17 @@ margin-left: -100px;
   .queries-table td {
     padding: 0.5rem;
     font-size: 0.75rem;
+    white-space: nowrap;
   }
-
   .view-btn {
     padding: 0.3rem 0.6rem;
     font-size: 0.75rem;
   }
-
   .queries-table {
     font-size: 0.85rem;
   }
-
-  .queries-table th,
-  .queries-table td {
-    padding: 0.6rem 0.5rem;
-    white-space: nowrap;
-  }
 }
+
 
 /* Help Desk Admin side end */
 
