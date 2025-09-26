@@ -600,6 +600,25 @@ export class AppService {
   
 
   
-  
+   public CreateMT5Account(requestBody: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    region: string;
+    promo: string;
+    createMtUser: boolean;
+    isEnabled: boolean;
+    masterPassword: string;
+    investorPassword: string;
+  }): CancelablePromise<any> {
+    return this.httpRequest.request({
+      method: 'POST',
+      url: '/api/app/create-mt5',
+      mediaType: 'application/json',
+      body: requestBody,
+    });
+  }
   
 }
