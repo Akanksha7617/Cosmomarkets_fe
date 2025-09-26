@@ -221,7 +221,7 @@ const CustomEmailForm: React.FC<CustomEmailFormProps> = ({
                 loading={resetEmailLoading}
                 block
               >
-                Reset Email
+                forget password
               </Button>
             </Col>
           </Row>
