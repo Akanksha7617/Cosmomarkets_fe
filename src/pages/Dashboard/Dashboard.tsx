@@ -58,29 +58,94 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [accountStatus, setAccountStatus] = useState('ready');
 
+  // const handleButtonClick = async () => {
+  //   console.log('=== BUTTON CLICKED ===');
+  //   console.log('Current accountStatus:', accountStatus);
+  //   console.log('Full appUser object:', appUser);
+
+  //   // Check if user data is loaded
+  //   if (!appUser || !appUser.Email) {
+  //     console.error('AppUser data not loaded properly:', appUser);
+  //     alert('User data not loaded. Please refresh the page.');
+  //     return;
+  //   }
+
+  //   setAccountStatus('creating');
+
+  //   try {
+  //     console.log('=== USING postMyMt5Account API ===');
+
+  //     // Try using the same API method as in your original working code
+  //     const response = await api.app.postMyMt5Account();
+
+  //     console.log('=== API SUCCESS ===');
+  //     console.log('Full response:', response);
+
+  //     setAccountStatus('success');
+  //     setShowSuccessMessage(true);
+
+  //     setTimeout(() => {
+  //       setShowSuccessMessage(false);
+  //       console.log('Refreshing user data...');
+  //       getUser();
+  //       setAccountStatus('ready');
+  //       console.log('Process complete');
+  //     }, 3000);
+
+  //   } catch (error) {
+  //     console.log('=== API ERROR ===');
+  //     console.error('Full error object:', error);
+  //     console.error('Error message:', error?.message);
+  //     console.error('Error response:', error?.response);
+
+  //     // Try to show more specific error message
+  //     let errorMessage = 'Unknown error occurred';
+  //     if (error?.response?.data?.message) {
+  //       errorMessage = error.response.data.message;
+  //     } else if (error?.message) {
+  //       errorMessage = error.message;
+  //     }
+
+  //     console.log('Processed error message:', errorMessage);
+  //     ShowError(error);
+  //     setAccountStatus('ready');
+  //   }
+  // };
+
   const handleButtonClick = async () => {
     console.log('=== BUTTON CLICKED ===');
     console.log('Current accountStatus:', accountStatus);
     console.log('Full appUser object:', appUser);
-    
-    // Check if user data is loaded
+
     if (!appUser || !appUser.Email) {
       console.error('AppUser data not loaded properly:', appUser);
       alert('User data not loaded. Please refresh the page.');
       return;
     }
-    
+
     setAccountStatus('creating');
-    
+
     try {
-      console.log('=== USING postMyMt5Account API ===');
-      
-      // Try using the same API method as in your original working code
-      const response = await api.app.postMyMt5Account();
+      console.log('=== USING CreateMT5Account API ===');
+
+      const response = await api.app.CreateMT5Account({
+        email: appUser.Email || '',
+        password: '',
+        firstName: appUser.FirstName || '',
+        lastName: appUser.LastName || '',
+        phone: appUser.Phone || '',
+        region: appUser.Region || '',
+        promo: appUser.Promo || '',
+        createMtUser: true,
+        isEnabled: true,
+        masterPassword: '',
+        investorPassword: '',
+        // ❌ No group / leverage here
+      });
 
       console.log('=== API SUCCESS ===');
       console.log('Full response:', response);
-      
+
       setAccountStatus('success');
       setShowSuccessMessage(true);
 
@@ -97,21 +162,19 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
       console.error('Full error object:', error);
       console.error('Error message:', error?.message);
       console.error('Error response:', error?.response);
-      
-      // Try to show more specific error message
+
       let errorMessage = 'Unknown error occurred';
       if (error?.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error?.message) {
         errorMessage = error.message;
       }
-      
+
       console.log('Processed error message:', errorMessage);
       ShowError(error);
       setAccountStatus('ready');
     }
   };
-
   const getUserAccount = async () => {
     setLoading(true);
 
@@ -134,50 +197,50 @@ const LiveAccount: React.FC<{ appUser: AppUserModel; getUser: Function }> = ({
     if (!hasMT5Accounts) {
       // If no MT5 accounts, show create account card
       const createAccountTab = {
-  key: 'create-mt5',
-  title: 'Create MT5 Account',
-  content: (
-    <div className="live-account-card-wrapper">
-      <div className="live-account-top-strip"></div>
-      <div className="live-account-container">
-        <div className="live-account-header">
-          <h3 className="live-account-title">Create Your MT5 Account</h3>
-        </div>
-        
-        {showSuccessMessage ? (
-          <div className="success-message">
-            Your MT5 account has been created successfully!
-          </div>
-        ) : (
-          <div className="create-account-content">
-            <p className="create-account-description">
-              You don't have any MT5 accounts yet. Create your first trading account to get started.
-            </p>
-            
-            <div className="create-account-button-container">
-              <Button
-                type="primary"
-                size="large"
-                disabled={accountStatus === 'creating'}
-                loading={accountStatus === 'creating'}
-                onClick={handleButtonClick}
-                className={`create-mt5-button ${accountStatus === 'creating' ? 'creating' : ''}`}
-              >
-                {accountStatus === 'creating' ? 'CREATING ACCOUNT...' : 'CREATE MT5 ACCOUNT'}
-              </Button>
-              
-              {accountStatus === 'creating' && (
-                <div className="creation-warning">
-                  ⚠️ PLEASE WAIT - DO NOT REFRESH OR CLICK AGAIN! ⚠️
+        key: 'create-mt5',
+        title: 'Create MT5 Account',
+        content: (
+          <div className="live-account-card-wrapper">
+            <div className="live-account-top-strip"></div>
+            <div className="live-account-container">
+              <div className="live-account-header">
+                <h3 className="live-account-title">Create Your MT5 Account</h3>
+              </div>
+
+              {showSuccessMessage ? (
+                <div className="success-message">
+                  Your MT5 account has been created successfully!
+                </div>
+              ) : (
+                <div className="create-account-content">
+                  <p className="create-account-description">
+                    You don't have any MT5 accounts yet. Create your first trading account to get started.
+                  </p>
+
+                  <div className="create-account-button-container">
+                    <Button
+                      type="primary"
+                      size="large"
+                      disabled={accountStatus === 'creating'}
+                      loading={accountStatus === 'creating'}
+                      onClick={handleButtonClick}
+                      className={`create-mt5-button ${accountStatus === 'creating' ? 'creating' : ''}`}
+                    >
+                      {accountStatus === 'creating' ? 'CREATING ACCOUNT...' : 'CREATE MT5 ACCOUNT'}
+                    </Button>
+
+                    {accountStatus === 'creating' && (
+                      <div className="creation-warning">
+                        ⚠️ PLEASE WAIT - DO NOT REFRESH OR CLICK AGAIN! ⚠️
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
           </div>
-        )}
-      </div>
-    </div>
-  ),
-};
+        ),
+      };
       setTabs([createAccountTab]);
     } else {
       // If has MT5 accounts, show existing account tabs
@@ -514,7 +577,7 @@ const Dashboard: React.FC = () => {
       console.log('getUser Dashbord error', error);
     }
   };
-  
+
   // ... rest of the component remains the same as your second code ...
 
   const [showForm, setShowForm] = useState(false);
