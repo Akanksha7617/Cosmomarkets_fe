@@ -214,7 +214,7 @@ const CustomEmailForm: React.FC<CustomEmailFormProps> = ({
               </Button>
             </Col>
             <Col span={5}>
-              <Button
+              {/* <Button
                 type="primary"
                 onClick={sendResetPasswordEmail}
                 icon={<MailOutlined />}
@@ -222,7 +222,7 @@ const CustomEmailForm: React.FC<CustomEmailFormProps> = ({
                 block
               >
                 forget password
-              </Button>
+              </Button> */}
             </Col>
           </Row>
         </div>

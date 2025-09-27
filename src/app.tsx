@@ -134,18 +134,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     };
     checkUserSession();
   }, []);
+ return {
+  actionsRender: () => [
+    <Tag
+  className="wallet-pill"
+  icon={<DollarOutlined className="wallet-icon" />}
+>
+  <span className="wallet-pill-text">{balance}</span>
+</Tag>
+  ],
 
-  return {
-    actionsRender: () =>
-      [
-        <Tag
-          className="wallet-pill"
-          icon={< DollarOutlined  style={{ fontSize: '18px' }} />}
-          style={{ display: 'inline-flex', alignItems: 'center' }}
-        >
-          <span className="wallet-pill-text">{balance}</span>
-        </Tag>,
-      ],
     // avatarProps: {
     //   src: initialState?.currentUser?.avatar,
     //   title: <AvatarName />,
