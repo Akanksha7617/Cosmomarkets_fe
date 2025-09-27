@@ -1531,7 +1531,7 @@ a {
   margin-right: auto;
   margin-left: auto;
   padding: 1rem;
-  background: linear-gradient(135deg, #102040 0%, #0b2b4b 35%, #15457a 65%, #1e60a2 100%);
+  background:  linear-gradient(135deg,#001219 0%,#005f73 35%,#0a9396 70%,#94d2bd 100%);
 }
 
 *,
@@ -2708,7 +2708,7 @@ margin-left: -100px;
   width: 100%;
   padding: 40px 30px;
   text-align: center;
-  background: linear-gradient(135deg, #102040 0%, #0b2b4b 35%, #15457a 65%, #1e60a2 100%);
+  background:linear-gradient(135deg,#001219 0%,#005f73 35%,#0a9396 70%,#94d2bd 100%);
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;

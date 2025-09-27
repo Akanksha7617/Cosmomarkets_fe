@@ -6,7 +6,7 @@ export const Navbar = () => {
     <div className="header-section">
       <div className="container-fluid">
         <a href="logo" className="ant-pro-global-header-logo">
-          <img src="/images/logo.png" alt="logo" />
+          <img src="/images/Cosmomarkets.png" alt="logo" />
         </a>
 
         {/* <a href="Signup" className="site-btn"> Request Demo</a> */}

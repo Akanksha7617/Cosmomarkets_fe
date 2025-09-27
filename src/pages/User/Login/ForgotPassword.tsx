@@ -38,7 +38,7 @@ const ForgotPassword: React.FC = () => {
         <div className="forgot-password-content">
           <div className="forgot-password-form-container">
             <Form className="forgot-password-form">
-              <img src="/images/logo.png" alt="logo" style={{ height: '56px', width: '197px' }} />
+              <img src="/images/Cosmomarkets.png" alt="logo" style={{ height: '56px', width: '197px' }} />
 
               <h2 className="forgot-password-title">Forgot Password</h2>
               <div>
