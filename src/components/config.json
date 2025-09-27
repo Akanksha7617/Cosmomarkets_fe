@@ -1,7 +1,7 @@
 {
-  "baseUrl": "https://crm.mevoracapital.com",
+  "baseUrl": "https://crm.cosmomarkets.com",
   "local":"http://localhost",
-  "port": "9092",
+  "port": "7072",
   "localPort":"4000",
   "prod": "no"
 }
