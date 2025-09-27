@@ -1,33 +1,54 @@
-.input-search-cls{
-    padding-bottom: 1%;
-    display: flex;
-    justify-content: flex-end;
+ .loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
-.date-picker-cls{
-    padding-bottom: 1%;
-    display: flex;
-    // justify-content: flex-end;
-    // margin-right: 100px;
-
-    .date-picker-range{
-        padding-right: 1%;
-    }
-    .search-box-1{
-        padding-right: 1%;
-        justify-content: flex-end;
-    }
-    .search-box-2{
-        padding-right: 1%;
-    }
+.ring-loader {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #e0e0e0;   // light gray background ring
+  border-top: 6px solid #2962ff; // main color (blue here)
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.loader-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// .input-search-cls{
+//     padding-bottom: 1%;
+//     display: flex;
+//     justify-content: flex-end;
+// }
+
+// .date-picker-cls{
+//     padding-bottom: 1%;
+//     display: flex;
+//     // justify-content: flex-end;
+//     // margin-right: 100px;
+
+//     .date-picker-range{
+//         padding-right: 1%;
+//     }
+//     .search-box-1{
+//         padding-right: 1%;
+//         justify-content: flex-end;
+//     }
+//     .search-box-2{
+//         padding-right: 1%;
+//     }
+// }
+
+// .loader-container {
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     height: 100%;
+//   }
   
  
   

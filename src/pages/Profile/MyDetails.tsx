@@ -173,12 +173,12 @@ const MyDetails: React.FC = () => {
                 </Col>
                 <Col xs={24} md={12}>
                   <Form.Item name="masterPassword" label="Master Password">
-                    <Input.Password disabled />
+                    <Input.Password  />
                   </Form.Item>
                 </Col>
                 <Col xs={24} md={12}>
                   <Form.Item name="investorPassword" label="Investor Password">
-                    <Input.Password disabled />
+                    <Input.Password />
                   </Form.Item>
                 </Col>
               </Row>
