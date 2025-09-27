@@ -729,65 +729,70 @@ const Deposit: React.FC = () => {
           {/* Upload Section - responsive width based on left content */}
           <Col xs={24} lg={hasLeftContent ? 12 : 16}>
             {/* Upload Section */}
-            <Card
-              title={
-                ['bank-transfer', 'other-payment'].includes(selectedPaymentMethod)
-                  ? "Upload Transaction Proof (Required)"
-                  : "Upload Transaction Proof (Optional)"
-              }
-              className="upload-card"
-            >
-              <Upload {...uploadProps} className="proof-upload">
-                <div className="upload-area">
-                  <UploadOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
-                  <Title level={4}>Upload Receipt</Title>
-                  <Text type="secondary">
-                    Upload a screenshot or receipt of your transaction
-                  </Text>
-                  <br />
-                  <Text type="secondary" style={{ fontSize: '12px' }}>
-                    JPEG, PNG, PDF (Max 2MB)
-                  </Text>
-                  {['bank-transfer', 'other-payment'].includes(selectedPaymentMethod) && (
-                    <>
-                      <br />
-                    </>
-                  )}
+
+            {!isCard && (
+              <Card
+                title={
+                  ['bank-transfer', 'other-payment'].includes(selectedPaymentMethod)
+                    ? "Upload Transaction Proof (Required)"
+                    : "Upload Transaction Proof (Optional)"
+                }
+                className="upload-card"
+              >
+
+                <Upload {...uploadProps} className="proof-upload">
+                  <div className="upload-area">
+                    <UploadOutlined style={{ fontSize: '48px', color: '#1890ff' }} />
+                    <Title level={4}>Upload Receipt</Title>
+                    <Text type="secondary">
+                      Upload a screenshot or receipt of your transaction
+                    </Text>
+                    <br />
+                    <Text type="secondary" style={{ fontSize: '12px' }}>
+                      JPEG, PNG, PDF (Max 2MB)
+                    </Text>
+                    {['bank-transfer', 'other-payment'].includes(selectedPaymentMethod) && (
+                      <>
+                        <br />
+                      </>
+                    )}
+                  </div>
+                </Upload>
+
+
+                <Divider />
+
+                {/* Mobile responsive button section */}
+                <div className="deposit-actions-mobile" style={{ textAlign: 'center' }}>
+                  <Row gutter={[8, 8]} justify="center">
+                    <Col xs={24} sm={12} md={8}>
+                      <Button
+                        size="large"
+                        onClick={handlePrevStep}
+                        block
+                        style={{ minHeight: '44px' }}
+                      >
+                        Back
+                      </Button>
+                    </Col>
+                    <Col xs={24} sm={12} md={16}>
+                      <Button
+                        type="primary"
+                        size="large"
+                        loading={loading}
+                        onClick={handleFinalSubmit}
+                        icon={<CheckCircleOutlined />}
+                        disabled={['bank-transfer', 'other-payment'].includes(selectedPaymentMethod) && fileList.length === 0}
+                        block
+                        style={{ minHeight: '44px' }}
+                      >
+                        Complete Deposit
+                      </Button>
+                    </Col>
+                  </Row>
                 </div>
-              </Upload>
-
-              <Divider />
-
-              {/* Mobile responsive button section */}
-              <div className="deposit-actions-mobile" style={{ textAlign: 'center' }}>
-                <Row gutter={[8, 8]} justify="center">
-                  <Col xs={24} sm={12} md={8}>
-                    <Button
-                      size="large"
-                      onClick={handlePrevStep}
-                      block
-                      style={{ minHeight: '44px' }}
-                    >
-                      Back
-                    </Button>
-                  </Col>
-                  <Col xs={24} sm={12} md={16}>
-                    <Button
-                      type="primary"
-                      size="large"
-                      loading={loading}
-                      onClick={handleFinalSubmit}
-                      icon={<CheckCircleOutlined />}
-                      disabled={['bank-transfer', 'other-payment'].includes(selectedPaymentMethod) && fileList.length === 0}
-                      block
-                      style={{ minHeight: '44px' }}
-                    >
-                      Complete Deposit
-                    </Button>
-                  </Col>
-                </Row>
-              </div>
-            </Card>
+              </Card>
+            )}
           </Col>
         </Row>
       </div>
