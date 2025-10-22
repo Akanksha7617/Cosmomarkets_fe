@@ -102,18 +102,18 @@ const Deposit: React.FC = () => {
   // Crypto details with QR codes and wallet addresses
   const cryptoDetails = {
     'erc-deposit': {
-      qrCode: '/images/ERC.png',
-      walletAddress: '0x8eA5A04E8be48928E03d060A126184CF704eaE64',
+      qrCode: '/images/ERC.jpeg',
+      walletAddress: '0x51b7c6Ef651fE573ee412B991F503B1A9c4E230d',
       name: 'Ethereum (ERC-20)'
     },
     'btc-deposit': {
-      qrCode: '/images/BTC.png',
-      walletAddress: 'bc1q8c43czf4gjzwtat8zh3vhr8h2rs5av2kvxrx0f',
+      qrCode: '/images/BTC.jpeg',
+      walletAddress: 'bc1qsyxfnefjg9zvn0z97cvkpeu3vduyyllwrnxdmm',
       name: 'Bitcoin'
     },
     'usdtc-deposit': {
-      qrCode: '/images/USDTC.png',
-      walletAddress: 'THnzBRE63NfkALRhHLtb8ZHJL2upkR2mCr',
+      qrCode: '/images/TRC.jpeg',
+      walletAddress: 'TFgoxMeHftgr9YRm1xDtBWQh8PqbmoUxt9',
       name: 'USDT (TRC-20)'
     }
   };
