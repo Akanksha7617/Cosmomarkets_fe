@@ -152,13 +152,13 @@ const MyDetails: React.FC = () => {
                   </Form.Item>
                 </Col>
                 <Col xs={24} md={12}>
-                  <Form.Item
+                  {/* <Form.Item
                     name="password"
                     label="Password"
                     rules={[{ required: true, message: 'Enter password' }]}
                   >
                     <Input.Password readOnly={!isEditing} placeholder="••••••••" />
-                  </Form.Item>
+                  </Form.Item> */}
                 </Col>
               </Row>
             </Panel>
@@ -222,15 +222,16 @@ const MyDetails: React.FC = () => {
                 </Button>
               </>
             ) : (
-              <Button
-                type="primary"
-                onClick={handleEditClick}
-                style={{
-                  border: 'none',
-                }}
-              >
-                Edit Profile
-              </Button>
+              <></>
+              // <Button
+              //   type="primary"
+              //   onClick={handleEditClick}
+              //   style={{
+              //     border: 'none',
+              //   }}
+              // >
+              //   Edit Profile
+              // </Button>
             )}
           </div>
         </Form>
